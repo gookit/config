@@ -13,7 +13,7 @@ const Toml = "toml"
 const Version = "0.0.1"
 const DefaultNode = "__DEFAULT"
 
-// Decoder for decode yml,json,toml format content
+// Decoder for decode yml,json,toml defFormat content
 type Decoder func(blob []byte, v interface{}) (err error)
 type Encoder func(v interface{}) (out []byte, err error)
 
@@ -47,30 +47,24 @@ type Config struct {
 	name string
 	lock sync.RWMutex
 
-	data map[string]interface{}
+	data  map[string]interface{}
 	nodes map[string]*Node
 
-	options  *Options
-	format   string
-	readOnly bool
+	options   *Options
+	readOnly  bool
 	// only load exists file
 	loadExist bool
+	// default format
+	defFormat string
 	// ignore key string case
 	ignoreCase bool
 
 	loadedFiles []string
 
-	// Encoder func(v interface{}) (out []byte, err error)
-	// decoders["toml"] = func(data string, v interface{}) (err error){
-	// }
-	// decoders["yaml"] = func(data string, v interface{}) (err error){
-	// }
+	// decoders["toml"] = func(data string, v interface{}) (err error){}
+	// decoders["yaml"] = func(data string, v interface{}) (err error){}
 	decoders map[string]Decoder
-}
-
-// SetDecoder
-func (c *Config) SetDecoder(format string, decoder Decoder) {
-	c.decoders[format] = decoder
+	encoders map[string]Encoder
 }
 
 // New
@@ -78,23 +72,24 @@ func New(name string) *Config {
 	return &Config{
 		name: name,
 		data: make(map[string]interface{}),
+
+		defFormat: Json,
+
+		encoders: map[string]Encoder{Json: JsonEncoder},
 		decoders: map[string]Decoder{Json: JsonDecoder},
 	}
 }
 
-func (c *Config) IgnoreCase() bool {
-	return c.ignoreCase
+// SetDecoder
+func (c *Config) SetDecoder(format string, decoder Decoder) {
+	c.decoders[format] = decoder
 }
 
-func (c *Config) SetIgnoreCase(ignoreCase bool) {
+func (c *Config) IgnoreCase(ignoreCase bool) {
 	c.ignoreCase = ignoreCase
 }
 
-func (c *Config) ReadOnly() bool {
-	return c.readOnly
-}
-
-func (c *Config) SetReadOnly(readOnly bool) {
+func (c *Config) ReadOnly(readOnly bool) {
 	c.readOnly = readOnly
 }
 

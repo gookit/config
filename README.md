@@ -2,10 +2,12 @@
 
 [![GoDoc](https://godoc.org/github.com/gookit/config?status.svg)](https://godoc.org/github.com/gookit/config)
 
-simple config manager implement.
+golang application config manage implement. 
 
-- support file format: `ini`, `yaml`, `toml`
-- generic api
+- generic api `Get` `Set` ...
+- support file format: `json`, `yaml`, `toml`
+- support multi file load
+- data override merge
 
 ## Godoc
 
@@ -18,9 +20,9 @@ simple config manager implement.
 
 ```text
 conf/
-    base.ini
-    dev.ini
-    test.ini
+    base.yml
+    dev.yml
+    test.yml
     ...
 ```
 

@@ -7,14 +7,20 @@ var JsonDecoder Decoder = func(blob []byte, v interface{}) (err error) {
 	return json.Unmarshal(blob, v)
 }
 
+// JsonEncoder
+var JsonEncoder Encoder = func(v interface{}) (out []byte, err error) {
+	return json.Marshal(v)
+}
+
 // a default manager
 var defConf = &Config{
-	name: DefaultNode,
-	format: Yaml,
-	decoders: map[string]Decoder{
-		Json: JsonDecoder,
-	},
+	name: "default",
 	data: make(map[string]interface{}),
+
+	defFormat: Json,
+
+	encoders: map[string]Encoder{Json: JsonEncoder},
+	decoders: map[string]Decoder{Json: JsonDecoder},
 }
 
 func Get() {
@@ -29,7 +35,7 @@ func Data() map[string]interface{} {
 	return defConf.data
 }
 
-func SetOptions(opts *Options)  {
+func SetOptions(opts *Options) {
 	defConf.options = opts
 }
 

@@ -105,7 +105,7 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	}
 
 	if !ok {
-		log.Fatalf("no exists or no register decoder for the format: %s", format)
+		log.Fatalf("no exists or no register decoder for the defFormat: %s", format)
 	}
 
 	data := make(map[string]interface{})
