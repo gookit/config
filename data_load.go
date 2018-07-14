@@ -92,6 +92,11 @@ func (c *Config) LoadSources(format string, sourceCodes ...[]byte) (err error) {
 	return
 }
 
+// Set a value by key string.
+func (c *Config) Set(key string, val interface{}) (err error)  {
+	return
+}
+
 // parse config source code to Config.
 func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	var ok bool

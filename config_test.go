@@ -47,3 +47,14 @@ func Example() {
 	// get 'map1', ok: true, val: map[string]string{"key":"val2", "key2":"val20"}
 	// get sub 'map1.key', ok: true, val: "val2"
 }
+
+func ExampleConfig_DefBool() {
+	val, ok := GetBool("debug")
+	fmt.Printf("get 'debug', ok: %v, val: %v\n", ok, val)
+	val1 := DefBool("debug", false)
+	fmt.Printf("get 'debug' with default, val: %v\n", val1)
+
+	// Output:
+	// get 'debug', ok: true, val: true
+	// get 'debug' with default, val: true
+}
