@@ -52,16 +52,16 @@ func Set() {
 
 }
 
-// Data
+// Data all config data
 func Data() map[string]interface{} {
 	return dc.data
 }
 
 func SetOptions(opts *Options) {
-	dc.options = opts
+	dc.SetOptions(opts)
 }
 
-// SetDecoder
+// SetDecoder add/set a format decoder
 func SetDecoder(format string, decoder Decoder) {
 	dc.SetDecoder(format, decoder)
 }

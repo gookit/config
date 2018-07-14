@@ -34,13 +34,13 @@ func (c *Config) loadFile(file string, onlyExist bool) (err error) {
 			return
 		}
 
-		// error
 		panic(err)
 	}
 
+	// get format for file ext
 	format := strings.Trim(filepath.Ext(file), ".")
-
 	fd, err := os.Open(file)
+
 	if err != nil {
 		panic(err)
 	}
@@ -51,6 +51,7 @@ func (c *Config) loadFile(file string, onlyExist bool) (err error) {
 		panic(err)
 	}
 
+	// parse file content
 	if c.parseSourceCode(format, content) != nil {
 		return
 	}
@@ -64,7 +65,6 @@ func (c *Config) loadFile(file string, onlyExist bool) (err error) {
 func (c *Config) LoadData(dataSources ...interface{}) (err error) {
 	for _, ds := range dataSources {
 		err = mergo.Merge(&c.data, ds, mergo.WithOverride)
-
 		if err != nil {
 			panic(err)
 		}
@@ -73,7 +73,7 @@ func (c *Config) LoadData(dataSources ...interface{}) (err error) {
 	return
 }
 
-// LoadSources load data from byte content
+// LoadSources load data from byte content.
 // usage:
 // 	config.LoadSources(config.Yml, []byte(`
 // 	name: blog
@@ -107,17 +107,17 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	}
 
 	if !ok {
-		log.Fatalf("no exists or no register decoder for the defFormat: %s", format)
+		log.Fatalf("no exists or no register decoder for the format: %s", format)
 	}
 
 	data := make(map[string]interface{})
-	// err = decoder(content, &data)
 
+	// decode content to data
 	if decoder(blob, &data) != nil {
 		return
 	}
 
-	// init
+	// init config data
 	if len(c.data) == 0 {
 		c.data = data
 

@@ -5,12 +5,12 @@ import (
 	"github.com/gookit/config"
 )
 
-// Decoder
+// Decoder the yaml content decoder
 var Decoder config.Decoder = func(blob []byte, ptr interface{}) (err error) {
 	return yaml.Unmarshal(blob, ptr)
 }
 
-// Encode
-func Encode(ptr interface{}) (out []byte, err error) {
+// Encoder the yaml content encoder
+var Encoder config.Encoder = func(ptr interface{}) (out []byte, err error) {
 	return yaml.Marshal(ptr)
 }

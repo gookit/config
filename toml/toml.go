@@ -1,28 +1,27 @@
 package toml
 
-// https://godoc.org/github.com/BurntSushi/toml
+// see https://godoc.org/github.com/BurntSushi/toml
 import (
 	"bytes"
 	"github.com/BurntSushi/toml"
 	"github.com/gookit/config"
 )
 
-// Decoder
+// Decoder the toml content decoder
 var Decoder config.Decoder = func(blob []byte, ptr interface{}) (err error) {
 	_, err = toml.Decode(string(blob), ptr)
 
 	return
 }
 
-// Encode
-func Encode(ptr interface{}) (str string, err error) {
+// Encoder the toml content encoder
+var Encoder config.Encoder = func(ptr interface{}) (out []byte, err error) {
 	buf := new(bytes.Buffer)
-	err = toml.NewEncoder(buf).Encode(ptr)
 
+	err = toml.NewEncoder(buf).Encode(ptr)
 	if err != nil {
 		return
 	}
 
-	str = buf.String()
-	return
+	return buf.Bytes(), nil
 }

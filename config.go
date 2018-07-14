@@ -24,16 +24,16 @@ type stringArr []string
 type Decoder func(blob []byte, v interface{}) (err error)
 type Encoder func(v interface{}) (out []byte, err error)
 
-// Options
+// Options config options
 type Options struct {
+	// parse env value. like: "${EnvName}" "${EnvName|default}"
+	ParseEnv bool
 	// config is readonly
 	Readonly bool
 	// ignore key string case
 	IgnoreCase bool
 	// default format
 	DefaultFormat string
-	// only load exists file
-	IgnoreNotExist bool
 }
 
 // Config
@@ -42,30 +42,24 @@ type Config struct {
 	name string
 	lock sync.RWMutex
 
+	// config options
+	opts *Options
 	// all config data
 	data map[string]interface{}
+
+	// loaded config files
+	loadedFiles []string
+
+	// decoders["toml"] = func(blob []byte, v interface{}) (err error){}
+	// decoders["yaml"] = func(blob []byte, v interface{}) (err error){}
+	decoders map[string]Decoder
+	encoders map[string]Encoder
 
 	// cache got config data
 	intCaches map[string]int
 	strCaches map[string]string
 	arrCaches map[string]stringArr
 	mapCaches map[string]stringMap
-
-	options  *Options
-	readOnly bool
-	// only load exists file
-	loadExist bool
-	// default format
-	defFormat string
-	// ignore key string case
-	// ignoreCase bool
-
-	loadedFiles []string
-
-	// decoders["toml"] = func(data string, v interface{}) (err error){}
-	// decoders["yaml"] = func(data string, v interface{}) (err error){}
-	decoders map[string]Decoder
-	encoders map[string]Encoder
 }
 
 // New
@@ -74,21 +68,24 @@ func New(name string) *Config {
 		name: name,
 		data: make(map[string]interface{}),
 
-		defFormat: Json,
-
+		opts:  &Options{DefaultFormat: Json},
 		encoders: map[string]Encoder{Json: JsonEncoder},
 		decoders: map[string]Decoder{Json: JsonDecoder},
 	}
 }
 
-// SetDecoder
-func (c *Config) SetDecoder(format string, decoder Decoder) {
-	c.decoders[format] = decoder
+// SetOptions
+func (c *Config) SetOptions(opts *Options) {
+	c.opts = opts
+
+	if c.opts.DefaultFormat == "" {
+		c.opts.DefaultFormat = Json
+	}
 }
 
-// ReadOnly
-func (c *Config) ReadOnly(readOnly bool) {
-	c.readOnly = readOnly
+// Readonly
+func (c *Config) Readonly(readonly bool) {
+	c.opts.Readonly = readonly
 }
 
 // Name get config name
@@ -99,6 +96,11 @@ func (c *Config) Name() string {
 // Data get all config data
 func (c *Config) Data() map[string]interface{} {
 	return c.data
+}
+
+// SetDecoder
+func (c *Config) SetDecoder(format string, decoder Decoder) {
+	c.decoders[format] = decoder
 }
 
 // HasDecoder

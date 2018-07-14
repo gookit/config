@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"encoding/json"
 	"fmt"
+	"os"
 )
 
 // Get config value by key string, support get sub-value by key path(eg. 'map.key'),
@@ -72,10 +73,37 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 // GetString
 func (c *Config) GetString(key string) (value string, ok bool) {
 	val, ok := c.Get(key)
+	if !ok {
+		return
+	}
 
 	switch val.(type) {
-	case bool, int, int64, string:
-		return fmt.Sprintf("%v", val), ok
+	case bool, int, int64:
+		value = fmt.Sprintf("%v", val)
+	case string:
+		value = fmt.Sprintf("%v", val)
+
+		// if opts.ParseEnv is true
+		if c.opts.ParseEnv && strings.Index(value, "${") == 0{
+			var name, def string
+			str := strings.Trim(strings.TrimSpace(value), "${}")
+			ss := strings.SplitN(str, "|", 2)
+
+			// ${NotExist|defValue}
+			if len(ss) == 2 {
+				name, def = strings.TrimSpace(ss[0]), strings.TrimSpace(ss[1])
+				// ${SHELL}
+			} else {
+				name = ss[0]
+			}
+
+			value = os.Getenv(name)
+			if value == "" {
+				value = def
+			}
+		}
+	default:
+		ok = false
 	}
 
 	return
@@ -129,7 +157,6 @@ func (c *Config) GetBool(key string) (value bool, ok bool) {
 		return
 	}
 
-	ok = true
 	lowerCase := strings.ToLower(rawVal)
 	switch lowerCase {
 	case "", "0", "false", "no":
@@ -139,6 +166,7 @@ func (c *Config) GetBool(key string) (value bool, ok bool) {
 	default:
 		ok = false
 	}
+
 	return
 }
 
@@ -163,6 +191,8 @@ func (c *Config) GetStringArr(key string) (arr []string, ok bool) {
 		for _, v := range rawVal.([]interface{}) {
 			arr = append(arr, fmt.Sprintf("%v", v))
 		}
+	default:
+		ok = false
 	}
 
 	return
@@ -181,9 +211,10 @@ func (c *Config) GetStringMap(key string) (mp map[string]string, ok bool) {
 		mp = make(map[string]string)
 		for k, v := range rawVal.(map[interface{}]interface{}) {
 			sk := fmt.Sprintf("%v", k)
-			sv := fmt.Sprintf("%v", v)
-			mp[sk] = sv
+			mp[sk] = fmt.Sprintf("%v", v)
 		}
+	default:
+		ok = false
 	}
 
 	return
@@ -194,7 +225,7 @@ func (c *Config) MapStructure(key string, v interface{}) (err error) {
 	return c.GetStructure(key, v)
 }
 
-// GetStructure get config data and map to a structure
+// GetStructure get config data and map to a structure.
 // usage:
 // 	dbInfo := Db{}
 // 	config.GetStructure("db", &dbInfo)

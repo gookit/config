@@ -2,6 +2,8 @@ name: app
 debug: false
 baseKey: value
 intkey: 123
+envKey: ${SHELL}
+envKey1: ${NotExist|defValue}
 
 map1:
     key: val

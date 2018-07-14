@@ -2,7 +2,7 @@ package config
 
 import "encoding/json"
 
-// jsonDecoder
+// JsonDecoder
 var JsonDecoder Decoder = func(blob []byte, v interface{}) (err error) {
 	return json.Unmarshal(blob, v)
 }

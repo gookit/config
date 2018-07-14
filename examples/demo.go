@@ -7,7 +7,9 @@ import (
 )
 
 func main() {
-	config.SetOptions(&config.Options{})
+	config.SetOptions(&config.Options{
+		ParseEnv: true,
+	})
 	config.SetDecoder(config.Yaml, yaml.Decoder)
 
 	config.LoadFiles("testdata/yml_base.yml")
@@ -33,4 +35,8 @@ func main() {
 
 	val0, ok = config.GetString("map1.key")
 	fmt.Printf("get sub 'map1.key', ok: %v, val: %#v\n", ok, val0)
+
+	// can parse env name(ParseEnv: true)
+	fmt.Printf("get env 'envKey' val: %s\n", config.DefString("envKey", ""))
+	fmt.Printf("get env 'envKey1' val: %s\n", config.DefString("envKey1", ""))
 }

@@ -9,6 +9,7 @@ golang application config manage implement.
 - support multi file/data load
 - support data override merge
 - support get sub value by path, like `map.key` `arr.2`
+- support parse env name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
 
 ## Godoc
 
