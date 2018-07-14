@@ -4,10 +4,10 @@
 
 golang application config manage implement. 
 
-- generic api `Get` `Set` ...
-- support file format: `json`, `yaml`, `toml`
-- support multi file load
-- data override merge
+- generic api `Get` `GetInt` `GetString` `GetBool` `GetStringArr` ...
+- support file format: `json`(default), `yaml`, `toml`
+- support multi file/data load
+- support data override merge
 
 ## Godoc
 
@@ -16,38 +16,54 @@ golang application config manage implement.
 
 ## Usage
 
-> there are use `ini` config file
+
+Here using the yaml format as an example(`testdata/yml_other.yml`):
+
+```yaml
+name: app2
+debug: false
+baseKey: value2
+
+map1:
+    key: val2
+    key2: val20
+
+arr1:
+    - val1
+    - val21
+```
+
+- usage:
+
+```go
+package main
+
+import (
+    "github.com/gookit/config"
+    "github.com/gookit/config/yaml"
+    "fmt"
+)
+
+// add yaml decoder
+config.SetDecoder(config.Yaml, yaml.Decoder)
+config.LoadFiles("testdata/yml_other.yml")
+
+name, ok := config.Get("name")
+fmt.Printf("get 'name', ok: %v, val: %#v\n", ok, name)
+
+arr1, ok := config.GetStringArr("arr1")
+fmt.Printf("get 'arr1', ok: %v, val: %#v\n", ok, arr1)
+
+map1, ok := config.GetStringMap("map1")
+fmt.Printf("get 'map1', ok: %v, val: %#v\n", ok, map1)
+```
+
+output:
 
 ```text
-conf/
-    base.yml
-    dev.yml
-    test.yml
-    ...
-```
-
-- init
-
-```go
-    import "github/gookit/config"
-
-    languages := map[string]string{
-        "en": "English",
-        "zh-CN": "简体中文",
-        "zh-TW": "繁体中文",
-    }
-
-    config.Init("conf/lang", "en", languages)
-```
-
-- usage
-
-```go
-    // translate from special language
-    val := config.Tr("en", "key")
-
-    // translate from default language
-    val := config.DefTr("key")
+get 'name', ok: true, val: "app2"
+get 'arr1', ok: true, val: []string{"val1", "val21"}
+get 'map1', ok: true, val: map[string]string{"key":"val2", "key2":"val20"}
 ```
 
 ## useful packages

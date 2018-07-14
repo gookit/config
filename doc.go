@@ -5,7 +5,7 @@ Source code and other details for the project are available at GitHub:
 
    https://github.com/gookit/config
 
-There are use yaml for example(yml_other.yml):
+Here using the yaml format as an example(yml_other.yml):
 
 	name: app2
 	debug: false
