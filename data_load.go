@@ -9,16 +9,7 @@ import (
 	"github.com/imdario/mergo"
 )
 
-// LoadExists
-func (c *Config) LoadExists(sourceFiles ...string) (err error) {
-	for _, file := range sourceFiles {
-		c.loadFile(file, true)
-	}
-
-	return
-}
-
-// LoadFiles
+// LoadFiles load and parse config files
 func (c *Config) LoadFiles(sourceFiles ...string) (err error) {
 	for _, file := range sourceFiles {
 		c.loadFile(file, false)
@@ -27,6 +18,16 @@ func (c *Config) LoadFiles(sourceFiles ...string) (err error) {
 	return
 }
 
+// LoadExists load and parse config files, but will ignore not exists file.
+func (c *Config) LoadExists(sourceFiles ...string) (err error) {
+	for _, file := range sourceFiles {
+		c.loadFile(file, true)
+	}
+
+	return
+}
+
+// load config file
 func (c *Config) loadFile(file string, onlyExist bool) (err error) {
 	if _, err = os.Stat(file); err != nil {
 		if os.IsNotExist(err) && onlyExist {
@@ -76,7 +77,7 @@ func (c *Config) LoadData(dataSources ...interface{}) (err error) {
 // usage:
 // 	config.LoadSources(config.Yml, []byte(`
 // 	name: blog
-//	arr:
+// 	arr:
 // 		key: val
 // `))
 func (c *Config) LoadSources(format string, sourceCodes ...[]byte) (err error) {
@@ -91,6 +92,7 @@ func (c *Config) LoadSources(format string, sourceCodes ...[]byte) (err error) {
 	return
 }
 
+// parse config source code to Config.
 func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	var ok bool
 	var decoder Decoder
@@ -98,7 +100,7 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	switch format {
 	case Json:
 		decoder, ok = c.decoders[Json]
-	case Yaml,Yml:
+	case Yaml, Yml:
 		decoder, ok = c.decoders[Yaml]
 	case Toml:
 		decoder, ok = c.decoders[Toml]
@@ -115,8 +117,11 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 		return
 	}
 
+	// init
 	if len(c.data) == 0 {
 		c.data = data
+
+		// second... merge data
 	} else {
 		// err = mergo.Map(&c.data, data, mergo.WithOverride)
 		err = mergo.Merge(&c.data, data, mergo.WithOverride)

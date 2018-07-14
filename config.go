@@ -42,6 +42,8 @@ type Options struct {
 	IgnoreNotExist bool
 }
 
+type stringMap map[string]string
+
 // Config
 type Config struct {
 	name string
@@ -49,6 +51,9 @@ type Config struct {
 
 	data  map[string]interface{}
 	nodes map[string]*Node
+
+	mapValues map[string]stringMap
+	// arrValues map[string]stringMap
 
 	options   *Options
 	readOnly  bool
@@ -91,6 +96,10 @@ func (c *Config) IgnoreCase(ignoreCase bool) {
 
 func (c *Config) ReadOnly(readOnly bool) {
 	c.readOnly = readOnly
+}
+
+func (c *Config) Name() string {
+	return c.name
 }
 
 func (c *Config) Data() map[string]interface{} {
