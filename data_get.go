@@ -17,6 +17,7 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 		return
 	}
 
+	// check top key
 	if value, ok = c.data[key]; ok {
 		return
 	}
@@ -63,6 +64,7 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 
 			item = arrItem[i]
 		default: // error
+			ok = false
 			return
 		}
 	}

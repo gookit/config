@@ -4,6 +4,9 @@ import (
 	"sync"
 )
 
+// package version
+const Version     = "1.0.1"
+
 // supported config format
 const (
 	Json = "json"
@@ -12,13 +15,8 @@ const (
 	Toml = "toml"
 )
 
-const (
-	Version     = "0.0.1"
-	DefaultNode = "__DEFAULT"
-)
-
-type stringMap map[string]string
 type stringArr []string
+type stringMap map[string]string
 
 // Decoder for decode yml,json,toml defFormat content
 type Decoder func(blob []byte, v interface{}) (err error)
@@ -100,6 +98,10 @@ func (c *Config) Data() map[string]interface{} {
 
 // SetDecoder
 func (c *Config) SetDecoder(format string, decoder Decoder) {
+	if format == Yml {
+		format = Yaml
+	}
+
 	c.decoders[format] = decoder
 }
 
