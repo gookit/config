@@ -1,6 +1,7 @@
 name: app
 debug: false
 baseKey: value
+intkey: 123
 
 map1:
     key: val

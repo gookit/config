@@ -6,7 +6,7 @@ import (
 )
 
 // Decoder
-var Decoder config.Decoder = func (blob []byte, ptr interface{}) (err error) {
+var Decoder config.Decoder = func(blob []byte, ptr interface{}) (err error) {
 	return yaml.Unmarshal(blob, ptr)
 }
 

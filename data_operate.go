@@ -7,7 +7,9 @@ import (
 	"fmt"
 )
 
-// Get
+// Get config value by key string, support get sub-value by key path(eg. 'map.key'),
+// ok is true, find value from config
+// ok is false, not found or error
 func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool) {
 	key = strings.Trim(strings.TrimSpace(key), ".")
 	if key == "" {
@@ -72,11 +74,20 @@ func (c *Config) GetString(key string) (value string, ok bool) {
 	val, ok := c.Get(key)
 
 	switch val.(type) {
-	case bool, int, string:
+	case bool, int, int64, string:
 		return fmt.Sprintf("%v", val), ok
 	}
 
 	return
+}
+
+// DefString get a string value, if not found return default value
+func (c *Config) DefString(key string, def string) string {
+	if value, ok := c.GetString(key); ok {
+		return value
+	}
+
+	return def
 }
 
 // GetInt
@@ -91,6 +102,15 @@ func (c *Config) GetInt(key string) (value int, ok bool) {
 	}
 
 	return
+}
+
+// DefInt get a int value, if not found return default value
+func (c *Config) DefInt(key string, def int) int {
+	if value, ok := c.GetInt(key); ok {
+		return value
+	}
+
+	return def
 }
 
 // GetBool Looks up a value for a key in this section and attempts to parse that value as a boolean,
@@ -122,6 +142,15 @@ func (c *Config) GetBool(key string) (value bool, ok bool) {
 	return
 }
 
+// DefBool get a bool value, if not found return default value
+func (c *Config) DefBool(key string, def bool) bool {
+	if value, ok := c.GetBool(key); ok {
+		return value
+	}
+
+	return def
+}
+
 // GetStringArr  get config data as a slice/array
 func (c *Config) GetStringArr(key string) (arr []string, ok bool) {
 	rawVal, ok := c.Get(key)
@@ -150,7 +179,6 @@ func (c *Config) GetStringMap(key string) (mp map[string]string, ok bool) {
 	case map[interface{}]interface{}:
 		// init map
 		mp = make(map[string]string)
-
 		for k, v := range rawVal.(map[interface{}]interface{}) {
 			sk := fmt.Sprintf("%v", k)
 			sv := fmt.Sprintf("%v", v)

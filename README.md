@@ -8,7 +8,7 @@ golang application config manage implement.
 - support file format: `json`(default), `yaml`, `toml`
 - support multi file/data load
 - support data override merge
-- support get sub value by path, like `map.key`
+- support get sub value by path, like `map.key` `arr.2`
 
 ## Godoc
 
@@ -16,7 +16,6 @@ golang application config manage implement.
 - [godoc for github](https://godoc.org/github.com/gookit/config)
 
 ## Usage
-
 
 Here using the yaml format as an example(`testdata/yml_other.yml`):
 
@@ -65,7 +64,7 @@ val0, ok = config.GetString("map1.key")
 fmt.Printf("get sub 'map1.key', ok: %v, val: %#v\n", ok, val0)
 ```
 
-output:
+- output:
 
 ```text
 get 'name', ok: true, val: "app2"
@@ -75,7 +74,7 @@ get 'map1', ok: true, val: map[string]string{"key":"val2", "key2":"val20"}
 get sub 'map1.key', ok: true, val: "val2"
 ```
 
-## useful packages
+## Useful packages
 
 ### ini config use
 

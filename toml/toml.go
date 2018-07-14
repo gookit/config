@@ -8,7 +8,7 @@ import (
 )
 
 // Decoder
-var Decoder config.Decoder = func (blob []byte, ptr interface{}) (err error) {
+var Decoder config.Decoder = func(blob []byte, ptr interface{}) (err error) {
 	_, err = toml.Decode(string(blob), ptr)
 
 	return
@@ -20,7 +20,7 @@ func Encode(ptr interface{}) (str string, err error) {
 	err = toml.NewEncoder(buf).Encode(ptr)
 
 	if err != nil {
-	    return
+		return
 	}
 
 	str = buf.String()
