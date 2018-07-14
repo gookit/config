@@ -40,7 +40,7 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 	// 查找子级
 	for _, k := range keys[1:] {
 		switch item.(type) {
-		case map[interface{}]interface{}:// is map
+		case map[interface{}]interface{}: // is map
 			item, ok = item.(map[interface{}]interface{})[k]
 
 			if !ok {
@@ -69,11 +69,11 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 
 // GetString
 func (c *Config) GetString(key string) (value string, ok bool) {
-	val, ok := c.data[key]
+	val, ok := c.Get(key)
 
 	switch val.(type) {
-	case string:
-		return val.(string), ok
+	case bool, int, string:
+		return fmt.Sprintf("%v", val), ok
 	}
 
 	return
@@ -86,22 +86,25 @@ func (c *Config) GetInt(key string) (value int, ok bool) {
 		return
 	}
 
-	ok = false
-	value, err := strconv.Atoi(rawVal)
-	if err != nil {
-		return
+	if value, err := strconv.Atoi(rawVal); err != nil {
+		return value, true
 	}
-	ok = true
 
 	return
 }
 
 // GetBool Looks up a value for a key in this section and attempts to parse that value as a boolean,
 // along with a boolean result similar to a map lookup.
+// of following( case insensitive):
+//  - true
+//  - yes
+//  - false
+//  - no
+//  - 1
+//  - 0
 // The `ok` boolean will be false in the event that the value could not be parsed as a bool
 func (c *Config) GetBool(key string) (value bool, ok bool) {
 	rawVal, ok := c.GetString(key)
-
 	if !ok {
 		return
 	}
@@ -128,7 +131,7 @@ func (c *Config) GetStringArr(key string) (arr []string, ok bool) {
 
 	switch rawVal.(type) {
 	case []interface{}:
-		for _,v := range rawVal.([]interface{}) {
+		for _, v := range rawVal.([]interface{}) {
 			arr = append(arr, fmt.Sprintf("%v", v))
 		}
 	}
@@ -148,7 +151,7 @@ func (c *Config) GetStringMap(key string) (mp map[string]string, ok bool) {
 		// init map
 		mp = make(map[string]string)
 
-		for k,v := range rawVal.(map[interface{}]interface{}) {
+		for k, v := range rawVal.(map[interface{}]interface{}) {
 			sk := fmt.Sprintf("%v", k)
 			sv := fmt.Sprintf("%v", v)
 			mp[sk] = sv
@@ -159,7 +162,7 @@ func (c *Config) GetStringMap(key string) (mp map[string]string, ok bool) {
 }
 
 // MapStructure alias method of the 'GetStructure'
-func (c *Config) MapStructure(key string, v interface{}) (err error)   {
+func (c *Config) MapStructure(key string, v interface{}) (err error) {
 	return c.GetStructure(key, v)
 }
 

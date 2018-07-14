@@ -8,6 +8,21 @@ func Get(key string, findByPath ...bool) (value interface{}, ok bool) {
 	return defConf.Get(key, findByPath...)
 }
 
+// GetInt
+func GetInt(key string) (value int, ok bool) {
+	return defConf.GetInt(key)
+}
+
+// GetBool
+func GetBool(key string) (value bool, ok bool) {
+	return defConf.GetBool(key)
+}
+
+// GetString
+func GetString(key string) (value string, ok bool) {
+	return defConf.GetString(key)
+}
+
 // GetStringMap get config data as a map[string]string
 func GetStringMap(key string) (mp map[string]string, ok bool) {
 	return defConf.GetStringMap(key)

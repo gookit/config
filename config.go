@@ -4,31 +4,25 @@ import (
 	"sync"
 )
 
-// const Ini = "ini"
-const Json = "json"
-const Yml = "yml"
-const Yaml = "yaml"
-const Toml = "toml"
+// supported config format
+const (
+	Json = "json"
+	Yml  = "yml"
+	Yaml = "yaml"
+	Toml = "toml"
+)
 
-const Version = "0.0.1"
-const DefaultNode = "__DEFAULT"
+const (
+	Version     = "0.0.1"
+	DefaultNode = "__DEFAULT"
+)
+
+type stringMap map[string]string
+type stringArr []string
 
 // Decoder for decode yml,json,toml defFormat content
 type Decoder func(blob []byte, v interface{}) (err error)
 type Encoder func(v interface{}) (out []byte, err error)
-
-// Node
-type Node struct {
-	name string
-
-	isArray   bool
-	mapValues map[string]string
-	arrValues map[string][]string
-
-	// sub nodes
-	hasChild bool
-	nodes    map[string]*Node
-}
 
 // Options
 type Options struct {
@@ -42,27 +36,29 @@ type Options struct {
 	IgnoreNotExist bool
 }
 
-type stringMap map[string]string
-
 // Config
 type Config struct {
+	// config instance name
 	name string
 	lock sync.RWMutex
 
-	data  map[string]interface{}
-	nodes map[string]*Node
+	// all config data
+	data map[string]interface{}
 
-	mapValues map[string]stringMap
-	// arrValues map[string]stringMap
+	// cache got config data
+	intCaches map[string]int
+	strCaches map[string]string
+	arrCaches map[string]stringArr
+	mapCaches map[string]stringMap
 
-	options   *Options
-	readOnly  bool
+	options  *Options
+	readOnly bool
 	// only load exists file
 	loadExist bool
 	// default format
 	defFormat string
 	// ignore key string case
-	ignoreCase bool
+	// ignoreCase bool
 
 	loadedFiles []string
 
@@ -90,24 +86,53 @@ func (c *Config) SetDecoder(format string, decoder Decoder) {
 	c.decoders[format] = decoder
 }
 
-func (c *Config) IgnoreCase(ignoreCase bool) {
-	c.ignoreCase = ignoreCase
-}
-
+// ReadOnly
 func (c *Config) ReadOnly(readOnly bool) {
 	c.readOnly = readOnly
 }
 
+// Name get config name
 func (c *Config) Name() string {
 	return c.name
 }
 
+// Data get all config data
 func (c *Config) Data() map[string]interface{} {
 	return c.data
 }
 
+// HasDecoder
 func (c *Config) HasDecoder(format string) bool {
 	_, ok := c.decoders[format]
 
 	return ok
+}
+
+// ClearAll
+func (c *Config) ClearAll() {
+	c.ClearData()
+	c.ClearCaches()
+
+	c.loadedFiles = []string{}
+}
+
+// ClearData
+func (c *Config) ClearData() {
+	c.data = make(map[string]interface{})
+}
+
+// ClearCaches
+func (c *Config) ClearCaches() {
+	c.intCaches = nil
+	c.strCaches = nil
+	c.mapCaches = nil
+	c.arrCaches = nil
+}
+
+// initCaches
+func (c *Config) initCaches() {
+	c.intCaches = map[string]int{}
+	c.strCaches = map[string]string{}
+	c.arrCaches = map[string]stringArr{}
+	c.mapCaches = map[string]stringMap{}
 }

@@ -19,15 +19,18 @@ func main() {
 
 	fmt.Printf("config data: \n %#v\n", config.Data())
 
-	name, ok := config.Get("name")
-
+	name, ok := config.GetString("name")
 	fmt.Printf("get 'name', ok: %v, val: %#v\n", ok, name)
 
 	arr1, ok := config.GetStringArr("arr1")
-
 	fmt.Printf("get 'arr1', ok: %v, val: %#v\n", ok, arr1)
 
-	map1, ok := config.GetStringMap("map1")
+	val0, ok := config.GetString("arr1.0")
+	fmt.Printf("get sub 'arr1.0', ok: %v, val: %#v\n", ok, val0)
 
+	map1, ok := config.GetStringMap("map1")
 	fmt.Printf("get 'map1', ok: %v, val: %#v\n", ok, map1)
+
+	val0, ok = config.GetString("map1.key")
+	fmt.Printf("get sub 'map1.key', ok: %v, val: %#v\n", ok, val0)
 }
