@@ -40,7 +40,7 @@ func Example() {
 	val0, ok = GetString("map1.key")
 	fmt.Printf("get sub 'map1.key', ok: %v, val: %#v\n", ok, val0)
 
-	// output:
+	// Output:
 	// get 'name', ok: true, val: "app2"
 	// get 'arr1', ok: true, val: []string{"val1", "val21"}
 	// get sub 'arr1.0', ok: true, val: "val1"
