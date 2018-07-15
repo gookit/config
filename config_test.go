@@ -22,7 +22,7 @@ arr1:
     - val21
 `
 
-func ExampleUseYaml() {
+func Example_useYaml() {
 	// add yaml decoder
 	SetDecoder(Yaml, yaml.Decoder)
 	err := LoadFiles("testdata/yml_other.yml")
@@ -31,7 +31,7 @@ func ExampleUseYaml() {
 	}
 
 	// load from string
-	LoadSources(Yaml, []byte(tomlStr))
+	LoadSources(Yaml, []byte(yamlStr))
 
 	fmt.Print("get config example:\n")
 
@@ -88,7 +88,7 @@ name = "Tom Preston-Werner"
 org = "GitHub"
 `
 
-func ExampleUseToml() {
+func Example_useToml() {
 	SetOptions(&Options{
 		ParseEnv: true,
 	})
@@ -161,7 +161,7 @@ func ExampleConfig_DefBool() {
 	// get 'debug' with default, val: true
 }
 
-func ExampleExportConfig() {
+func Example_exportConfig() {
 	// Notice: before dump please set driver encoder
 	SetEncoder(Yaml, yaml.Encoder)
 

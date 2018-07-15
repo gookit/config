@@ -19,7 +19,7 @@ Here using the yaml format as an example(yml_other.yml):
 	    - val1
 	    - val21
 
-usage please see example:
+usage please see examples:
 
  */
 package config

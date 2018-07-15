@@ -4,8 +4,8 @@
 
 golang application config manage implement. 
 
-- generic api `Get` `GetInt` `GetString` `GetBool` `GetStringArr` ...
-- support file format: `json`(default), `yaml`, `toml`
+- generic api `Get` `GetInt` `GetString` `GetBool` `GetStringArr` `GetStringMap` ...
+- support multi format: `json`(default), `yaml`, `toml`
 - support multi file/data load
 - support data override merge
 - support get sub value by path, like `map.key` `arr.2`
