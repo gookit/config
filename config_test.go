@@ -84,7 +84,7 @@ arr1 = [
 ]
 
 [map1]
-name = "Tom Preston-Werner"
+name = "inhere"
 org = "GitHub"
 `
 
@@ -143,9 +143,9 @@ func Example_useToml() {
 	// - get sub-value by path 'arr.index'
 	// ok: true, val: alpha
 	// - get map
-	// ok: true, val: map[string]string{"name":"Tom Preston-Werner", "org":"GitHub"}
+	// ok: true, val: map[string]string{"name":"inhere", "org":"GitHub"}
 	// - get sub-value by path 'map.key'
-	// ok: true, val: Tom Preston-Werner
+	// ok: true, val: inhere
 	// get env 'envKey' val: /bin/zsh
 	// get env 'envKey1' val: defValue
 }

@@ -54,7 +54,7 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 			if !ok {
 				return
 			}
-		case []interface{}: // is array(decode from yaml)
+		case []interface{}: // is array
 			i, err := strconv.Atoi(k)
 			if err != nil {
 				return
@@ -131,7 +131,7 @@ func (c *Config) GetInt(key string) (value int, ok bool) {
 		return
 	}
 
-	if value, err := strconv.Atoi(rawVal); err != nil {
+	if value, err := strconv.Atoi(rawVal); err == nil {
 		return value, true
 	}
 
@@ -149,7 +149,7 @@ func (c *Config) DefInt(key string, def int) int {
 
 // GetBool Looks up a value for a key in this section and attempts to parse that value as a boolean,
 // along with a boolean result similar to a map lookup.
-// of following( case insensitive):
+// of following(case insensitive):
 //  - true
 //  - yes
 //  - false
@@ -185,7 +185,70 @@ func (c *Config) DefBool(key string, def bool) bool {
 	return def
 }
 
-// GetStringArr  get config data as a slice/array
+// GetIntArr  get config data as a int slice/array
+func (c *Config) GetIntArr(key string) (arr []int, ok bool) {
+	rawVal, ok := c.Get(key)
+	if !ok {
+		return
+	}
+
+	switch rawVal.(type) {
+	case []interface{}:
+		for _, v := range rawVal.([]interface{}) {
+			// iv, err := strconv.Atoi(v.(string))
+			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
+			if  err != nil {
+				ok = false
+				return
+			}
+
+			arr = append(arr, iv)
+		}
+	default:
+		ok = false
+	}
+
+	return
+}
+
+// GetIntMap get config data as a map[string]int
+func (c *Config) GetIntMap(key string) (mp map[string]int, ok bool) {
+	rawVal, ok := c.Get(key)
+	if !ok {
+		return
+	}
+
+	switch rawVal.(type) {
+	case map[string]interface{}: // decode from json,toml
+		mp = make(map[string]int)
+		for k, v := range rawVal.(map[string]interface{}) {
+			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
+			if  err != nil {
+				ok = false
+				return
+			}
+			mp[k] = iv
+		}
+	case map[interface{}]interface{}: // if decode from yaml
+		mp = make(map[string]int)
+		for k, v := range rawVal.(map[interface{}]interface{}) {
+			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
+			if  err != nil {
+				ok = false
+				return
+			}
+
+			sk := fmt.Sprintf("%v", k)
+			mp[sk] = iv
+		}
+	default:
+		ok = false
+	}
+
+	return
+}
+
+// GetStringArr  get config data as a string slice/array
 func (c *Config) GetStringArr(key string) (arr []string, ok bool) {
 	rawVal, ok := c.Get(key)
 	if !ok {

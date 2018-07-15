@@ -78,14 +78,24 @@ func DefString(key string, def string) string {
 	return dc.DefString(key, def)
 }
 
-// GetStringMap get config data as a map[string]string
-func GetStringMap(key string) (mp map[string]string, ok bool) {
-	return dc.GetStringMap(key)
+// GetIntArr  get config data as a int slice/array
+func GetIntArr(key string) (arr []int, ok bool) {
+	return dc.GetIntArr(key)
+}
+
+// GetIntMap get config data as a map[string]int
+func GetIntMap(key string) (mp map[string]int, ok bool) {
+	return dc.GetIntMap(key)
 }
 
 // GetStringArr
 func GetStringArr(key string) (arr []string, ok bool) {
 	return dc.GetStringArr(key)
+}
+
+// GetStringMap get config data as a map[string]string
+func GetStringMap(key string) (mp map[string]string, ok bool) {
+	return dc.GetStringMap(key)
 }
 
 /*************************************************************

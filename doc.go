@@ -5,7 +5,7 @@ Source code and other details for the project are available at GitHub:
 
    https://github.com/gookit/config
 
-Here using the yaml format as an example(yml_other.yml):
+Yaml format content:
 
 	name: app2
 	debug: false
@@ -19,7 +19,24 @@ Here using the yaml format as an example(yml_other.yml):
 	    - val1
 	    - val21
 
-usage please see examples:
+Toml format content:
+
+	title = "TOML Example"
+	name = "app"
+
+	envKey = "${SHELL}"
+	envKey1 = "${NotExist|defValue}"
+
+	arr1 = [
+	  "alpha",
+	  "omega"
+	]
+
+	[map1]
+	name = "inhere"
+	org = "GitHub"
+
+Usage please see examples:
 
  */
 package config
