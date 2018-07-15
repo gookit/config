@@ -44,13 +44,17 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 	// 查找子级
 	for _, k := range keys[1:] {
 		switch item.(type) {
-		case map[interface{}]interface{}: // is map
-			item, ok = item.(map[interface{}]interface{})[k]
-
+		case map[string]interface{}: // is map(decode from toml/json)
+			item, ok = item.(map[string]interface{})[k]
 			if !ok {
 				return
 			}
-		case []interface{}: // is array
+		case map[interface{}]interface{}: // is map(decode from yaml)
+			item, ok = item.(map[interface{}]interface{})[k]
+			if !ok {
+				return
+			}
+		case []interface{}: // is array(decode from yaml)
 			i, err := strconv.Atoi(k)
 			if err != nil {
 				return
@@ -208,8 +212,12 @@ func (c *Config) GetStringMap(key string) (mp map[string]string, ok bool) {
 	}
 
 	switch rawVal.(type) {
-	case map[interface{}]interface{}:
-		// init map
+	case map[string]interface{}: // decode from json,toml
+		mp = make(map[string]string)
+		for k, v := range rawVal.(map[string]interface{}) {
+			mp[k] = fmt.Sprintf("%v", v)
+		}
+	case map[interface{}]interface{}: // if decode from yaml
 		mp = make(map[string]string)
 		for k, v := range rawVal.(map[interface{}]interface{}) {
 			sk := fmt.Sprintf("%v", k)

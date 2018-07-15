@@ -4,15 +4,18 @@ import (
 	"os"
 	"strings"
 	"path/filepath"
-	"log"
 	"io/ioutil"
 	"github.com/imdario/mergo"
+	"errors"
 )
 
 // LoadFiles load and parse config files
 func (c *Config) LoadFiles(sourceFiles ...string) (err error) {
 	for _, file := range sourceFiles {
-		c.loadFile(file, false)
+		err = c.loadFile(file, false)
+		if err != nil {
+			return
+		}
 	}
 
 	return
@@ -21,42 +24,46 @@ func (c *Config) LoadFiles(sourceFiles ...string) (err error) {
 // LoadExists load and parse config files, but will ignore not exists file.
 func (c *Config) LoadExists(sourceFiles ...string) (err error) {
 	for _, file := range sourceFiles {
-		c.loadFile(file, true)
+		err = c.loadFile(file, true)
+		if err != nil {
+			return
+		}
 	}
 
 	return
 }
 
 // load config file
-func (c *Config) loadFile(file string, onlyExist bool) (err error) {
+func (c *Config) loadFile(file string, loadExist bool) (err error) {
 	if _, err = os.Stat(file); err != nil {
-		if os.IsNotExist(err) && onlyExist {
-			return
+		// skip not exist file
+		if os.IsNotExist(err) && loadExist {
+			return nil
 		}
 
-		panic(err)
-	}
-
-	// get format for file ext
-	format := strings.Trim(filepath.Ext(file), ".")
-	fd, err := os.Open(file)
-
-	if err != nil {
-		panic(err)
-	}
-	defer fd.Close()
-
-	content, err := ioutil.ReadAll(fd)
-	if err != nil {
-		panic(err)
-	}
-
-	// parse file content
-	if c.parseSourceCode(format, content) != nil {
 		return
 	}
 
-	c.loadedFiles = append(c.loadedFiles, file)
+	// open file
+	fd, err := os.Open(file)
+	if err != nil {
+		return
+	}
+	defer fd.Close()
+
+	// read file content
+	content, err := ioutil.ReadAll(fd)
+	if err == nil {
+		// get format for file ext
+		format := strings.Trim(filepath.Ext(file), ".")
+
+		// parse file content
+		if err = c.parseSourceCode(format, content); err != nil {
+			return
+		}
+
+		c.loadedFiles = append(c.loadedFiles, file)
+	}
 
 	return
 }
@@ -66,7 +73,7 @@ func (c *Config) LoadData(dataSources ...interface{}) (err error) {
 	for _, ds := range dataSources {
 		err = mergo.Merge(&c.data, ds, mergo.WithOverride)
 		if err != nil {
-			panic(err)
+			return
 		}
 	}
 
@@ -83,17 +90,11 @@ func (c *Config) LoadData(dataSources ...interface{}) (err error) {
 func (c *Config) LoadSources(format string, sourceCodes ...[]byte) (err error) {
 	for _, sc := range sourceCodes {
 		err = c.parseSourceCode(format, sc)
-
 		if err != nil {
-			panic(err)
+			return
 		}
 	}
 
-	return
-}
-
-// Set a value by key string.
-func (c *Config) Set(key string, val interface{}) (err error)  {
 	return
 }
 
@@ -112,25 +113,30 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	}
 
 	if !ok {
-		log.Fatalf("no exists or no register decoder for the format: %s", format)
+		return errors.New("no exists or no register decoder for the format: " + format)
 	}
 
 	data := make(map[string]interface{})
 
 	// decode content to data
-	if decoder(blob, &data) != nil {
+	if err = decoder(blob, &data); err != nil {
 		return
 	}
 
 	// init config data
 	if len(c.data) == 0 {
 		c.data = data
-
-		// second... merge data
 	} else {
+		// again ... will merge data
 		// err = mergo.Map(&c.data, data, mergo.WithOverride)
 		err = mergo.Merge(&c.data, data, mergo.WithOverride)
 	}
 
+	data = nil
+	return
+}
+
+// Set a value by key string.
+func (c *Config) Set(key string, val interface{}) (err error)  {
 	return
 }

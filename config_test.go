@@ -3,6 +3,8 @@ package config
 import (
 	"fmt"
 	"github.com/gookit/config/yaml"
+	"bytes"
+	"github.com/gookit/config/toml"
 )
 
 var yamlStr = `
@@ -20,32 +22,132 @@ arr1:
     - val21
 `
 
-func Example() {
+func ExampleUseYaml() {
 	// add yaml decoder
 	SetDecoder(Yaml, yaml.Decoder)
-	LoadFiles("testdata/yml_other.yml")
+	err := LoadFiles("testdata/yml_other.yml")
+	if err != nil {
+		panic(err)
+	}
+
+	// load from string
+	LoadSources(Yaml, []byte(tomlStr))
+
+	fmt.Print("get config example:\n")
 
 	name, ok := GetString("name")
-	fmt.Printf("get 'name', ok: %v, val: %#v\n", ok, name)
+	fmt.Printf("- get string\n ok: %v, val: %v\n", ok, name)
 
 	arr1, ok := GetStringArr("arr1")
-	fmt.Printf("get 'arr1', ok: %v, val: %#v\n", ok, arr1)
+	fmt.Printf("- get array\n ok: %v, val: %#v\n", ok, arr1)
 
 	val0, ok := GetString("arr1.0")
-	fmt.Printf("get sub 'arr1.0', ok: %v, val: %#v\n", ok, val0)
+	fmt.Printf("- get sub-value by path 'arr.index'\n ok: %v, val: %#v\n", ok, val0)
 
 	map1, ok := GetStringMap("map1")
-	fmt.Printf("get 'map1', ok: %v, val: %#v\n", ok, map1)
+	fmt.Printf("- get map\n ok: %v, val: %#v\n", ok, map1)
 
 	val0, ok = GetString("map1.key")
-	fmt.Printf("get sub 'map1.key', ok: %v, val: %#v\n", ok, val0)
+	fmt.Printf("- get sub-value by path 'map.key'\n ok: %v, val: %#v\n", ok, val0)
+
+	// can parse env name(ParseEnv: true)
+	fmt.Printf("get env 'envKey' val: %s\n", DefString("envKey", ""))
+	fmt.Printf("get env 'envKey1' val: %s\n", DefString("envKey1", ""))
+
 
 	// Output:
-	// get 'name', ok: true, val: "app2"
-	// get 'arr1', ok: true, val: []string{"val1", "val21"}
-	// get sub 'arr1.0', ok: true, val: "val1"
-	// get 'map1', ok: true, val: map[string]string{"key":"val2", "key2":"val20"}
-	// get sub 'map1.key', ok: true, val: "val2"
+	// get config example:
+	// - get string
+	// ok: true, val: app2
+	// - get array
+	// ok: true, val: []string{"val1", "val21"}
+	// - get sub-value by path 'arr.index'
+	// ok: true, val: "val1"
+	// - get map
+	// ok: true, val: map[string]string{"key":"val2", "key2":"val20"}
+	// - get sub-value by path 'map.key'
+	// ok: true, val: "val2"
+	// get env 'envKey' val: /bin/zsh
+	// get env 'envKey1' val: defValue
+}
+
+var tomlStr = `
+title = "TOML Example"
+name = "app"
+
+envKey = "${SHELL}"
+envKey1 = "${NotExist|defValue}"
+
+arr1 = [
+  "alpha",
+  "omega"
+]
+
+[map1]
+name = "Tom Preston-Werner"
+org = "GitHub"
+`
+
+func ExampleUseToml() {
+	SetOptions(&Options{
+		ParseEnv: true,
+	})
+	SetDriver(Toml, toml.Decoder, toml.Encoder)
+
+	err := LoadFiles("testdata/toml_base.toml")
+	if err != nil {
+		panic(err)
+	}
+
+	// fmt.Printf("config data: \n %#v\n", Data())
+
+	// load more files
+	err = LoadFiles("testdata/toml_other.toml")
+	// can also
+	// LoadFiles("testdata/toml_base.toml", "testdata/toml_other.toml")
+	if err != nil {
+		panic(err)
+	}
+
+	// load from string
+	LoadSources(Toml, []byte(tomlStr))
+
+	// fmt.Printf("config data: \n %#v\n", Data())
+	fmt.Print("get config example:\n")
+
+	name, ok := GetString("name")
+	fmt.Printf("- get string\n ok: %v, val: %v\n", ok, name)
+
+	arr1, ok := GetStringArr("arr1")
+	fmt.Printf("- get array\n ok: %v, val: %#v\n", ok, arr1)
+
+	val0, ok := GetString("arr1.0")
+	fmt.Printf("- get sub-value by path 'arr.index'\n ok: %v, val: %v\n", ok, val0)
+
+	map1, ok := GetStringMap("map1")
+	fmt.Printf("- get map\n ok: %v, val: %#v\n", ok, map1)
+
+	val0, ok = GetString("map1.name")
+	fmt.Printf("- get sub-value by path 'map.key'\n ok: %v, val: %v\n", ok, val0)
+
+	// can parse env name(ParseEnv: true)
+	fmt.Printf("get env 'envKey' val: %s\n", DefString("envKey", ""))
+	fmt.Printf("get env 'envKey1' val: %s\n", DefString("envKey1", ""))
+
+	// Output:
+	// get config example:
+	// - get string
+	// ok: true, val: app2
+	// - get array
+	// ok: true, val: []string{"alpha", "omega"}
+	// - get sub-value by path 'arr.index'
+	// ok: true, val: alpha
+	// - get map
+	// ok: true, val: map[string]string{"name":"Tom Preston-Werner", "org":"GitHub"}
+	// - get sub-value by path 'map.key'
+	// ok: true, val: Tom Preston-Werner
+	// get env 'envKey' val: /bin/zsh
+	// get env 'envKey1' val: defValue
 }
 
 func ExampleConfig_DefBool() {
@@ -57,4 +159,25 @@ func ExampleConfig_DefBool() {
 	// Output:
 	// get 'debug', ok: true, val: true
 	// get 'debug' with default, val: true
+}
+
+func ExampleExportConfig() {
+	// Notice: before dump please set driver encoder
+	SetEncoder(Yaml, yaml.Encoder)
+
+	buf := new(bytes.Buffer)
+	_, err := DumpTo(buf, Yaml)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("export config:\n%s", buf.String())
+
+	// Output:
+	// arr1:
+	// 	- val1
+	// 	- val21
+	// baseKey: value2
+	// debug: false
+	// ... ...
 }

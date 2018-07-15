@@ -1,5 +1,6 @@
 package yaml
 
+// see https://godoc.org/gopkg.in/yaml.v2
 import (
 	"gopkg.in/yaml.v2"
 	"github.com/gookit/config"

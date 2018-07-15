@@ -2,10 +2,13 @@ package config
 
 import (
 	"sync"
+	"io"
+	"fmt"
+	"errors"
 )
 
 // package version
-const Version     = "1.0.1"
+const Version = "1.0.1"
 
 // supported config format
 const (
@@ -28,10 +31,10 @@ type Options struct {
 	ParseEnv bool
 	// config is readonly
 	Readonly bool
-	// ignore key string case
-	IgnoreCase bool
-	// default format
-	DefaultFormat string
+	// default write format
+	DumpFormat string
+	// default input format
+	ReadFormat string
 }
 
 // Config
@@ -66,18 +69,29 @@ func New(name string) *Config {
 		name: name,
 		data: make(map[string]interface{}),
 
-		opts:  &Options{DefaultFormat: Json},
+		// init options
+		opts: &Options{DumpFormat: Json, ReadFormat: Json},
+
+		// default add json driver
 		encoders: map[string]Encoder{Json: JsonEncoder},
 		decoders: map[string]Decoder{Json: JsonDecoder},
 	}
 }
 
+/*************************************************************
+ * config setting
+ *************************************************************/
+
 // SetOptions
 func (c *Config) SetOptions(opts *Options) {
 	c.opts = opts
 
-	if c.opts.DefaultFormat == "" {
-		c.opts.DefaultFormat = Json
+	if c.opts.DumpFormat == "" {
+		c.opts.DumpFormat = Json
+	}
+
+	if c.opts.ReadFormat == "" {
+		c.opts.ReadFormat = Json
 	}
 }
 
@@ -96,6 +110,22 @@ func (c *Config) Data() map[string]interface{} {
 	return c.data
 }
 
+// SetDriver set a decoder and encoder for a format.
+func (c *Config) SetDriver(format string, decoder Decoder, encoder Encoder)  {
+	c.SetDecoder(format, decoder)
+	c.SetEncoder(format, encoder)
+}
+
+// HasDecoder
+func (c *Config) HasDecoder(format string) bool {
+	if format == Yml {
+		format = Yaml
+	}
+
+	_, ok := c.decoders[format]
+	return ok
+}
+
 // SetDecoder
 func (c *Config) SetDecoder(format string, decoder Decoder) {
 	if format == Yml {
@@ -105,11 +135,75 @@ func (c *Config) SetDecoder(format string, decoder Decoder) {
 	c.decoders[format] = decoder
 }
 
-// HasDecoder
-func (c *Config) HasDecoder(format string) bool {
-	_, ok := c.decoders[format]
+// SetDecoders
+func (c *Config) SetDecoders(decoders map[string]Decoder) {
+	for format, decoder := range decoders {
+		c.SetDecoder(format, decoder)
+	}
+}
 
+// SetEncoder
+func (c *Config) SetEncoder(format string, encoder Encoder) {
+	if format == Yml {
+		format = Yaml
+	}
+
+	c.encoders[format] = encoder
+}
+
+// SetEncoders
+func (c *Config) SetEncoders(encoders map[string]Encoder) {
+	for format, encoder := range encoders {
+		c.SetEncoder(format, encoder)
+	}
+}
+
+// HasEncoder
+func (c *Config) HasEncoder(format string) bool {
+	if format == Yml {
+		format = Yaml
+	}
+
+	_, ok := c.encoders[format]
 	return ok
+}
+
+/*************************************************************
+ * helper methods
+ *************************************************************/
+
+// WriteTo Write out config data representing the current state to a writer.
+func (c *Config) WriteTo(out io.Writer) (n int64, err error) {
+	return c.DumpTo(out, c.opts.DumpFormat)
+}
+
+// DumpTo use the format(json,yaml,toml) dump config data to a writer
+func (c *Config) DumpTo(out io.Writer, format string) (n int64, err error) {
+	var ok bool
+	var encoder Encoder
+
+	if format == Yml {
+		format = Yaml
+	}
+
+	if encoder, ok = c.encoders[format]; !ok {
+		err = errors.New("no exists or no register encoder for the format: " + format)
+		return
+	}
+
+	// encode data to string
+	encoded, err := encoder(&c.data)
+	if err != nil {
+		return
+	}
+
+	// write content to out
+	num, err := fmt.Fprintln(out, string(encoded))
+	if err != nil {
+		return
+	}
+
+	return int64(num), nil
 }
 
 // ClearAll
