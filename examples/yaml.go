@@ -4,7 +4,6 @@ import (
 	"github.com/gookit/config"
 	"github.com/gookit/config/yaml"
 	"fmt"
-	"bytes"
 )
 
 // go run ./examples/yaml.go
@@ -50,10 +49,11 @@ func main() {
 	fmt.Printf("get env 'envKey' val: %s\n", config.DefString("envKey", ""))
 	fmt.Printf("get env 'envKey1' val: %s\n", config.DefString("envKey1", ""))
 
-	buf := new(bytes.Buffer)
-	_, err = config.DumpTo(buf, config.Yaml)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("export config:\n%s", buf.String())
+	// if you want export config data
+	// buf := new(bytes.Buffer)
+	// _, err = config.DumpTo(buf, config.Yaml)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Printf("export config:\n%s", buf.String())
 }
