@@ -1,3 +1,9 @@
+/*
+Here use yaml format content as config source
+
+Usage please see example:
+
+ */
 package yaml
 
 // see https://godoc.org/gopkg.in/yaml.v2

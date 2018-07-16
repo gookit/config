@@ -3,7 +3,7 @@ golang application config manage implement. support yaml,toml,json format.
 
 Source code and other details for the project are available at GitHub:
 
-   https://github.com/gookit/config
+- https://github.com/gookit/config
 
 Yaml format content:
 
@@ -37,6 +37,9 @@ Toml format content:
 	org = "GitHub"
 
 Usage please see examples:
+
+- yaml format example and usage, see [yaml-example](/github.com/gookit/config/yaml#example-package)
+- toml format example and usage, see [toml-example](/github.com/gookit/config/toml#example-package)
 
  */
 package config
