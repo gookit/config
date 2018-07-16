@@ -54,7 +54,7 @@ func main() {
 	})
 	
 	// config.SetDecoder(config.Yaml, yaml.Decoder)
-	config.SetDriver(config.Yaml, yaml.Decoder, yaml.Encoder)
+	config.DecoderEncoder(config.Yaml, yaml.Decoder, yaml.Encoder)
 
 	err := config.LoadFiles("testdata/yml_base.yml")
 	if err != nil {

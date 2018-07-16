@@ -25,3 +25,26 @@ var Encoder config.Encoder = func(ptr interface{}) (out []byte, err error) {
 
 	return buf.Bytes(), nil
 }
+
+// Driver
+var Driver = &tomlDriver{config.Toml}
+
+// tomlDriver for toml format content
+type tomlDriver struct {
+	name string
+}
+
+// Name
+func (d *tomlDriver) Name() string {
+	return d.name
+}
+
+// GetDecoder for toml
+func (d *tomlDriver) GetDecoder() config.Decoder {
+	return Decoder
+}
+
+// GetEncoder for toml
+func (d *tomlDriver) GetEncoder() config.Encoder {
+	return Encoder
+}

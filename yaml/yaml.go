@@ -15,3 +15,26 @@ var Decoder config.Decoder = func(blob []byte, ptr interface{}) (err error) {
 var Encoder config.Encoder = func(ptr interface{}) (out []byte, err error) {
 	return yaml.Marshal(ptr)
 }
+
+// Driver
+var Driver = &yamlDriver{config.Yaml}
+
+// yamlDriver for yaml format content
+type yamlDriver struct {
+	name string
+}
+
+// Name
+func (d *yamlDriver) Name() string {
+	return d.name
+}
+
+// GetDecoder for yaml
+func (d *yamlDriver) GetDecoder() config.Decoder {
+	return Decoder
+}
+
+// GetEncoder for yaml
+func (d *yamlDriver) GetEncoder() config.Encoder {
+	return Encoder
+}

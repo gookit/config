@@ -135,8 +135,3 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	data = nil
 	return
 }
-
-// Set a value by key string.
-func (c *Config) Set(key string, val interface{}) (err error)  {
-	return
-}

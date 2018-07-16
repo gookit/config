@@ -7,11 +7,15 @@ import (
 )
 
 // go run ./examples/toml.go
-func main()  {
+func main() {
 	config.SetOptions(&config.Options{
 		ParseEnv: true,
 	})
-	config.SetDriver(config.Toml, toml.Decoder, toml.Encoder)
+
+	// add Decoder and Encoder
+	config.AddDriver(config.Toml, toml.Driver)
+	// Or
+	// config.DecoderEncoder(config.Toml, toml.Decoder, toml.Encoder)
 
 	err := config.LoadFiles("testdata/toml_base.toml")
 	if err != nil {

@@ -17,7 +17,13 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 		return
 	}
 
-	// check top key
+	// if not is readonly
+	if !c.opts.Readonly {
+		c.lock.Lock()
+		defer c.lock.Unlock()
+	}
+
+	// is top key
 	if value, ok = c.data[key]; ok {
 		return
 	}
@@ -35,13 +41,13 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 	keys := strings.Split(key, ".")
 	topK := keys[0]
 
-	// 根据top key 找到顶级 item 数据
+	// find top item data based on top key
 	var item interface{}
 	if item, ok = c.data[topK]; !ok {
 		return
 	}
 
-	// 查找子级
+	// find child
 	for _, k := range keys[1:] {
 		switch item.(type) {
 		case map[string]interface{}: // is map(decode from toml/json)
@@ -76,6 +82,10 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 	return item, true
 }
 
+/*************************************************************
+ * config get(basic data type)
+ *************************************************************/
+
 // GetString
 func (c *Config) GetString(key string) (value string, ok bool) {
 	val, ok := c.Get(key)
@@ -90,7 +100,7 @@ func (c *Config) GetString(key string) (value string, ok bool) {
 		value = fmt.Sprintf("%v", val)
 
 		// if opts.ParseEnv is true
-		if c.opts.ParseEnv && strings.Index(value, "${") == 0{
+		if c.opts.ParseEnv && strings.Index(value, "${") == 0 {
 			var name, def string
 			str := strings.Trim(strings.TrimSpace(value), "${}")
 			ss := strings.SplitN(str, "|", 2)
@@ -147,6 +157,24 @@ func (c *Config) DefInt(key string, def int) int {
 	return def
 }
 
+// GetInt64
+func (c *Config) GetInt64(key string) (value int64, ok bool) {
+	if intVal, ok := c.GetInt(key); ok {
+		value = int64(intVal)
+	}
+
+	return
+}
+
+// DefInt64
+func (c *Config) DefInt64(key string, def int64) int64 {
+	if intVal, ok := c.GetInt(key); ok {
+		return int64(intVal)
+	}
+
+	return def
+}
+
 // GetBool Looks up a value for a key in this section and attempts to parse that value as a boolean,
 // along with a boolean result similar to a map lookup.
 // of following(case insensitive):
@@ -185,7 +213,11 @@ func (c *Config) DefBool(key string, def bool) bool {
 	return def
 }
 
-// GetIntArr  get config data as a int slice/array
+/*************************************************************
+ * config get(complex data type)
+ *************************************************************/
+
+// GetIntArr get config data as a int slice/array
 func (c *Config) GetIntArr(key string) (arr []int, ok bool) {
 	rawVal, ok := c.Get(key)
 	if !ok {
@@ -197,7 +229,7 @@ func (c *Config) GetIntArr(key string) (arr []int, ok bool) {
 		for _, v := range rawVal.([]interface{}) {
 			// iv, err := strconv.Atoi(v.(string))
 			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
-			if  err != nil {
+			if err != nil {
 				ok = false
 				return
 			}
@@ -223,7 +255,7 @@ func (c *Config) GetIntMap(key string) (mp map[string]int, ok bool) {
 		mp = make(map[string]int)
 		for k, v := range rawVal.(map[string]interface{}) {
 			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
-			if  err != nil {
+			if err != nil {
 				ok = false
 				return
 			}
@@ -233,7 +265,7 @@ func (c *Config) GetIntMap(key string) (mp map[string]int, ok bool) {
 		mp = make(map[string]int)
 		for k, v := range rawVal.(map[interface{}]interface{}) {
 			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
-			if  err != nil {
+			if err != nil {
 				ok = false
 				return
 			}
@@ -250,6 +282,14 @@ func (c *Config) GetIntMap(key string) (mp map[string]int, ok bool) {
 
 // GetStringArr  get config data as a string slice/array
 func (c *Config) GetStringArr(key string) (arr []string, ok bool) {
+	// find from cache
+	if c.opts.EnableCache && len(c.sArrCache) > 0 {
+		arr, ok = c.sArrCache[key]
+		if ok {
+			return
+		}
+	}
+
 	rawVal, ok := c.Get(key)
 	if !ok {
 		return
@@ -264,11 +304,28 @@ func (c *Config) GetStringArr(key string) (arr []string, ok bool) {
 		ok = false
 	}
 
+	// add cache
+	if ok && c.opts.EnableCache {
+		if c.sArrCache == nil {
+			c.sArrCache = make(map[string]strArr)
+		}
+
+		c.sArrCache[key] = arr
+	}
+
 	return
 }
 
 // GetStringMap get config data as a map[string]string
 func (c *Config) GetStringMap(key string) (mp map[string]string, ok bool) {
+	// find from cache
+	if c.opts.EnableCache && len(c.sMapCache) > 0 {
+		mp, ok = c.sMapCache[key]
+		if ok {
+			return
+		}
+	}
+
 	rawVal, ok := c.Get(key)
 	if !ok {
 		return
@@ -288,6 +345,15 @@ func (c *Config) GetStringMap(key string) (mp map[string]string, ok bool) {
 		}
 	default:
 		ok = false
+	}
+
+	// add cache
+	if ok && c.opts.EnableCache {
+		if c.sMapCache == nil {
+			c.sMapCache = make(map[string]strMap)
+		}
+
+		c.sMapCache[key] = mp
 	}
 
 	return

@@ -5,6 +5,7 @@ import (
 	"github.com/gookit/config/yaml"
 	"bytes"
 	"github.com/gookit/config/toml"
+	"testing"
 )
 
 var yamlStr = `
@@ -54,7 +55,6 @@ func Example_useYaml() {
 	fmt.Printf("get env 'envKey' val: %s\n", DefString("envKey", ""))
 	fmt.Printf("get env 'envKey1' val: %s\n", DefString("envKey1", ""))
 
-
 	// Output:
 	// get config example:
 	// - get string
@@ -92,7 +92,7 @@ func Example_useToml() {
 	SetOptions(&Options{
 		ParseEnv: true,
 	})
-	SetDriver(Toml, toml.Decoder, toml.Encoder)
+	DecoderEncoder(Toml, toml.Decoder, toml.Encoder)
 
 	err := LoadFiles("testdata/toml_base.toml")
 	if err != nil {
@@ -180,4 +180,16 @@ func Example_exportConfig() {
 	// baseKey: value2
 	// debug: false
 	// ... ...
+}
+
+func BenchmarkGet(b *testing.B) {
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		Get("name")
+	}
+}
+
+func TestGet(t *testing.T) {
+
 }

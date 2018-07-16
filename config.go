@@ -8,7 +8,7 @@ import (
 )
 
 // package version
-const Version = "1.0.1"
+const Version = "1.0.3"
 
 // supported config format
 const (
@@ -18,11 +18,23 @@ const (
 	Toml = "toml"
 )
 
-type stringArr []string
-type stringMap map[string]string
+// internal vars
+type intArr []int
+type strArr []string
+type intMap map[string]int
+type strMap map[string]string
 
-// Decoder for decode yml,json,toml defFormat content
+// Driver
+type Driver interface {
+	Name() string
+	GetDecoder() Decoder
+	GetEncoder() Encoder
+}
+
+// Decoder for decode yml,json,toml format content
 type Decoder func(blob []byte, v interface{}) (err error)
+
+// Encoder for decode yml,json,toml format content
 type Encoder func(v interface{}) (out []byte, err error)
 
 // Options config options
@@ -31,6 +43,8 @@ type Options struct {
 	ParseEnv bool
 	// config is readonly
 	Readonly bool
+	// enable config data cache
+	EnableCache bool
 	// default write format
 	DumpFormat string
 	// default input format
@@ -59,8 +73,11 @@ type Config struct {
 	// cache got config data
 	intCaches map[string]int
 	strCaches map[string]string
-	arrCaches map[string]stringArr
-	mapCaches map[string]stringMap
+
+	iArrCache map[string]intArr
+	iMapCache map[string]intMap
+	sArrCache map[string]strArr
+	sMapCache map[string]strMap
 }
 
 // New
@@ -95,11 +112,6 @@ func (c *Config) SetOptions(opts *Options) {
 	}
 }
 
-// Readonly
-func (c *Config) Readonly(readonly bool) {
-	c.opts.Readonly = readonly
-}
-
 // Name get config name
 func (c *Config) Name() string {
 	return c.name
@@ -110,28 +122,34 @@ func (c *Config) Data() map[string]interface{} {
 	return c.data
 }
 
-// SetDriver set a decoder and encoder for a format.
-func (c *Config) SetDriver(format string, decoder Decoder, encoder Encoder)  {
+// Readonly
+func (c *Config) Readonly(readonly bool) {
+	c.opts.Readonly = readonly
+}
+
+// AddDriver set a decoder and encoder driver for a format.
+func (c *Config) AddDriver(format string, driver Driver) {
+	c.SetDecoder(format, driver.GetDecoder())
+	c.SetEncoder(format, driver.GetEncoder())
+}
+
+// DecoderEncoder set a decoder and encoder for a format.
+func (c *Config) DecoderEncoder(format string, decoder Decoder, encoder Encoder) {
 	c.SetDecoder(format, decoder)
 	c.SetEncoder(format, encoder)
 }
 
 // HasDecoder
 func (c *Config) HasDecoder(format string) bool {
-	if format == Yml {
-		format = Yaml
-	}
-
+	format = fixFormat(format)
 	_, ok := c.decoders[format]
+
 	return ok
 }
 
 // SetDecoder
 func (c *Config) SetDecoder(format string, decoder Decoder) {
-	if format == Yml {
-		format = Yaml
-	}
-
+	format = fixFormat(format)
 	c.decoders[format] = decoder
 }
 
@@ -144,10 +162,7 @@ func (c *Config) SetDecoders(decoders map[string]Decoder) {
 
 // SetEncoder
 func (c *Config) SetEncoder(format string, encoder Encoder) {
-	if format == Yml {
-		format = Yaml
-	}
-
+	format = fixFormat(format)
 	c.encoders[format] = encoder
 }
 
@@ -160,11 +175,9 @@ func (c *Config) SetEncoders(encoders map[string]Encoder) {
 
 // HasEncoder
 func (c *Config) HasEncoder(format string) bool {
-	if format == Yml {
-		format = Yaml
-	}
-
+	format = fixFormat(format)
 	_, ok := c.encoders[format]
+
 	return ok
 }
 
@@ -182,9 +195,7 @@ func (c *Config) DumpTo(out io.Writer, format string) (n int64, err error) {
 	var ok bool
 	var encoder Encoder
 
-	if format == Yml {
-		format = Yaml
-	}
+	format = fixFormat(format)
 
 	if encoder, ok = c.encoders[format]; !ok {
 		err = errors.New("no exists or no register encoder for the format: " + format)
@@ -223,14 +234,23 @@ func (c *Config) ClearData() {
 func (c *Config) ClearCaches() {
 	c.intCaches = nil
 	c.strCaches = nil
-	c.mapCaches = nil
-	c.arrCaches = nil
+	c.sMapCache = nil
+	c.sArrCache = nil
 }
 
 // initCaches
 func (c *Config) initCaches() {
 	c.intCaches = map[string]int{}
 	c.strCaches = map[string]string{}
-	c.arrCaches = map[string]stringArr{}
-	c.mapCaches = map[string]stringMap{}
+	c.sArrCache = map[string]strArr{}
+	c.sMapCache = map[string]strMap{}
+}
+
+// fixFormat
+func fixFormat(f string) string {
+	if f == Yml {
+		f = Yaml
+	}
+
+	return f
 }

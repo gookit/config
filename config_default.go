@@ -14,9 +14,14 @@ func SetOptions(opts *Options) {
 	dc.SetOptions(opts)
 }
 
-// SetDriver set a decoder and encoder for a format.
-func SetDriver(format string, decoder Decoder, encoder Encoder)  {
-	dc.SetDriver(format, decoder, encoder)
+// AddDriver set a decoder and encoder driver for a format.
+func AddDriver(format string, driver Driver) {
+	dc.AddDriver(format, driver)
+}
+
+// DecoderEncoder set a decoder and encoder for a format.
+func DecoderEncoder(format string, decoder Decoder, encoder Encoder) {
+	dc.DecoderEncoder(format, decoder, encoder)
 }
 
 // SetDecoder add/set a format decoder
@@ -56,6 +61,16 @@ func GetInt(key string) (value int, ok bool) {
 // DefInt get a int value, if not found return default value
 func DefInt(key string, def int) int {
 	return dc.DefInt(key, def)
+}
+
+// GetInt64
+func GetInt64(key string) (value int64, ok bool) {
+	return dc.GetInt64(key)
+}
+
+// DefInt64
+func DefInt64(key string, def int64) int64 {
+	return dc.DefInt64(key, def)
 }
 
 // GetBool
@@ -121,8 +136,9 @@ func LoadSources(format string, sourceCode ...[]byte) (err error) {
  * helper functions for the default instance
  *************************************************************/
 
-func Set() {
-
+// Set
+func Set(key string, val interface{}) (err error) {
+	return dc.Set(key, val)
 }
 
 // WriteTo

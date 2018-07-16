@@ -2,32 +2,30 @@ package main
 
 import (
 	"github.com/gookit/config"
-	"github.com/gookit/config/yaml"
 	"fmt"
+	"github.com/gookit/config/json"
 )
 
-// go run ./examples/yaml.go
+// go run ./examples/json.go
 func main() {
 	config.SetOptions(&config.Options{
 		ParseEnv: true,
 	})
 
-	// only add decoder
-	// config.SetDecoder(config.Yaml, yaml.Decoder)
+	// add Decoder and Encoder
+	config.AddDriver(config.Json, json.Driver)
 	// Or
-	config.AddDriver(config.Yaml, yaml.Driver)
-	// Or
-	// config.DecoderEncoder(config.Yaml, yaml.Decoder, yaml.Encoder)
+	// config.DecoderEncoder(config.Json, json.Decoder, json.Encoder)
 
-	err := config.LoadFiles("testdata/yml_base.yml")
+	err := config.LoadFiles("testdata/json_base.json")
 	if err != nil {
 		panic(err)
 	}
 
 	fmt.Printf("config data: \n %#v\n", config.Data())
 
-	err = config.LoadFiles("testdata/yml_other.yml")
-	// config.LoadFiles("testdata/yml_base.yml", "testdata/yml_other.yml")
+	err = config.LoadFiles("testdata/json_other.json")
+	// config.LoadFiles("testdata/json_base.json", "testdata/json_other.json")
 	if err != nil {
 		panic(err)
 	}
@@ -61,7 +59,7 @@ func main() {
 
 	// if you want export config data
 	// buf := new(bytes.Buffer)
-	// _, err = config.DumpTo(buf, config.Yaml)
+	// _, err = config.DumpTo(buf, config.Json)
 	// if err != nil {
 	// 	panic(err)
 	// }
