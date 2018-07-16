@@ -93,6 +93,11 @@ func main() {
 	fmt.Printf("get env 'envKey' val: %s\n", config.DefString("envKey", ""))
 	fmt.Printf("get env 'envKey1' val: %s\n", config.DefString("envKey1", ""))
 
+	// set value
+	config.Set("name", "new name")
+	name, ok = config.GetString("name")
+	fmt.Printf("- set string\n ok: %v, val: %v\n", ok, name)
+	
 	// if you want export config data
 	// buf := new(bytes.Buffer)
 	// _, err = config.DumpTo(buf, config.Yaml)
@@ -119,7 +124,8 @@ get config example:
  ok: true, val: "val2"
 get env 'envKey' val: /bin/zsh
 get env 'envKey1' val: defValue
-
+- set string
+ok: true, val: new name
 ```
 
 ## Useful packages

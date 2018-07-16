@@ -3,6 +3,7 @@ package yaml
 import (
 	"fmt"
 	"github.com/gookit/config"
+	"bytes"
 )
 
 var yamlStr = `
@@ -72,4 +73,26 @@ func Example() {
 	// ok: true, val: "val2"
 	// get env 'envKey' val: /bin/zsh
 	// get env 'envKey1' val: defValue
+}
+
+
+func Example_exportConfig() {
+	// Notice: before dump please set driver encoder
+	config.SetEncoder(config.Yaml, Encoder)
+
+	buf := new(bytes.Buffer)
+	_, err := config.DumpTo(buf, config.Yaml)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("export config:\n%s", buf.String())
+
+	// Output:
+	// arr1:
+	// 	- val1
+	// 	- val21
+	// baseKey: value2
+	// debug: false
+	// ... ...
 }

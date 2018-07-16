@@ -62,16 +62,15 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 // build new value by key paths
 // "site.info" -> map[string]map[string]val
 func buildValueByPath(paths []string, val interface{}) interface{} {
-	ln := len(paths)
-	sliceReverse(paths)
-
-	if ln == 1 {
+	if len(paths) == 1 {
 		if paths[0] == "0" {
 			return []interface{}{val}
 		} else {
 			return map[string]interface{}{paths[0]: val}
 		}
 	}
+
+	sliceReverse(paths)
 
 	// multi nodes
 	for _, p := range paths {
