@@ -1,5 +1,5 @@
 /*
-Here use toml format content as config source
+This is driver use TOML format content as config source
 
 Usage please see example:
 

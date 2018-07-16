@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"bytes"
 	"testing"
-	"github.com/gookit/config/json"
 )
 
 var jsonStr = `
 {
     "name": "app",
-    "debug": false,
+    "debug": true,
     "baseKey": "value",
     "age": 123,
     "envKey": "${SHELL}",
@@ -34,9 +33,14 @@ func Example() {
 	})
 
 	// add Decoder and Encoder
-	AddDriver(Json, json.Driver)
+	// use yaml github.com/gookit/config/yaml
+	// AddDriver(Yaml, yaml.Driver)
+	// use toml github.com/gookit/config/toml
+	// AddDriver(Toml, toml.Driver)
+	// use toml github.com/gookit/config/hcl
+	// AddDriver(Hcl, hcl.Driver)
 	// Or
-	// config.DecoderEncoder(config.Json, json.Decoder, json.Encoder)
+	// config.DecoderEncoder(config.Json, yaml.Decoder, yaml.Encoder)
 
 	err := LoadFiles("testdata/json_base.json")
 	if err != nil {
@@ -108,6 +112,9 @@ func Example() {
 }
 
 func ExampleConfig_DefBool() {
+	// load from string
+	LoadSources(Json, []byte(jsonStr))
+
 	val, ok := GetBool("debug")
 	fmt.Printf("get 'debug', ok: %v, val: %v\n", ok, val)
 	val1 := DefBool("debug", false)
@@ -146,20 +153,5 @@ func BenchmarkGet(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		Get("name")
-	}
-}
-
-func TestGet(t *testing.T) {
-	err := LoadFiles("testdata/json_base.json")
-	if err != nil {
-		t.Error(err)
-	}
-
-	val, ok := Get("name")
-	if !ok {
-		t.Error("get config by key 'name', ok should be 'true'")
-	}
-	if val != "app" {
-		t.Error("get config by key 'name', val should be 'app'")
 	}
 }

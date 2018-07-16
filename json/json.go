@@ -1,6 +1,6 @@
+// use the https://github.com/json-iterator/go for parse json
 package json
 
-// use the https://github.com/json-iterator/go for parse json
 import (
 	"github.com/json-iterator/go"
 	"github.com/gookit/config"

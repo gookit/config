@@ -4,12 +4,12 @@
 
 golang application config manage implement. 
 
-- generic api `Get` `GetInt` `GetString` `GetBool` `GetStringArr` `GetStringMap` ...
-- support multi format: `json`(default), `yaml`, `toml`
+- support multi format: `JSON`(default), `YAML`, `TOML`, `HCL`
 - support multi file/data load
 - support data override merge
 - support get sub value by path, like `map.key` `arr.2`
 - support parse env name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
+- generic api `Get` `GetInt` `GetString` `GetBool` `GetStringArr` `GetStringMap` ...
 
 ## Godoc
 
@@ -130,11 +130,6 @@ ok: true, val: new name
 
 ## Useful packages
 
-### Ini config use
-
-- [go-ini/ini](https://github.com/go-ini/ini) ini parser and config manage
-- [dombenson/go-ini](https://github.com/dombenson/go-ini) ini parser and config manage
-
 ### Yaml
 
 - [go-yaml](https://github.com/go-yaml/yaml) yaml parser
@@ -146,6 +141,11 @@ ok: true, val: new name
 ### Data merge
 
 - [mergo](https://github.com/imdario/mergo) merge data
+
+### Ini config use
+
+- [go-ini/ini](https://github.com/go-ini/ini) ini parser and config manage
+- [dombenson/go-ini](https://github.com/dombenson/go-ini) ini parser and config manage
 
 ## License
 

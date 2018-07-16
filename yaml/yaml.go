@@ -1,5 +1,5 @@
 /*
-Here use yaml format content as config source
+Here use YAML format content as config source
 
 Usage please see example:
 
