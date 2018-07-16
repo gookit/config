@@ -129,14 +129,25 @@ func (c *Config) Readonly(readonly bool) {
 
 // AddDriver set a decoder and encoder driver for a format.
 func (c *Config) AddDriver(format string, driver Driver) {
-	c.SetDecoder(format, driver.GetDecoder())
-	c.SetEncoder(format, driver.GetEncoder())
+	format = fixFormat(format)
+	if format != driver.Name() {
+		panic(fmt.Sprintf(
+			"format name must be equals to the driver name. current format:%s driver:%s",
+			format,
+			driver.Name(),
+		))
+	}
+
+	c.decoders[format] = driver.GetDecoder()
+	c.encoders[format] = driver.GetEncoder()
 }
 
 // DecoderEncoder set a decoder and encoder for a format.
 func (c *Config) DecoderEncoder(format string, decoder Decoder, encoder Encoder) {
-	c.SetDecoder(format, decoder)
-	c.SetEncoder(format, encoder)
+	format = fixFormat(format)
+
+	c.decoders[format] = decoder
+	c.encoders[format] = encoder
 }
 
 // HasDecoder

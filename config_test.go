@@ -183,6 +183,10 @@ func Example_exportConfig() {
 }
 
 func BenchmarkGet(b *testing.B) {
+	err := LoadFiles("testdata/json_base.json")
+	if err != nil {
+		panic(err)
+	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -191,5 +195,16 @@ func BenchmarkGet(b *testing.B) {
 }
 
 func TestGet(t *testing.T) {
+	err := LoadFiles("testdata/json_base.json")
+	if err != nil {
+		t.Error(err)
+	}
 
+	val, ok := Get("name")
+	if !ok {
+		t.Error("get config by key 'name', ok should be 'true'")
+	}
+	if val != "app" {
+		t.Error("get config by key 'name', val should be 'app'")
+	}
 }

@@ -2,7 +2,6 @@ package config
 
 import (
 	"strings"
-	"fmt"
 	"errors"
 )
 
@@ -40,7 +39,9 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 
 	// find top item data based on top key
 	if item, ok = c.data[topK]; !ok {
-		err = errors.New(fmt.Sprintf("the top key '%s' is not exist", topK))
+		// not found, is new add
+		c.data[topK] = buildValueByPath(keys[1:], val)
+
 		return
 	}
 

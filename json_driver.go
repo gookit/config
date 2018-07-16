@@ -13,15 +13,24 @@ var JsonEncoder Encoder = func(v interface{}) (out []byte, err error) {
 	return json.Marshal(v)
 }
 
-// JsonDriver for json format content
-type JsonDriver struct{}
+// JsonDriver
+var JsonDriver = &jsonDriver{Json}
 
+// jsonDriver for json format content
+type jsonDriver struct {
+	name string
+}
+
+// Name
+func (d *jsonDriver) Name() string {
+	return d.name
+}
 // GetDecoder for json
-func (d *JsonDriver) GetDecoder() Decoder {
+func (d *jsonDriver) GetDecoder() Decoder {
 	return JsonDecoder
 }
 
 // GetEncoder for json
-func (d *JsonDriver) GetEncoder() Encoder {
+func (d *jsonDriver) GetEncoder() Encoder {
 	return JsonEncoder
 }
