@@ -3,43 +3,38 @@ golang application config manage implement. support yaml,toml,json format.
 
 Source code and other details for the project are available at GitHub:
 
-- https://github.com/gookit/config
+	https://github.com/gookit/config
 
-Yaml format content:
+Json format content:
 
-	name: app2
-	debug: false
-	baseKey: value2
+	{
+		"name": "app",
+		"debug": false,
+		"baseKey": "value",
+		"age": 123,
+		"envKey": "${SHELL}",
+		"envKey1": "${NotExist|defValue}",
+		"map1": {
+			"key": "val",
+			"key1": "val1",
+			"key2": "val2"
+		},
+		"arr1": [
+			"val",
+			"val1",
+			"val2"
+		],
+		"lang": {
+			"dir": "res/lang",
+			"defLang": "en",
+			"allowed": {
+				"en": "val",
+				"zh-CN": "val2"
+			}
+		}
+	}
 
-	map1:
-	    key: val2
-	    key2: val20
-
-	arr1:
-	    - val1
-	    - val21
-
-Toml format content:
-
-	title = "TOML Example"
-	name = "app"
-
-	envKey = "${SHELL}"
-	envKey1 = "${NotExist|defValue}"
-
-	arr1 = [
-	  "alpha",
-	  "omega"
-	]
-
-	[map1]
-	name = "inhere"
-	org = "GitHub"
-
-Usage please see examples:
-
-- yaml format example and usage, see [yaml-example](/github.com/gookit/config/yaml#example-package)
-- toml format example and usage, see [toml-example](/github.com/gookit/config/toml#example-package)
+Usage please see example(more example please see examples folder in the lib):
 
  */
 package config
