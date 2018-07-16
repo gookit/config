@@ -3,6 +3,7 @@ package config
 import (
 	"strings"
 	"errors"
+	"github.com/imdario/mergo"
 )
 
 // Set a value by key string.
@@ -41,24 +42,20 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 	if item, ok = c.data[topK]; !ok {
 		// not found, is new add
 		c.data[topK] = buildValueByPath(keys[1:], val)
-
 		return
 	}
 
-	// find child
-	for _, k := range keys[1:] {
-		switch item.(type) {
-		case int, int8, int64, string, bool:
-			err = errors.New("the top item is scalar type, cannot set sub-value by path: " + key)
-			return
-		case map[string]interface{}:
-			item, ok = item.(map[string]interface{})[k]
-			if !ok {
-				return
-			}
-		}
+	// create a new item for the topK
+	newItem := buildValueByPath(keys[1:], val)
+
+	// merge new item to old item
+	err = mergo.Map(&item, newItem, mergo.WithOverride)
+	if err != nil {
+		return
 	}
 
+	// resetting
+	c.data[topK] = item
 	return
 }
 
