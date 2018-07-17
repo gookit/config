@@ -122,14 +122,19 @@ func LoadFiles(sourceFiles ...string) (err error) {
 	return dc.LoadFiles(sourceFiles...)
 }
 
+// LoadExists
+func LoadExists(sourceFiles ...string) (err error) {
+	return dc.LoadExists(sourceFiles...)
+}
+
 // LoadData
 func LoadData(dataSource ...interface{}) (err error) {
 	return dc.LoadData(dataSource...)
 }
 
 // LoadSources
-func LoadSources(format string, sourceCode ...[]byte) (err error) {
-	return dc.LoadSources(format, sourceCode...)
+func LoadSources(format string, src []byte, more ...[]byte) (err error) {
+	return dc.LoadSources(format, src, more...)
 }
 
 // LoadStrings

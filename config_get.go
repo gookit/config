@@ -111,7 +111,9 @@ func (c *Config) GetString(key string) (value string, ok bool) {
 	}
 
 	switch val.(type) {
-	case bool, int, int8, int32, int64:
+	case bool, int, int8, int32, int64,
+	// from json int always is float64
+		float32, float64:
 		value = fmt.Sprintf("%v", val)
 	case string:
 		value = fmt.Sprintf("%v", val)
@@ -176,7 +178,8 @@ func (c *Config) DefInt(key string, def int) int {
 
 // GetInt64
 func (c *Config) GetInt64(key string) (value int64, ok bool) {
-	if intVal, ok := c.GetInt(key); ok {
+	intVal, ok := c.GetInt(key)
+	if ok {
 		value = int64(intVal)
 	}
 
@@ -185,7 +188,8 @@ func (c *Config) GetInt64(key string) (value int64, ok bool) {
 
 // DefInt64
 func (c *Config) DefInt64(key string, def int64) int64 {
-	if intVal, ok := c.GetInt(key); ok {
+	intVal, ok := c.GetInt(key)
+	if ok {
 		return int64(intVal)
 	}
 

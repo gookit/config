@@ -87,8 +87,13 @@ func (c *Config) LoadData(dataSources ...interface{}) (err error) {
 // 	arr:
 // 		key: val
 // `))
-func (c *Config) LoadSources(format string, sourceCodes ...[]byte) (err error) {
-	for _, sc := range sourceCodes {
+func (c *Config) LoadSources(format string, src []byte, more ...[]byte) (err error) {
+	err = c.parseSourceCode(format, src)
+	if err != nil {
+		return
+	}
+
+	for _, sc := range more {
 		err = c.parseSourceCode(format, sc)
 		if err != nil {
 			return

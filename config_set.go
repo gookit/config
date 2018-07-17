@@ -84,7 +84,6 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 		index, err := strconv.Atoi(keys[1])
 		if len(keys) == 2 && err == nil {
 			arrItem := item.([]interface{})
-
 			if index <= len(arrItem) {
 				arrItem[index] = val
 			}
@@ -100,6 +99,10 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 
 	return
 }
+
+/**
+more setter: SetIntArr, SetIntMap, SetString, SetStringArr, SetStringMap
+ */
 
 // build new value by key paths
 // "site.info" -> map[string]map[string]val

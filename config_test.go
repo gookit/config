@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"bytes"
 	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
 var jsonStr = `
@@ -149,7 +150,7 @@ func Example_exportConfig() {
 }
 
 func BenchmarkGet(b *testing.B) {
-	err := LoadFiles("testdata/json_base.json")
+	err := LoadStrings(Json, jsonStr)
 	if err != nil {
 		panic(err)
 	}
@@ -158,4 +159,35 @@ func BenchmarkGet(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		Get("name")
 	}
+}
+
+func TestLoadData(t *testing.T) {
+	st := assert.New(t)
+
+	ClearAll()
+
+	// load map
+	err := LoadData(map[string]interface{}{
+		"name": "inhere",
+		"age": 28,
+		"working": true,
+		"tags": []string{"a", "b"},
+		"info": map[string]string{"k1":"a", "k2":"b"},
+	})
+
+	st.NotEmpty(Data())
+
+	if st.Nil(err) {
+		str, ok := GetString("name")
+		st.True(ok)
+		st.Equal("inhere", str)
+
+		str, ok = GetString("notExists")
+		st.False(ok)
+		st.Equal("", str)
+
+		def := DefString("notExists", "defVal")
+		st.Equal("defVal", def)
+	}
+
 }
