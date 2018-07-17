@@ -132,6 +132,11 @@ func LoadSources(format string, sourceCode ...[]byte) (err error) {
 	return dc.LoadSources(format, sourceCode...)
 }
 
+// LoadStrings
+func LoadStrings(format string, str string, more ...string) (err error) {
+	return dc.LoadStrings(format, str, more...)
+}
+
 /*************************************************************
  * helper functions for the default instance
  *************************************************************/
@@ -154,4 +159,14 @@ func DumpTo(out io.Writer, format string) (n int64, err error) {
 // Data return all config data
 func Data() map[string]interface{} {
 	return dc.Data()
+}
+
+// ClearAll
+func ClearAll()  {
+	dc.ClearAll()
+}
+
+// ClearData
+func ClearData()  {
+	dc.ClearData()
 }

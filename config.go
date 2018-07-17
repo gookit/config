@@ -240,6 +240,7 @@ func (c *Config) ClearAll() {
 // ClearData
 func (c *Config) ClearData() {
 	c.data = make(map[string]interface{})
+	c.loadedFiles = []string{}
 }
 
 // ClearCaches

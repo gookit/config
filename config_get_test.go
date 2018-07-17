@@ -6,14 +6,19 @@ import (
 )
 
 func TestGet(t *testing.T) {
-	ast := assert.New(t)
+	st := assert.New(t)
 
-	err := LoadFiles("testdata/json_base.json")
-	if err != nil {
-		t.Error(err)
-	}
+	ClearAll()
+	err := LoadStrings(Json, jsonStr)
+	st.Nil(err)
 
+	// get bool
+	bv, ok := Get("debug")
+	st.True(ok)
+	st.Equal(true, bv)
+
+	// get string
 	val, ok := Get("name")
-	ast.True(ok)
-	ast.Equal("app", val)
+	st.True(ok)
+	st.Equal("app", val)
 }

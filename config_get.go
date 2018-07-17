@@ -50,6 +50,11 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 	// find child
 	for _, k := range keys[1:] {
 		switch item.(type) {
+		case map[string]string: // is map(from Set)
+			item, ok = item.(map[string]string)[k]
+			if !ok {
+				return
+			}
 		case map[string]interface{}: // is map(decode from toml/json)
 			item, ok = item.(map[string]interface{})[k]
 			if !ok {
@@ -60,7 +65,7 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 			if !ok {
 				return
 			}
-		case []interface{}: // is array
+		case []interface{}: // is array(load from file)
 			i, err := strconv.Atoi(k)
 			if err != nil {
 				return
@@ -68,6 +73,18 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 
 			// 检查slice index是否存在
 			arrItem := item.([]interface{})
+			if len(arrItem) < i {
+				return
+			}
+
+			item = arrItem[i]
+		case []string: // is array(is from Set)
+			i, err := strconv.Atoi(k)
+			if err != nil {
+				return
+			}
+			// 检查slice index是否存在
+			arrItem := item.([]string)
 			if len(arrItem) < i {
 				return
 			}
@@ -94,7 +111,7 @@ func (c *Config) GetString(key string) (value string, ok bool) {
 	}
 
 	switch val.(type) {
-	case bool, int, int64:
+	case bool, int, int8, int32, int64:
 		value = fmt.Sprintf("%v", val)
 	case string:
 		value = fmt.Sprintf("%v", val)
@@ -225,6 +242,8 @@ func (c *Config) GetIntArr(key string) (arr []int, ok bool) {
 	}
 
 	switch rawVal.(type) {
+	case []int:
+		arr = rawVal.([]int)
 	case []interface{}:
 		for _, v := range rawVal.([]interface{}) {
 			// iv, err := strconv.Atoi(v.(string))
@@ -251,6 +270,8 @@ func (c *Config) GetIntMap(key string) (mp map[string]int, ok bool) {
 	}
 
 	switch rawVal.(type) {
+	case map[string]int: // from Set
+		mp = rawVal.(map[string]int)
 	case map[string]interface{}: // decode from json,toml
 		mp = make(map[string]int)
 		for k, v := range rawVal.(map[string]interface{}) {
@@ -296,6 +317,8 @@ func (c *Config) GetStringArr(key string) (arr []string, ok bool) {
 	}
 
 	switch rawVal.(type) {
+	case []string:
+		arr = rawVal.([]string)
 	case []interface{}:
 		for _, v := range rawVal.([]interface{}) {
 			arr = append(arr, fmt.Sprintf("%v", v))
@@ -332,6 +355,8 @@ func (c *Config) GetStringMap(key string) (mp map[string]string, ok bool) {
 	}
 
 	switch rawVal.(type) {
+	case map[string]string: // from Set
+		mp = rawVal.(map[string]string)
 	case map[string]interface{}: // decode from json,toml
 		mp = make(map[string]string)
 		for k, v := range rawVal.(map[string]interface{}) {

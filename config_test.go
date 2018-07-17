@@ -93,22 +93,22 @@ func Example() {
 	// }
 	// fmt.Printf("export config:\n%s", buf.String())
 
-	// Output:
+	// Out:
 	// get config example:
 	// - get string
-	// ok: true, val: app2
+	//  ok: true, val: app
 	// - get array
-	// ok: true, val: []string{"val1", "val21"}
+	//  ok: true, val: []string{"val", "val1", "val2"}
 	// - get sub-value by path 'arr.index'
-	// ok: true, val: "val1"
+	//  ok: true, val: "val"
 	// - get map
-	// ok: true, val: map[string]string{"key2":"val20", "key":"val2", "key1":"val1"}
+	//  ok: true, val: map[string]string{"key":"val", "key1":"val1", "key2":"val2"}
 	// - get sub-value by path 'map.key'
-	// ok: true, val: "val2"
+	//  ok: true, val: "val"
 	// get env 'envKey' val: /bin/zsh
 	// get env 'envKey1' val: defValue
 	// - set string
-	// ok: true, val: new name
+	//  ok: true, val: new name
 }
 
 func ExampleConfig_DefBool() {
@@ -129,19 +129,23 @@ func Example_exportConfig() {
 	// Notice: before dump please set driver encoder
 	// SetEncoder(Yaml, yaml.Encoder)
 
+	ClearAll()
+	// load from string
+	LoadStrings(Json, `{
+"name": "app",
+"age": 34
+}`)
+
 	buf := new(bytes.Buffer)
 	_, err := DumpTo(buf, Json)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf("export config:\n%s", buf.String())
+	fmt.Printf("%s", buf.String())
 
 	// Output:
-	// {
-	// 	"name": "app"
-	// 	... ...
-	// }
+	// {"age":34,"name":"app"}
 }
 
 func BenchmarkGet(b *testing.B) {

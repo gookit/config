@@ -98,6 +98,23 @@ func (c *Config) LoadSources(format string, sourceCodes ...[]byte) (err error) {
 	return
 }
 
+// LoadStrings load data from source string content.
+func (c *Config) LoadStrings(format string, str string, more ...string) (err error) {
+	err = c.parseSourceCode(format, []byte(str))
+	if err != nil {
+		return
+	}
+
+	for _, s := range more {
+		err = c.parseSourceCode(format, []byte(s))
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
+
 // parse config source code to Config.
 func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	var ok bool

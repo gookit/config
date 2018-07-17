@@ -4,6 +4,8 @@ import (
 	"strings"
 	"errors"
 	"github.com/imdario/mergo"
+	"fmt"
+	"strconv"
 )
 
 // Set a value by key string.
@@ -12,6 +14,9 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 	if c.opts.Readonly {
 		err = errors.New("the config instance in 'readonly' mode")
 		return
+	} else {
+		c.lock.Lock()
+		defer c.lock.Unlock()
 	}
 
 	key = strings.Trim(strings.TrimSpace(key), ".")
@@ -45,43 +50,72 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 		return
 	}
 
-	// create a new item for the topK
-	newItem := buildValueByPath(keys[1:], val)
+	switch item.(type) {
+	case map[interface{}]interface{}: // from yaml
+		dstItem := make(map[string]interface{})
+		for k, v := range item.(map[interface{}]interface{}) {
+			sk := fmt.Sprintf("%v", k)
+			dstItem[sk] = v
+		}
 
-	// merge new item to old item
-	err = mergo.Map(&item, newItem, mergo.WithOverride)
-	if err != nil {
-		return
+		// create a new item for the topK
+		newItem := buildValueByPath(keys[1:], val)
+		// merge new item to old item
+		err = mergo.Merge(&dstItem, newItem, mergo.WithOverride)
+		if err != nil {
+			return
+		}
+
+		// resetting
+		c.data[topK] = dstItem
+	case map[string]interface{}: // from json,toml
+		dstItem := item.(map[string]interface{})
+		// create a new item for the topK
+		newItem := buildValueByPath(keys[1:], val)
+		// merge new item to old item
+		err = mergo.Merge(&dstItem, newItem, mergo.WithOverride)
+		if err != nil {
+			return
+		}
+
+		// resetting
+		c.data[topK] = dstItem
+	case []interface{}: // is array
+		index, err := strconv.Atoi(keys[1])
+		if len(keys) == 2 && err == nil {
+			arrItem := item.([]interface{})
+
+			if index <= len(arrItem) {
+				arrItem[index] = val
+			}
+
+			// resetting
+			c.data[topK] = arrItem
+		} else {
+			err = errors.New("max allow 1 level for setting array value, current key: " + key)
+		}
+	default:
+		err = errors.New("cannot setting value for the key: " + key)
 	}
 
-	// resetting
-	c.data[topK] = item
 	return
 }
 
 // build new value by key paths
 // "site.info" -> map[string]map[string]val
-func buildValueByPath(paths []string, val interface{}) interface{} {
+func buildValueByPath(paths []string, val interface{}) (newItem map[string]interface{}) {
 	if len(paths) == 1 {
-		if paths[0] == "0" {
-			return []interface{}{val}
-		} else {
-			return map[string]interface{}{paths[0]: val}
-		}
+		return map[string]interface{}{paths[0]: val}
 	}
 
 	sliceReverse(paths)
 
 	// multi nodes
 	for _, p := range paths {
-		if p == "0" {
-			val = []interface{}{val}
-		} else {
-			val = map[string]interface{}{p: val}
-		}
+		newItem = map[string]interface{}{p: val}
 	}
 
-	return val
+	return
 }
 
 // reverse a slice. (slice 是引用，所以可以直接改变)
