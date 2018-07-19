@@ -130,13 +130,17 @@ ok: true, val: new name
 
 ## Useful packages
 
-### Yaml
+### Yaml parse
 
 - [go-yaml](https://github.com/go-yaml/yaml) yaml parser
 
-### Toml
+### Toml parse
 
 - [go toml](https://github.com/BurntSushi/toml) toml parser
+
+### Ini parse
+
+- [gookit/ini/parser](https://github.com/gookit/ini/parser) ini parser
 
 ### Data merge
 
@@ -144,8 +148,7 @@ ok: true, val: new name
 
 ### Ini config use
 
-- [go-ini/ini](https://github.com/go-ini/ini) ini parser and config manage
-- [dombenson/go-ini](https://github.com/dombenson/go-ini) ini parser and config manage
+- [gookit/ini](https://github.com/gookit/ini/parser) ini config manage
 
 ## License
 
