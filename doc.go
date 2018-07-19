@@ -1,5 +1,5 @@
 /*
-golang application config manage implement. support YAML,TOML,JSON,HCL format.
+golang application config manage implement. support YAML,TOML,JSON,INI,HCL format.
 
 Source code and other details for the project are available at GitHub:
 

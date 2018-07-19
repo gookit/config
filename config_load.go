@@ -126,6 +126,10 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	var decoder Decoder
 
 	switch format {
+	case Hcl:
+		decoder, ok = c.decoders[Hcl]
+	case Ini:
+		decoder, ok = c.decoders[Ini]
 	case Json:
 		decoder, ok = c.decoders[Json]
 	case Yaml, Yml:

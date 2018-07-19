@@ -2,9 +2,9 @@
 
 [![GoDoc](https://godoc.org/github.com/gookit/config?status.svg)](https://godoc.org/github.com/gookit/config)
 
-golang application config manage implement. 
+golang application config manage tool library. 
 
-- support multi format: `JSON`(default), `YAML`, `TOML`, `HCL`
+- support multi format: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`
 - support multi file/data load
 - support data override merge
 - support get sub value by path, like `map.key` `arr.2`
