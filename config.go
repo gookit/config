@@ -12,7 +12,7 @@ const Version = "1.0.3"
 
 // supported config format
 const (
-	Ini = "ini"
+	Ini  = "ini"
 	Hcl  = "hcl"
 	Yml  = "yml"
 	Json = "json"

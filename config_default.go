@@ -5,6 +5,11 @@ import "io"
 // This is a default config manager instance
 var dc = New("default")
 
+// C get the default instance
+func C() *Config {
+	return dc
+}
+
 /*************************************************************
  * config setting for the default instance
  *************************************************************/
