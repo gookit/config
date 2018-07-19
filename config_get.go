@@ -105,6 +105,14 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 
 // GetString
 func (c *Config) GetString(key string) (value string, ok bool) {
+	// find from cache
+	if c.opts.EnableCache && len(c.strCache) > 0 {
+		value, ok = c.strCache[key]
+		if ok {
+			return
+		}
+	}
+
 	val, ok := c.Get(key)
 	if !ok {
 		return
@@ -139,6 +147,15 @@ func (c *Config) GetString(key string) (value string, ok bool) {
 		}
 	default:
 		ok = false
+	}
+
+	// add cache
+	if ok && c.opts.EnableCache {
+		if c.strCache == nil {
+			c.strCache = make(map[string]string)
+		}
+
+		c.strCache[key] = value
 	}
 
 	return

@@ -73,8 +73,8 @@ type Config struct {
 	encoders map[string]Encoder
 
 	// cache got config data
-	intCaches map[string]int
-	strCaches map[string]string
+	intCache map[string]int
+	strCache map[string]string
 
 	iArrCache map[string]intArr
 	iMapCache map[string]intMap
@@ -245,16 +245,16 @@ func (c *Config) ClearData() {
 
 // ClearCaches
 func (c *Config) ClearCaches() {
-	c.intCaches = nil
-	c.strCaches = nil
+	c.intCache = nil
+	c.strCache = nil
 	c.sMapCache = nil
 	c.sArrCache = nil
 }
 
 // initCaches
 func (c *Config) initCaches() {
-	c.intCaches = map[string]int{}
-	c.strCaches = map[string]string{}
+	c.intCache = map[string]int{}
+	c.strCache = map[string]string{}
 	c.sArrCache = map[string]strArr{}
 	c.sMapCache = map[string]strMap{}
 }
