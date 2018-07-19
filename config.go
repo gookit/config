@@ -5,6 +5,7 @@ import (
 	"io"
 	"fmt"
 	"errors"
+	"bytes"
 )
 
 // package version
@@ -197,6 +198,18 @@ func (c *Config) HasEncoder(format string) bool {
 /*************************************************************
  * helper methods
  *************************************************************/
+
+// ToJson string
+func (c *Config) ToJson() string {
+	buf := &bytes.Buffer{}
+
+	_, err := c.DumpTo(buf, Json)
+	if err != nil {
+		return ""
+	}
+
+	return buf.String()
+}
 
 // WriteTo Write out config data representing the current state to a writer.
 func (c *Config) WriteTo(out io.Writer) (n int64, err error) {

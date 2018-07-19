@@ -189,5 +189,4 @@ func TestLoadData(t *testing.T) {
 		def := DefString("notExists", "defVal")
 		st.Equal("defVal", def)
 	}
-
 }

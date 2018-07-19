@@ -50,10 +50,10 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 		return
 	}
 
-	switch item.(type) {
+	switch typeData := item.(type) {
 	case map[interface{}]interface{}: // from yaml
 		dstItem := make(map[string]interface{})
-		for k, v := range item.(map[interface{}]interface{}) {
+		for k, v := range typeData {
 			sk := fmt.Sprintf("%v", k)
 			dstItem[sk] = v
 		}
@@ -66,30 +66,25 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 			return
 		}
 
-		// resetting
 		c.data[topK] = dstItem
 	case map[string]interface{}: // from json,toml
-		dstItem := item.(map[string]interface{})
 		// create a new item for the topK
 		newItem := buildValueByPath(keys[1:], val)
 		// merge new item to old item
-		err = mergo.Merge(&dstItem, newItem, mergo.WithOverride)
+		err = mergo.Merge(&typeData, newItem, mergo.WithOverride)
 		if err != nil {
 			return
 		}
 
-		// resetting
-		c.data[topK] = dstItem
+		c.data[topK] = typeData
 	case []interface{}: // is array
 		index, err := strconv.Atoi(keys[1])
 		if len(keys) == 2 && err == nil {
-			arrItem := item.([]interface{})
-			if index <= len(arrItem) {
-				arrItem[index] = val
+			if index <= len(typeData) {
+				typeData[index] = val
 			}
 
-			// resetting
-			c.data[topK] = arrItem
+			c.data[topK] = typeData
 		} else {
 			err = errors.New("max allow 1 level for setting array value, current key: " + key)
 		}

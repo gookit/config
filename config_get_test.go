@@ -94,3 +94,30 @@ func TestGet(t *testing.T) {
 	st.True(ok)
 	st.Equal(34, iv)
 }
+
+type user struct {
+	Age int
+	Name string
+	Sports []string
+}
+
+func TestConfig_MapStructure(t *testing.T) {
+	st := assert.New(t)
+
+	cfg := New("test")
+	err := cfg.LoadStrings(Json, `{
+"age": 28,
+"name": "inhere",
+"sports": ["pingPong", "跑步"]
+}`)
+
+	st.Nil(err)
+
+	user := &user{}
+	err = cfg.MapStructure("", user)
+	st.Nil(err)
+
+	st.Equal(28, user.Age)
+	st.Equal("inhere", user.Name)
+	st.Equal("pingPong", user.Sports[0])
+}

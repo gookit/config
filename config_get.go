@@ -12,7 +12,7 @@ import (
 // ok is true, find value from config
 // ok is false, not found or error
 func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool) {
-	key = strings.Trim(strings.TrimSpace(key), ".")
+	key = formatKey(key)
 	if key == "" {
 		return
 	}
@@ -49,19 +49,19 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 
 	// find child
 	for _, k := range keys[1:] {
-		switch item.(type) {
+		switch typeData := item.(type) {
 		case map[string]string: // is map(from Set)
-			item, ok = item.(map[string]string)[k]
+			item, ok = typeData[k]
 			if !ok {
 				return
 			}
 		case map[string]interface{}: // is map(decode from toml/json)
-			item, ok = item.(map[string]interface{})[k]
+			item, ok = typeData[k]
 			if !ok {
 				return
 			}
 		case map[interface{}]interface{}: // is map(decode from yaml)
-			item, ok = item.(map[interface{}]interface{})[k]
+			item, ok = typeData[k]
 			if !ok {
 				return
 			}
@@ -72,24 +72,23 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 			}
 
 			// 检查slice index是否存在
-			arrItem := item.([]interface{})
-			if len(arrItem) < i {
+			if len(typeData) < i {
 				return
 			}
 
-			item = arrItem[i]
+			item = typeData[i]
 		case []string: // is array(is from Set)
 			i, err := strconv.Atoi(k)
 			if err != nil {
 				return
 			}
+
 			// 检查slice index是否存在
-			arrItem := item.([]string)
-			if len(arrItem) < i {
+			if len(typeData) < i {
 				return
 			}
 
-			item = arrItem[i]
+			item = typeData[i]
 		default: // error
 			ok = false
 			return
@@ -262,11 +261,11 @@ func (c *Config) GetIntArr(key string) (arr []int, ok bool) {
 		return
 	}
 
-	switch rawVal.(type) {
+	switch typeData := rawVal.(type) {
 	case []int:
-		arr = rawVal.([]int)
+		arr = typeData
 	case []interface{}:
-		for _, v := range rawVal.([]interface{}) {
+		for _, v := range typeData {
 			// iv, err := strconv.Atoi(v.(string))
 			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
 			if err != nil {
@@ -290,12 +289,12 @@ func (c *Config) GetIntMap(key string) (mp map[string]int, ok bool) {
 		return
 	}
 
-	switch rawVal.(type) {
+	switch typeData := rawVal.(type) {
 	case map[string]int: // from Set
-		mp = rawVal.(map[string]int)
+		mp = typeData
 	case map[string]interface{}: // decode from json,toml
 		mp = make(map[string]int)
-		for k, v := range rawVal.(map[string]interface{}) {
+		for k, v := range typeData {
 			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
 			if err != nil {
 				ok = false
@@ -305,7 +304,7 @@ func (c *Config) GetIntMap(key string) (mp map[string]int, ok bool) {
 		}
 	case map[interface{}]interface{}: // if decode from yaml
 		mp = make(map[string]int)
-		for k, v := range rawVal.(map[interface{}]interface{}) {
+		for k, v := range typeData {
 			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
 			if err != nil {
 				ok = false
@@ -337,11 +336,11 @@ func (c *Config) GetStringArr(key string) (arr []string, ok bool) {
 		return
 	}
 
-	switch rawVal.(type) {
+	switch typeData := rawVal.(type) {
 	case []string:
-		arr = rawVal.([]string)
+		arr = typeData
 	case []interface{}:
-		for _, v := range rawVal.([]interface{}) {
+		for _, v := range typeData {
 			arr = append(arr, fmt.Sprintf("%v", v))
 		}
 	default:
@@ -375,17 +374,17 @@ func (c *Config) GetStringMap(key string) (mp map[string]string, ok bool) {
 		return
 	}
 
-	switch rawVal.(type) {
+	switch typeData := rawVal.(type) {
 	case map[string]string: // from Set
-		mp = rawVal.(map[string]string)
+		mp = typeData
 	case map[string]interface{}: // decode from json,toml
 		mp = make(map[string]string)
-		for k, v := range rawVal.(map[string]interface{}) {
+		for k, v := range typeData {
 			mp[k] = fmt.Sprintf("%v", v)
 		}
 	case map[interface{}]interface{}: // if decode from yaml
 		mp = make(map[string]string)
-		for k, v := range rawVal.(map[interface{}]interface{}) {
+		for k, v := range typeData {
 			sk := fmt.Sprintf("%v", k)
 			mp[sk] = fmt.Sprintf("%v", v)
 		}
@@ -415,8 +414,20 @@ func (c *Config) MapStructure(key string, v interface{}) (err error) {
 // 	dbInfo := Db{}
 // 	config.GetStructure("db", &dbInfo)
 func (c *Config) GetStructure(key string, v interface{}) (err error) {
-	if rawVal, ok := c.Get(key); ok {
-		blob, err := json.Marshal(rawVal)
+	var data interface{}
+
+	ok := false
+
+	// map all data
+	if key == "" {
+		ok = true
+		data = c.data
+	} else {
+		data, ok = c.Get(key)
+	}
+
+	if ok {
+		blob, err := json.Marshal(data)
 		if err != nil {
 			return err
 		}
@@ -425,4 +436,9 @@ func (c *Config) GetStructure(key string, v interface{}) (err error) {
 	}
 
 	return
+}
+
+// format key
+func formatKey(key string) string {
+	return strings.Trim(strings.TrimSpace(key), ".")
 }
