@@ -5,8 +5,8 @@ import "io"
 // This is a default config manager instance
 var dc = New("default")
 
-// C get the default instance
-func C() *Config {
+// Default get the default instance
+func Default() *Config {
 	return dc
 }
 
@@ -58,9 +58,9 @@ func Get(key string, findByPath ...bool) (value interface{}, ok bool) {
 	return dc.Get(key, findByPath...)
 }
 
-// GetInt
-func GetInt(key string) (value int, ok bool) {
-	return dc.GetInt(key)
+// Int
+func Int(key string) (value int, ok bool) {
+	return dc.Int(key)
 }
 
 // DefInt get a int value, if not found return default value
@@ -68,9 +68,9 @@ func DefInt(key string, def int) int {
 	return dc.DefInt(key, def)
 }
 
-// GetInt64
-func GetInt64(key string) (value int64, ok bool) {
-	return dc.GetInt64(key)
+// Int64
+func Int64(key string) (value int64, ok bool) {
+	return dc.Int64(key)
 }
 
 // DefInt64
@@ -78,9 +78,9 @@ func DefInt64(key string, def int64) int64 {
 	return dc.DefInt64(key, def)
 }
 
-// GetBool
-func GetBool(key string) (value bool, ok bool) {
-	return dc.GetBool(key)
+// Bool
+func Bool(key string) (value bool, ok bool) {
+	return dc.Bool(key)
 }
 
 // DefBool get a bool value, if not found return default value
@@ -88,9 +88,9 @@ func DefBool(key string, def bool) bool {
 	return dc.DefBool(key, def)
 }
 
-// GetString
-func GetString(key string) (value string, ok bool) {
-	return dc.GetString(key)
+// String
+func String(key string) (value string, ok bool) {
+	return dc.String(key)
 }
 
 // DefString get a string value, if not found return default value
@@ -98,24 +98,24 @@ func DefString(key string, def string) string {
 	return dc.DefString(key, def)
 }
 
-// GetIntArr  get config data as a int slice/array
-func GetIntArr(key string) (arr []int, ok bool) {
-	return dc.GetIntArr(key)
+// Ints  get config data as a int slice/array
+func Ints(key string) (arr []int, ok bool) {
+	return dc.Ints(key)
 }
 
-// GetIntMap get config data as a map[string]int
-func GetIntMap(key string) (mp map[string]int, ok bool) {
-	return dc.GetIntMap(key)
+// IntMap get config data as a map[string]int
+func IntMap(key string) (mp map[string]int, ok bool) {
+	return dc.IntMap(key)
 }
 
-// GetStringArr
-func GetStringArr(key string) (arr []string, ok bool) {
-	return dc.GetStringArr(key)
+// Strings
+func Strings(key string) (arr []string, ok bool) {
+	return dc.Strings(key)
 }
 
-// GetStringMap get config data as a map[string]string
-func GetStringMap(key string) (mp map[string]string, ok bool) {
-	return dc.GetStringMap(key)
+// StringMap get config data as a map[string]string
+func StringMap(key string) (mp map[string]string, ok bool) {
+	return dc.StringMap(key)
 }
 
 /*************************************************************

@@ -53,19 +53,19 @@ func Example() {
 	// fmt.Printf("config data: \n %#v\n", Data())
 	fmt.Print("get config example:\n")
 
-	name, ok := config.GetString("name")
+	name, ok := config.String("name")
 	fmt.Printf("- get string\n ok: %v, val: %v\n", ok, name)
 
-	arr1, ok := config.GetStringArr("arr1")
+	arr1, ok := config.Strings("arr1")
 	fmt.Printf("- get array\n ok: %v, val: %#v\n", ok, arr1)
 
-	val0, ok := config.GetString("arr1.0")
+	val0, ok := config.String("arr1.0")
 	fmt.Printf("- get sub-value by path 'arr.index'\n ok: %v, val: %v\n", ok, val0)
 
-	map1, ok := config.GetStringMap("map1")
+	map1, ok := config.StringMap("map1")
 	fmt.Printf("- get map\n ok: %v, val: %#v\n", ok, map1)
 
-	val0, ok = config.GetString("map1.name")
+	val0, ok = config.String("map1.name")
 	fmt.Printf("- get sub-value by path 'map.key'\n ok: %v, val: %v\n", ok, val0)
 
 	// can parse env name(ParseEnv: true)

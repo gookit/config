@@ -62,19 +62,19 @@ func Example() {
 	// fmt.Printf("config data: \n %#v\n", Data())
 	fmt.Print("get config example:\n")
 
-	name, ok := GetString("name")
+	name, ok := String("name")
 	fmt.Printf("- get string\n ok: %v, val: %v\n", ok, name)
 
-	arr1, ok := GetStringArr("arr1")
+	arr1, ok := Strings("arr1")
 	fmt.Printf("- get array\n ok: %v, val: %#v\n", ok, arr1)
 
-	val0, ok := GetString("arr1.0")
+	val0, ok := String("arr1.0")
 	fmt.Printf("- get sub-value by path 'arr.index'\n ok: %v, val: %#v\n", ok, val0)
 
-	map1, ok := GetStringMap("map1")
+	map1, ok := StringMap("map1")
 	fmt.Printf("- get map\n ok: %v, val: %#v\n", ok, map1)
 
-	val0, ok = GetString("map1.key")
+	val0, ok = String("map1.key")
 	fmt.Printf("- get sub-value by path 'map.key'\n ok: %v, val: %#v\n", ok, val0)
 
 	// can parse env name(ParseEnv: true)
@@ -83,7 +83,7 @@ func Example() {
 
 	// set value
 	Set("name", "new name")
-	name, ok = GetString("name")
+	name, ok = String("name")
 	fmt.Printf("- set string\n ok: %v, val: %v\n", ok, name)
 
 	// if you want export config data
@@ -116,7 +116,7 @@ func ExampleConfig_DefBool() {
 	// load from string
 	LoadSources(Json, []byte(jsonStr))
 
-	val, ok := GetBool("debug")
+	val, ok := Bool("debug")
 	fmt.Printf("get 'debug', ok: %v, val: %v\n", ok, val)
 	val1 := DefBool("debug", false)
 	fmt.Printf("get 'debug' with default, val: %v\n", val1)
@@ -161,13 +161,16 @@ func BenchmarkGet(b *testing.B) {
 	}
 }
 
-func TestLoadData(t *testing.T) {
+func TestLoad(t *testing.T) {
 	st := assert.New(t)
 
 	ClearAll()
+	err := LoadExists("testdata/json_base.json", "not-exist.json")
+	st.Nil(err)
 
+	ClearAll()
 	// load map
-	err := LoadData(map[string]interface{}{
+	err = LoadData(map[string]interface{}{
 		"name": "inhere",
 		"age": 28,
 		"working": true,
@@ -178,11 +181,11 @@ func TestLoadData(t *testing.T) {
 	st.NotEmpty(Data())
 
 	if st.Nil(err) {
-		str, ok := GetString("name")
+		str, ok := String("name")
 		st.True(ok)
 		st.Equal("inhere", str)
 
-		str, ok = GetString("notExists")
+		str, ok = String("notExists")
 		st.False(ok)
 		st.Equal("", str)
 

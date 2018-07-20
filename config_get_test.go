@@ -21,7 +21,7 @@ func TestGet(t *testing.T) {
 	st.Equal(float64(123), iv)
 	st.Equal("float64", fmt.Sprintf("%T",iv))
 
-	iv, ok = GetInt("age")
+	iv, ok = Int("age")
 	st.True(ok)
 	st.Equal(123, iv)
 
@@ -29,7 +29,7 @@ func TestGet(t *testing.T) {
 	st.Equal(34, iv)
 
 	// get int64
-	iv64, ok := GetInt64("age")
+	iv64, ok := Int64("age")
 	st.True(ok)
 	st.Equal(int64(123), iv64)
 
@@ -41,7 +41,7 @@ func TestGet(t *testing.T) {
 	st.True(ok)
 	st.Equal(true, bv)
 
-	bv, ok = GetBool("debug")
+	bv, ok = Bool("debug")
 	st.True(ok)
 	st.Equal(true, bv)
 
@@ -54,7 +54,11 @@ func TestGet(t *testing.T) {
 	st.Equal("app", val)
 
 	// get not exists
-	str, ok := GetString("notExists")
+	val, ok = Get("notExist", false)
+	st.False(ok)
+	st.Nil(val)
+
+	str, ok := String("notExists")
 	st.False(ok)
 	st.Equal("", str)
 
@@ -62,11 +66,11 @@ func TestGet(t *testing.T) {
 	st.Equal("defVal", def)
 
 	// get array
-	arr, ok := GetStringArr("arr1")
+	arr, ok := Strings("arr1")
 	st.True(ok)
 	st.Equal(`[]string{"val", "val1", "val2"}`, fmt.Sprintf("%#v", arr))
 
-	val, ok = GetString("arr1.1")
+	val, ok = String("arr1.1")
 	st.True(ok)
 	st.Equal("val1", val)
 
@@ -77,20 +81,20 @@ func TestGet(t *testing.T) {
 	st.Nil(err)
 
 	// get int arr
-	iarr, ok := GetIntArr("iArr")
+	iarr, ok := Ints("iArr")
 	st.True(ok)
 	st.Equal(`[]int{12, 34, 36}`, fmt.Sprintf("%#v", iarr))
 
-	iv, ok = GetInt("iArr.1")
+	iv, ok = Int("iArr.1")
 	st.True(ok)
 	st.Equal(34, iv)
 
 	// get int map
-	imp, ok := GetIntMap("iMap")
+	imp, ok := IntMap("iMap")
 	st.True(ok)
 	st.NotEmpty(imp)
 
-	iv, ok = GetInt("iMap.k2")
+	iv, ok = Int("iMap.k2")
 	st.True(ok)
 	st.Equal(34, iv)
 }

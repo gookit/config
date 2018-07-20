@@ -9,7 +9,7 @@ golang application config manage tool library.
 - support data override merge
 - support get sub value by path, like `map.key` `arr.2`
 - support parse env name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
-- generic api `Get` `GetInt` `GetString` `GetBool` `GetStringArr` `GetStringMap` ...
+- generic api `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
 
 ## Godoc
 
@@ -74,20 +74,20 @@ func main() {
 	// fmt.Printf("config data: \n %#v\n", config.Data())
 	fmt.Print("get config example:\n")
 
-	name, ok := config.GetString("name")
-	fmt.Printf("- get string\n ok: %v, val: %v\n", ok, name)
+	name, ok := config.String("name")
+	fmt.Printf("get string\n - ok: %v, val: %v\n", ok, name)
 
-	arr1, ok := config.GetStringArr("arr1")
-	fmt.Printf("- get array\n ok: %v, val: %#v\n", ok, arr1)
+	arr1, ok := config.Strings("arr1")
+	fmt.Printf("get array\n - ok: %v, val: %#v\n", ok, arr1)
 
-	val0, ok := config.GetString("arr1.0")
-	fmt.Printf("- get sub-value by path 'arr.index'\n ok: %v, val: %#v\n", ok, val0)
+	val0, ok := config.String("arr1.0")
+	fmt.Printf("get sub-value by path 'arr.index'\n - ok: %v, val: %#v\n", ok, val0)
 
-	map1, ok := config.GetStringMap("map1")
-	fmt.Printf("- get map\n ok: %v, val: %#v\n", ok, map1)
+	map1, ok := config.StringMap("map1")
+	fmt.Printf("get map\n - ok: %v, val: %#v\n", ok, map1)
 
-	val0, ok = config.GetString("map1.key")
-	fmt.Printf("- get sub-value by path 'map.key'\n ok: %v, val: %#v\n", ok, val0)
+	val0, ok = config.String("map1.key")
+	fmt.Printf("get sub-value by path 'map.key'\n - ok: %v, val: %#v\n", ok, val0)
 
 	// can parse env name(ParseEnv: true)
 	fmt.Printf("get env 'envKey' val: %s\n", config.DefString("envKey", ""))
@@ -95,8 +95,8 @@ func main() {
 
 	// set value
 	config.Set("name", "new name")
-	name, ok = config.GetString("name")
-	fmt.Printf("- set string\n ok: %v, val: %v\n", ok, name)
+	name, ok = config.String("name")
+	fmt.Printf("set string\n - ok: %v, val: %v\n", ok, name)
 	
 	// if you want export config data
 	// buf := new(bytes.Buffer)
@@ -112,20 +112,20 @@ func main() {
 
 ```text
 get config example:
-- get string
- ok: true, val: app2
-- get array
- ok: true, val: []string{"val1", "val21"}
-- get sub-value by path 'arr.index'
- ok: true, val: "val1"
-- get map
- ok: true, val: map[string]string{"key":"val2", "key2":"val20"}
-- get sub-value by path 'map.key'
- ok: true, val: "val2"
+get string
+ - ok: true, val: app2
+get array
+ - ok: true, val: []string{"val1", "val21"}
+get sub-value by path 'arr.index'
+ - ok: true, val: "val1"
+get map
+ - ok: true, val: map[string]string{"key":"val2", "key2":"val20"}
+get sub-value by path 'map.key'
+ - ok: true, val: "val2"
 get env 'envKey' val: /bin/zsh
 get env 'envKey1' val: defValue
-- set string
-ok: true, val: new name
+set string
+- ok: true, val: new name
 ```
 
 ## Useful packages

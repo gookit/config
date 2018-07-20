@@ -15,14 +15,14 @@ func TestSet(t *testing.T) {
 	err := LoadStrings(Json, jsonStr)
 	st.Nil(err)
 
-	val, ok := GetString("name")
+	val, ok := String("name")
 	st.True(ok)
 	st.Equal("app", val)
 
 	// set value
 	err = Set("name", "new name")
 	if st.Nil(err) {
-		val, ok = GetString("name")
+		val, ok = String("name")
 		st.True(ok)
 		st.Equal("new name", val)
 	}
@@ -30,7 +30,7 @@ func TestSet(t *testing.T) {
 	// set value to arr: by path
 	err = Set("arr1.1", "new val")
 	if st.Nil(err) {
-		val, ok = GetString("arr1.1")
+		val, ok = String("arr1.1")
 		st.True(ok)
 		st.Equal("new val", val)
 	}
@@ -38,7 +38,7 @@ func TestSet(t *testing.T) {
 	// set value to map: by path
 	err = Set("map1.key", "new val")
 	if st.Nil(err) {
-		val, ok = GetString("map1.key")
+		val, ok = String("map1.key")
 		st.True(ok)
 		st.Equal("new val", val)
 	}
@@ -46,7 +46,7 @@ func TestSet(t *testing.T) {
 	// set new value: int
 	err = Set("newInt", 23)
 	if st.Nil(err) {
-		iv, ok := GetInt("newInt")
+		iv, ok := Int("newInt")
 		st.True(ok)
 		st.Equal(23, iv)
 	}
@@ -54,7 +54,7 @@ func TestSet(t *testing.T) {
 	// set new value: int
 	err = Set("newBool", false)
 	if st.Nil(err) {
-		bv, ok := GetBool("newBool")
+		bv, ok := Bool("newBool")
 		st.True(ok)
 		st.False(bv)
 	}
@@ -62,7 +62,7 @@ func TestSet(t *testing.T) {
 	// set new value: string
 	err = Set("newKey", "new val")
 	if st.Nil(err) {
-		val, ok = GetString("newKey")
+		val, ok = String("newKey")
 		st.True(ok)
 		st.Equal("new val", val)
 	}
@@ -70,11 +70,11 @@ func TestSet(t *testing.T) {
 	// set new value: array(slice)
 	err = Set("newArr", []string{"a", "b"})
 	if st.Nil(err) {
-		arr, ok := GetStringArr("newArr")
+		arr, ok := Strings("newArr")
 		st.True(ok)
 		st.Equal(`[]string{"a", "b"}`, fmt.Sprintf("%#v", arr))
 
-		val, ok = GetString("newArr.1")
+		val, ok = String("newArr.1")
 		st.True(ok)
 		st.Equal("b", val)
 	}
@@ -82,12 +82,12 @@ func TestSet(t *testing.T) {
 	// set new value: map
 	err = Set("newMap", map[string]string{"k1":"a", "k2":"b"})
 	if st.Nil(err) {
-		mp, ok := GetStringMap("newMap")
+		mp, ok := StringMap("newMap")
 		st.True(ok)
 		st.NotEmpty(mp)
 		// st.Equal("map[k1:a k2:b]", fmt.Sprintf("%v", mp))
 
-		val, ok = GetString("newMap.k1")
+		val, ok = String("newMap.k1")
 		st.True(ok)
 		st.Equal("a", val)
 	}

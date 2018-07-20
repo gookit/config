@@ -102,8 +102,8 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
  * config get(basic data type)
  *************************************************************/
 
-// GetString
-func (c *Config) GetString(key string) (value string, ok bool) {
+// String
+func (c *Config) String(key string) (value string, ok bool) {
 	// find from cache
 	if c.opts.EnableCache && len(c.strCache) > 0 {
 		value, ok = c.strCache[key]
@@ -162,16 +162,21 @@ func (c *Config) GetString(key string) (value string, ok bool) {
 
 // DefString get a string value, if not found return default value
 func (c *Config) DefString(key string, def string) string {
-	if value, ok := c.GetString(key); ok {
+	if value, ok := c.String(key); ok {
 		return value
 	}
 
 	return def
 }
 
-// GetInt
-func (c *Config) GetInt(key string) (value int, ok bool) {
-	rawVal, ok := c.GetString(key)
+// MustString get a string value, if not found return empty string
+func (c *Config) MustString(key string) string {
+	return c.DefString(key, "")
+}
+
+// Int
+func (c *Config) Int(key string) (value int, ok bool) {
+	rawVal, ok := c.String(key)
 	if !ok {
 		return
 	}
@@ -185,16 +190,21 @@ func (c *Config) GetInt(key string) (value int, ok bool) {
 
 // DefInt get a int value, if not found return default value
 func (c *Config) DefInt(key string, def int) int {
-	if value, ok := c.GetInt(key); ok {
+	if value, ok := c.Int(key); ok {
 		return value
 	}
 
 	return def
 }
 
-// GetInt64
-func (c *Config) GetInt64(key string) (value int64, ok bool) {
-	intVal, ok := c.GetInt(key)
+// MustInt get a int value, if not found return 0
+func (c *Config) MustInt(key string) int {
+	return c.DefInt(key, 0)
+}
+
+// Int64
+func (c *Config) Int64(key string) (value int64, ok bool) {
+	intVal, ok := c.Int(key)
 	if ok {
 		value = int64(intVal)
 	}
@@ -204,7 +214,7 @@ func (c *Config) GetInt64(key string) (value int64, ok bool) {
 
 // DefInt64
 func (c *Config) DefInt64(key string, def int64) int64 {
-	intVal, ok := c.GetInt(key)
+	intVal, ok := c.Int(key)
 	if ok {
 		return int64(intVal)
 	}
@@ -212,7 +222,12 @@ func (c *Config) DefInt64(key string, def int64) int64 {
 	return def
 }
 
-// GetBool Looks up a value for a key in this section and attempts to parse that value as a boolean,
+// MustInt get a int value, if not found return 0
+func (c *Config) MustInt64(key string) int64 {
+	return c.DefInt64(key, 0)
+}
+
+// Bool Looks up a value for a key in this section and attempts to parse that value as a boolean,
 // along with a boolean result similar to a map lookup.
 // of following(case insensitive):
 //  - true
@@ -222,8 +237,8 @@ func (c *Config) DefInt64(key string, def int64) int64 {
 //  - 1
 //  - 0
 // The `ok` boolean will be false in the event that the value could not be parsed as a bool
-func (c *Config) GetBool(key string) (value bool, ok bool) {
-	rawVal, ok := c.GetString(key)
+func (c *Config) Bool(key string) (value bool, ok bool) {
+	rawVal, ok := c.String(key)
 	if !ok {
 		return
 	}
@@ -243,19 +258,24 @@ func (c *Config) GetBool(key string) (value bool, ok bool) {
 
 // DefBool get a bool value, if not found return default value
 func (c *Config) DefBool(key string, def bool) bool {
-	if value, ok := c.GetBool(key); ok {
+	if value, ok := c.Bool(key); ok {
 		return value
 	}
 
 	return def
 }
 
+// MustBool get a string value, if not found return false
+func (c *Config) MustBool(key string) bool {
+	return c.DefBool(key, false)
+}
+
 /*************************************************************
  * config get(complex data type)
  *************************************************************/
 
-// GetIntArr get config data as a int slice/array
-func (c *Config) GetIntArr(key string) (arr []int, ok bool) {
+// Ints get config data as a int slice/array
+func (c *Config) Ints(key string) (arr []int, ok bool) {
 	rawVal, ok := c.Get(key)
 	if !ok {
 		return
@@ -282,8 +302,8 @@ func (c *Config) GetIntArr(key string) (arr []int, ok bool) {
 	return
 }
 
-// GetIntMap get config data as a map[string]int
-func (c *Config) GetIntMap(key string) (mp map[string]int, ok bool) {
+// IntMap get config data as a map[string]int
+func (c *Config) IntMap(key string) (mp map[string]int, ok bool) {
 	rawVal, ok := c.Get(key)
 	if !ok {
 		return
@@ -321,8 +341,8 @@ func (c *Config) GetIntMap(key string) (mp map[string]int, ok bool) {
 	return
 }
 
-// GetStringArr  get config data as a string slice/array
-func (c *Config) GetStringArr(key string) (arr []string, ok bool) {
+// Strings get config data as a string slice/array
+func (c *Config) Strings(key string) (arr []string, ok bool) {
 	// find from cache
 	if c.opts.EnableCache && len(c.sArrCache) > 0 {
 		arr, ok = c.sArrCache[key]
@@ -359,8 +379,8 @@ func (c *Config) GetStringArr(key string) (arr []string, ok bool) {
 	return
 }
 
-// GetStringMap get config data as a map[string]string
-func (c *Config) GetStringMap(key string) (mp map[string]string, ok bool) {
+// StringMap get config data as a map[string]string
+func (c *Config) StringMap(key string) (mp map[string]string, ok bool) {
 	// find from cache
 	if c.opts.EnableCache && len(c.sMapCache) > 0 {
 		mp, ok = c.sMapCache[key]
@@ -406,14 +426,14 @@ func (c *Config) GetStringMap(key string) (mp map[string]string, ok bool) {
 
 // MapStructure alias method of the 'GetStructure'
 func (c *Config) MapStructure(key string, v interface{}) (err error) {
-	return c.GetStructure(key, v)
+	return c.Structure(key, v)
 }
 
 // GetStructure get config data and map to a structure.
 // usage:
 // 	dbInfo := Db{}
-// 	config.GetStructure("db", &dbInfo)
-func (c *Config) GetStructure(key string, v interface{}) (err error) {
+// 	config.Structure("db", &dbInfo)
+func (c *Config) Structure(key string, v interface{}) (err error) {
 	var data interface{}
 
 	ok := false

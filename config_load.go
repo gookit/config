@@ -35,7 +35,9 @@ func (c *Config) LoadExists(sourceFiles ...string) (err error) {
 
 // load config file
 func (c *Config) loadFile(file string, loadExist bool) (err error) {
-	if _, err = os.Stat(file); err != nil {
+	// open file
+	fd, err := os.Open(file)
+	if err != nil {
 		// skip not exist file
 		if os.IsNotExist(err) && loadExist {
 			return nil
@@ -43,22 +45,16 @@ func (c *Config) loadFile(file string, loadExist bool) (err error) {
 
 		return
 	}
-
-	// open file
-	fd, err := os.Open(file)
-	if err != nil {
-		return
-	}
 	defer fd.Close()
 
 	// read file content
-	content, err := ioutil.ReadAll(fd)
+	bts, err := ioutil.ReadAll(fd)
 	if err == nil {
 		// get format for file ext
 		format := strings.Trim(filepath.Ext(file), ".")
 
 		// parse file content
-		if err = c.parseSourceCode(format, content); err != nil {
+		if err = c.parseSourceCode(format, bts); err != nil {
 			return
 		}
 
