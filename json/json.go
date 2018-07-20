@@ -6,19 +6,19 @@ import (
 	"github.com/json-iterator/go"
 )
 
-// Decoder
+// Decoder for json
 var Decoder config.Decoder = func(blob []byte, v interface{}) (err error) {
 	var parser = jsoniter.ConfigCompatibleWithStandardLibrary
 	return parser.Unmarshal(blob, v)
 }
 
-// Encoder
+// Encoder for json
 var Encoder config.Encoder = func(v interface{}) (out []byte, err error) {
 	var parser = jsoniter.ConfigCompatibleWithStandardLibrary
 	return parser.Marshal(v)
 }
 
-// Driver
+// Driver for json
 var Driver = &jsonDriver{config.Json}
 
 // jsonDriver for json format content
@@ -26,7 +26,7 @@ type jsonDriver struct {
 	name string
 }
 
-// Name
+// Name get name
 func (d *jsonDriver) Name() string {
 	return d.name
 }

@@ -14,7 +14,7 @@ func Default() *Config {
  * config setting for the default instance
  *************************************************************/
 
-// SetOptions
+// SetOptions set options
 func SetOptions(opts *Options) {
 	dc.SetOptions(opts)
 }
@@ -34,17 +34,17 @@ func SetDecoder(format string, decoder Decoder) {
 	dc.SetDecoder(format, decoder)
 }
 
-// SetDecoders
+// SetDecoders set decoders
 func SetDecoders(decoders map[string]Decoder) {
 	dc.SetDecoders(decoders)
 }
 
-// SetEncoder
+// SetEncoder set a encoder for the format
 func SetEncoder(format string, encoder Encoder) {
 	dc.SetEncoder(format, encoder)
 }
 
-// SetEncoders
+// SetEncoders set encoders
 func SetEncoders(encoders map[string]Encoder) {
 	dc.SetEncoders(encoders)
 }
@@ -53,12 +53,12 @@ func SetEncoders(encoders map[string]Encoder) {
  * read config data
  *************************************************************/
 
-// Get
+// Get get a value by key
 func Get(key string, findByPath ...bool) (value interface{}, ok bool) {
 	return dc.Get(key, findByPath...)
 }
 
-// Int
+// Int get a int by key
 func Int(key string) (value int, ok bool) {
 	return dc.Int(key)
 }
@@ -68,17 +68,17 @@ func DefInt(key string, def int) int {
 	return dc.DefInt(key, def)
 }
 
-// Int64
+// Int64 get a int64 by key
 func Int64(key string) (value int64, ok bool) {
 	return dc.Int64(key)
 }
 
-// DefInt64
+// DefInt64 get a int64 with a default value
 func DefInt64(key string, def int64) int64 {
 	return dc.DefInt64(key, def)
 }
 
-// Bool
+// Bool get a bool by key
 func Bool(key string) (value bool, ok bool) {
 	return dc.Bool(key)
 }
@@ -88,7 +88,7 @@ func DefBool(key string, def bool) bool {
 	return dc.DefBool(key, def)
 }
 
-// String
+// String get a string by key
 func String(key string) (value string, ok bool) {
 	return dc.String(key)
 }
@@ -108,7 +108,7 @@ func IntMap(key string) (mp map[string]int, ok bool) {
 	return dc.IntMap(key)
 }
 
-// Strings
+// Strings get strings by key
 func Strings(key string) (arr []string, ok bool) {
 	return dc.Strings(key)
 }
@@ -122,27 +122,27 @@ func StringMap(key string) (mp map[string]string, ok bool) {
  * load config data to default instance
  *************************************************************/
 
-// LoadFiles
+// LoadFiles load one or multi files
 func LoadFiles(sourceFiles ...string) (err error) {
 	return dc.LoadFiles(sourceFiles...)
 }
 
-// LoadExists
+// LoadExists load one or multi files, will ignore not exist
 func LoadExists(sourceFiles ...string) (err error) {
 	return dc.LoadExists(sourceFiles...)
 }
 
-// LoadData
+// LoadData load one or multi data
 func LoadData(dataSource ...interface{}) (err error) {
 	return dc.LoadData(dataSource...)
 }
 
-// LoadSources
+// LoadSources load one or multi byte data
 func LoadSources(format string, src []byte, more ...[]byte) (err error) {
 	return dc.LoadSources(format, src, more...)
 }
 
-// LoadStrings
+// LoadStrings load one or multi string
 func LoadStrings(format string, str string, more ...string) (err error) {
 	return dc.LoadStrings(format, str, more...)
 }
@@ -151,17 +151,17 @@ func LoadStrings(format string, str string, more ...string) (err error) {
  * helper functions for the default instance
  *************************************************************/
 
-// Set
+// Set val by key
 func Set(key string, val interface{}) (err error) {
 	return dc.Set(key, val)
 }
 
-// WriteTo
+// WriteTo a writer
 func WriteTo(out io.Writer) (n int64, err error) {
 	return dc.WriteTo(out)
 }
 
-// DumpTo
+// DumpTo a writer and use format
 func DumpTo(out io.Writer, format string) (n int64, err error) {
 	return dc.DumpTo(out, format)
 }
@@ -171,12 +171,12 @@ func Data() map[string]interface{} {
 	return dc.Data()
 }
 
-// ClearAll
+// ClearAll data and caches
 func ClearAll() {
 	dc.ClearAll()
 }
 
-// ClearData
+// ClearData data
 func ClearData() {
 	dc.ClearData()
 }

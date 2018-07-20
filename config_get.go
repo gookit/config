@@ -102,7 +102,7 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
  * config get(basic data type)
  *************************************************************/
 
-// String
+// String get a string by key
 func (c *Config) String(key string) (value string, ok bool) {
 	// find from cache
 	if c.opts.EnableCache && len(c.strCache) > 0 {
@@ -174,7 +174,7 @@ func (c *Config) MustString(key string) string {
 	return c.DefString(key, "")
 }
 
-// Int
+// Int get a int by key
 func (c *Config) Int(key string) (value int, ok bool) {
 	rawVal, ok := c.String(key)
 	if !ok {
@@ -202,7 +202,7 @@ func (c *Config) MustInt(key string) int {
 	return c.DefInt(key, 0)
 }
 
-// Int64
+// Int64 get a int64 by key
 func (c *Config) Int64(key string) (value int64, ok bool) {
 	intVal, ok := c.Int(key)
 	if ok {
@@ -212,7 +212,7 @@ func (c *Config) Int64(key string) (value int64, ok bool) {
 	return
 }
 
-// DefInt64
+// DefInt64 get a int64 with a default value
 func (c *Config) DefInt64(key string, def int64) int64 {
 	intVal, ok := c.Int(key)
 	if ok {

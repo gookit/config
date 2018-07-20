@@ -22,7 +22,7 @@ var Encoder config.Encoder = func(ptr interface{}) (out []byte, err error) {
 	return yaml.Marshal(ptr)
 }
 
-// Driver
+// Driver for yaml
 var Driver = &yamlDriver{config.Yaml}
 
 // yamlDriver for yaml format content
@@ -30,7 +30,7 @@ type yamlDriver struct {
 	name string
 }
 
-// Name
+// Name for driver
 func (d *yamlDriver) Name() string {
 	return d.name
 }

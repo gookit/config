@@ -32,7 +32,7 @@ var Encoder config.Encoder = func(ptr interface{}) (out []byte, err error) {
 	return buf.Bytes(), nil
 }
 
-// Driver
+// Driver for yaml
 var Driver = &tomlDriver{config.Toml}
 
 // tomlDriver for toml format content
@@ -40,7 +40,7 @@ type tomlDriver struct {
 	name string
 }
 
-// Name
+// Name get name
 func (d *tomlDriver) Name() string {
 	return d.name
 }

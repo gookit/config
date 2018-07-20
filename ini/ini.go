@@ -22,7 +22,7 @@ var Encoder config.Encoder = func(ptr interface{}) (out []byte, err error) {
 	return
 }
 
-// Driver
+// Driver for ini
 var Driver = &iniDriver{config.Ini}
 
 // iniDriver for ini format content
@@ -30,7 +30,7 @@ type iniDriver struct {
 	name string
 }
 
-// Name
+// Name get name
 func (d *iniDriver) Name() string {
 	return d.name
 }

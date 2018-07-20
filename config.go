@@ -125,7 +125,7 @@ func (c *Config) Data() map[string]interface{} {
 	return c.data
 }
 
-// Readonly
+// Readonly set readonly
 func (c *Config) Readonly(readonly bool) {
 	c.opts.Readonly = readonly
 }
@@ -153,7 +153,7 @@ func (c *Config) DecoderEncoder(format string, decoder Decoder, encoder Encoder)
 	c.encoders[format] = encoder
 }
 
-// HasDecoder
+// HasDecoder has decoder
 func (c *Config) HasDecoder(format string) bool {
 	format = fixFormat(format)
 	_, ok := c.decoders[format]
@@ -161,33 +161,33 @@ func (c *Config) HasDecoder(format string) bool {
 	return ok
 }
 
-// SetDecoder
+// SetDecoder set decoder
 func (c *Config) SetDecoder(format string, decoder Decoder) {
 	format = fixFormat(format)
 	c.decoders[format] = decoder
 }
 
-// SetDecoders
+// SetDecoders set decoders
 func (c *Config) SetDecoders(decoders map[string]Decoder) {
 	for format, decoder := range decoders {
 		c.SetDecoder(format, decoder)
 	}
 }
 
-// SetEncoder
+// SetEncoder set a encoder for the format
 func (c *Config) SetEncoder(format string, encoder Encoder) {
 	format = fixFormat(format)
 	c.encoders[format] = encoder
 }
 
-// SetEncoders
+// SetEncoders set encoders
 func (c *Config) SetEncoders(encoders map[string]Encoder) {
 	for format, encoder := range encoders {
 		c.SetEncoder(format, encoder)
 	}
 }
 
-// HasEncoder
+// HasEncoder has encoder
 func (c *Config) HasEncoder(format string) bool {
 	format = fixFormat(format)
 	_, ok := c.encoders[format]
@@ -242,7 +242,7 @@ func (c *Config) DumpTo(out io.Writer, format string) (n int64, err error) {
 	return int64(num), nil
 }
 
-// ClearAll
+// ClearAll data and caches
 func (c *Config) ClearAll() {
 	c.ClearData()
 	c.ClearCaches()
@@ -250,13 +250,13 @@ func (c *Config) ClearAll() {
 	c.loadedFiles = []string{}
 }
 
-// ClearData
+// ClearData clear data
 func (c *Config) ClearData() {
 	c.data = make(map[string]interface{})
 	c.loadedFiles = []string{}
 }
 
-// ClearCaches
+// ClearCaches clear caches
 func (c *Config) ClearCaches() {
 	c.intCache = nil
 	c.strCache = nil
