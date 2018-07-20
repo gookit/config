@@ -1,9 +1,9 @@
 package config
 
 import (
-	"testing"
-	"github.com/stretchr/testify/assert"
 	"fmt"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestGet(t *testing.T) {
@@ -19,7 +19,7 @@ func TestGet(t *testing.T) {
 	iv, ok := Get("age")
 	st.True(ok)
 	st.Equal(float64(123), iv)
-	st.Equal("float64", fmt.Sprintf("%T",iv))
+	st.Equal("float64", fmt.Sprintf("%T", iv))
 
 	iv, ok = Int("age")
 	st.True(ok)
@@ -100,8 +100,8 @@ func TestGet(t *testing.T) {
 }
 
 type user struct {
-	Age int
-	Name string
+	Age    int
+	Name   string
 	Sports []string
 }
 

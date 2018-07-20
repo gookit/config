@@ -2,13 +2,13 @@
 This is driver use INI format content as config source
 
 about ini parse, please see https://github.com/gookit/ini/parser
- */
+*/
 package ini
 
 import (
+	"errors"
 	"github.com/gookit/config"
 	"github.com/gookit/ini/parser"
-	"errors"
 )
 
 // Decoder the ini content decoder

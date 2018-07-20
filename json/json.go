@@ -2,8 +2,8 @@
 package json
 
 import (
-	"github.com/json-iterator/go"
 	"github.com/gookit/config"
+	"github.com/json-iterator/go"
 )
 
 // Decoder

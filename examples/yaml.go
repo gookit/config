@@ -1,9 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gookit/config"
 	"github.com/gookit/config/yaml"
-	"fmt"
 )
 
 // go run ./examples/yaml.go

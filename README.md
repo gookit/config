@@ -1,6 +1,7 @@
 # config
 
 [![GoDoc](https://godoc.org/github.com/gookit/config?status.svg)](https://godoc.org/github.com/gookit/config)
+[![cover.run](https://cover.run/go/https:/github.com/gookit/config.svg?style=flat&tag=golang-1.10)](https://cover.run/go?tag=golang-1.10&repo=https%3A%2Fgithub.com%2Fgookit%2Fconfig)
 
 golang application config manage tool library. 
 

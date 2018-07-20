@@ -1,11 +1,11 @@
 package config
 
 import (
-	"sync"
-	"io"
-	"fmt"
-	"errors"
 	"bytes"
+	"errors"
+	"fmt"
+	"io"
+	"sync"
 )
 
 // package version

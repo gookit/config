@@ -1,12 +1,12 @@
 package config
 
 import (
-	"os"
-	"strings"
-	"path/filepath"
-	"io/ioutil"
-	"github.com/imdario/mergo"
 	"errors"
+	"github.com/imdario/mergo"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
 // LoadFiles load and parse config files

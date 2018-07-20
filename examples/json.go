@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/gookit/config"
 	"fmt"
+	"github.com/gookit/config"
 	"github.com/gookit/config/json"
 )
 

@@ -172,11 +172,11 @@ func Data() map[string]interface{} {
 }
 
 // ClearAll
-func ClearAll()  {
+func ClearAll() {
 	dc.ClearAll()
 }
 
 // ClearData
-func ClearData()  {
+func ClearData() {
 	dc.ClearData()
 }

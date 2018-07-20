@@ -1,10 +1,10 @@
 package config
 
 import (
-	"fmt"
 	"bytes"
-	"testing"
+	"fmt"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 var jsonStr = `
@@ -161,6 +161,15 @@ func BenchmarkGet(b *testing.B) {
 	}
 }
 
+func TestBasic(t *testing.T) {
+	st := assert.New(t)
+
+	ClearAll()
+	c := Default()
+	st.True(c.HasDecoder(Json))
+	st.True(c.HasEncoder(Json))
+}
+
 func TestLoad(t *testing.T) {
 	st := assert.New(t)
 
@@ -171,11 +180,11 @@ func TestLoad(t *testing.T) {
 	ClearAll()
 	// load map
 	err = LoadData(map[string]interface{}{
-		"name": "inhere",
-		"age": 28,
+		"name":    "inhere",
+		"age":     28,
 		"working": true,
-		"tags": []string{"a", "b"},
-		"info": map[string]string{"k1":"a", "k2":"b"},
+		"tags":    []string{"a", "b"},
+		"info":    map[string]string{"k1": "a", "k2": "b"},
 	})
 
 	st.NotEmpty(Data())

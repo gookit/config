@@ -25,6 +25,7 @@ type jsonDriver struct {
 func (d *jsonDriver) Name() string {
 	return d.name
 }
+
 // GetDecoder for json
 func (d *jsonDriver) GetDecoder() Decoder {
 	return JsonDecoder

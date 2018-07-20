@@ -2,13 +2,13 @@
 This is driver use HCL format content as config source
 
 about HCL, please see https://github.com/hashicorp/hcl
- */
+*/
 package hcl
 
 import (
+	"errors"
 	"github.com/gookit/config"
 	"github.com/hashicorp/hcl"
-	"errors"
 )
 
 // Decoder the hcl content decoder

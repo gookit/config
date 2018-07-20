@@ -1,9 +1,9 @@
 package config
 
 import (
-	"testing"
-	"github.com/stretchr/testify/assert"
 	"fmt"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestSet(t *testing.T) {
@@ -80,7 +80,7 @@ func TestSet(t *testing.T) {
 	}
 
 	// set new value: map
-	err = Set("newMap", map[string]string{"k1":"a", "k2":"b"})
+	err = Set("newMap", map[string]string{"k1": "a", "k2": "b"})
 	if st.Nil(err) {
 		mp, ok := StringMap("newMap")
 		st.True(ok)

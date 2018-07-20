@@ -2,13 +2,13 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gookit/config"
 	"github.com/gookit/config/ini"
-	"fmt"
 )
 
 // go run ./examples/ini.go
-func main()  {
+func main() {
 	config.SetOptions(&config.Options{
 		ParseEnv: true,
 	})

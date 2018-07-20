@@ -1,11 +1,11 @@
 package config
 
 import (
-	"strings"
-	"strconv"
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 )
 
 // Get config value by key string, support get sub-value by key path(eg. 'map.key'),
@@ -119,7 +119,7 @@ func (c *Config) String(key string) (value string, ok bool) {
 
 	switch val.(type) {
 	case bool, int, int8, int32, int64,
-	// from json int always is float64
+		// from json int always is float64
 		float32, float64:
 		value = fmt.Sprintf("%v", val)
 	case string:

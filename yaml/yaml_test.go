@@ -1,9 +1,9 @@
 package yaml
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/gookit/config"
-	"bytes"
 )
 
 var yamlStr = `
@@ -74,7 +74,6 @@ func Example() {
 	// get env 'envKey' val: /bin/zsh
 	// get env 'envKey1' val: defValue
 }
-
 
 func Example_exportConfig() {
 	// Notice: before dump please set driver encoder

@@ -3,13 +3,13 @@ Here use YAML format content as config source
 
 Usage please see example:
 
- */
+*/
 package yaml
 
 // see https://godoc.org/gopkg.in/yaml.v2
 import (
-	"gopkg.in/yaml.v2"
 	"github.com/gookit/config"
+	"gopkg.in/yaml.v2"
 )
 
 // Decoder the yaml content decoder
