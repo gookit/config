@@ -87,7 +87,7 @@ func Example_exportConfig() {
 
 	fmt.Printf("export config:\n%s", buf.String())
 
-	// Output:
+	// Out:
 	// arr1:
 	// 	- val1
 	// 	- val21

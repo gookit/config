@@ -7,8 +7,7 @@ import (
 	"testing"
 )
 
-var jsonStr = `
-{
+var jsonStr = `{
     "name": "app",
     "debug": true,
     "baseKey": "value",
@@ -25,8 +24,7 @@ var jsonStr = `
         "val1",
         "val2"
     ]
-}
-`
+}`
 
 func Example() {
 	SetOptions(&Options{
