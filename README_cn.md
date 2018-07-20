@@ -2,25 +2,25 @@
 
 [![GoDoc](https://godoc.org/github.com/gookit/config?status.svg)](https://godoc.org/github.com/gookit/config)
 
-golang application config manage tool library. 
+golang应用程序配置管理工具库。
 
-- support multi format: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`
-- support multi file/data load
-- support data override merge
-- support get sub value by path, like `map.key` `arr.2`
-- support parse env name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
-- generic api `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
+- 支持多种格式: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`
+- 支持多文件/数据加载
+- 支持数据覆盖合并
+- 支持按路径获取子级值, e.g `map.key` `arr.2`
+- 支持解析ENV变量名称. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
+- 通用的使用API `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
 
-> **[中文说明](README_cn.md)**
+> **[EN README](README.md)**
 
 ## Godoc
 
 - [godoc for gopkg](https://godoc.org/gopkg.in/gookit/config.v1)
 - [godoc for github](https://godoc.org/github.com/gookit/config)
 
-## Usage
+## 快速使用
 
-Here using the yaml format as an example(`testdata/yml_other.yml`):
+这里使用yaml格式作为示例(`testdata/yml_other.yml`):
 
 ```yaml
 name: app2
@@ -38,7 +38,7 @@ arr1:
     - val21
 ```
 
-- usage, see [examples/yaml.go](examples/yaml.go):
+- 使用, demo请看 [examples/yaml.go](examples/yaml.go):
 
 ```go
 package main
@@ -52,12 +52,16 @@ import (
 // go run ./examples/yaml.go
 func main() {
 	config.SetOptions(&config.Options{
-		ParseEnv: true,
+		ParseEnv: true, // 启用解析ENV变量
 	})
 	
+	// 除了json格式是内置的外，其他格式都需在使用前添加解析驱动
 	// config.SetDecoder(config.Yaml, yaml.Decoder)
-	config.DecoderEncoder(config.Yaml, yaml.Decoder, yaml.Encoder)
+	config.AddDriver(config.Yaml, yaml.Driver)
+	// OR
+	// config.DecoderEncoder(config.Yaml, yaml.Decoder, yaml.Encoder)
 
+    // 加载配置，可以同时传入多个文件
 	err := config.LoadFiles("testdata/yml_base.yml")
 	if err != nil {
 		panic(err)
@@ -65,7 +69,7 @@ func main() {
 
 	// fmt.Printf("config data: \n %#v\n", config.Data())
 
-	// load more files
+	// 加载更多文件
 	err = config.LoadFiles("testdata/yml_other.yml")
 	// can also load multi at once
 	// err := config.LoadFiles("testdata/yml_base.yml", "testdata/yml_other.yml")
@@ -110,7 +114,7 @@ func main() {
 }
 ```
 
-- output:
+- 输出:
 
 ```text
 get config example:
@@ -130,27 +134,29 @@ set string
 - ok: true, val: new name
 ```
 
-## Useful packages
+## 有用的包
 
-### Yaml parse
+### Yaml 解析
 
 - [go-yaml](https://github.com/go-yaml/yaml) yaml parser
 
-### Toml parse
+### Toml 解析
 
 - [go toml](https://github.com/BurntSushi/toml) toml parser
 
-### Ini parse
+### Ini 解析
 
 - [gookit/ini/parser](https://github.com/gookit/ini/parser) ini parser
 
-### Data merge
+### 数据合并
 
 - [mergo](https://github.com/imdario/mergo) merge data
 
-### Ini config use
+## 其他
 
-- [gookit/ini](https://github.com/gookit/ini/parser) ini config manage
+使用INI作为简单的配置管理
+
+- [gookit/ini](https://github.com/gookit/ini) 
 
 ## License
 
