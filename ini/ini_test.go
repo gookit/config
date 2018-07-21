@@ -57,4 +57,13 @@ func TestDriver(t *testing.T) {
 
 	st.Equal("ini", Driver.Name())
 	// st.IsType(new(Encoder), JsonDriver.GetEncoder())
+
+	c := config.NewEmpty("test")
+	st.False(c.HasDecoder(config.Ini))
+	st.Panics(func() {
+		c.AddDriver("invalid", Driver)
+	})
+	c.AddDriver(config.Ini, Driver)
+	st.True(c.HasDecoder(config.Ini))
+	st.True(c.HasEncoder(config.Ini))
 }

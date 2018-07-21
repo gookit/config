@@ -68,5 +68,13 @@ func TestDriver(t *testing.T) {
 	st := assert.New(t)
 
 	st.Equal("json", Driver.Name())
-	// st.IsType(new(Encoder), Driver.GetEncoder())
+
+	c := config.NewEmpty("test")
+	st.False(c.HasDecoder(config.Json))
+	st.Panics(func() {
+		c.AddDriver("invalid", Driver)
+	})
+	c.AddDriver(config.Json, Driver)
+	st.True(c.HasDecoder(config.Json))
+	st.True(c.HasEncoder(config.Json))
 }

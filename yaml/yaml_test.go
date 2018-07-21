@@ -105,5 +105,14 @@ func TestDriver(t *testing.T) {
 
 	st.Equal("yaml", Driver.Name())
 	// st.IsType(new(Encoder), JsonDriver.GetEncoder())
+
+	c := config.NewEmpty("test")
+	st.False(c.HasDecoder(config.Yaml))
+	st.Panics(func() {
+		c.AddDriver("invalid", Driver)
+	})
+	c.AddDriver(config.Yaml, Driver)
+	st.True(c.HasDecoder(config.Yaml))
+	st.True(c.HasEncoder(config.Yaml))
 }
 
