@@ -3,6 +3,8 @@ package toml
 import (
 	"fmt"
 	"github.com/gookit/config"
+	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
 var tomlStr = `
@@ -23,9 +25,7 @@ org = "GitHub"
 `
 
 func Example() {
-	config.SetOptions(&config.Options{
-		ParseEnv: true,
-	})
+	config.WithOptions(config.WithParseEnv)
 
 	// add Decoder and Encoder
 	config.AddDriver(config.Toml, Driver)
@@ -86,4 +86,11 @@ func Example() {
 	// - ok: true, val: inhere
 	// get env 'envKey' val: /bin/zsh
 	// get env 'envKey1' val: defValue
+}
+
+func TestDriver(t *testing.T) {
+	st := assert.New(t)
+
+	st.Equal("toml", Driver.Name())
+	// st.IsType(new(Encoder), JsonDriver.GetEncoder())
 }

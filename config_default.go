@@ -19,6 +19,11 @@ func SetOptions(opts *Options) {
 	dc.SetOptions(opts)
 }
 
+// WithOptions with options
+func WithOptions(opts ...func(*Options)) {
+	dc.WithOptions(opts...)
+}
+
 // AddDriver set a decoder and encoder driver for a format.
 func AddDriver(format string, driver Driver) {
 	dc.AddDriver(format, driver)
@@ -174,9 +179,4 @@ func Data() map[string]interface{} {
 // ClearAll data and caches
 func ClearAll() {
 	dc.ClearAll()
-}
-
-// ClearData data
-func ClearData() {
-	dc.ClearData()
 }

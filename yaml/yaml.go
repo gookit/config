@@ -13,14 +13,10 @@ import (
 )
 
 // Decoder the yaml content decoder
-var Decoder config.Decoder = func(blob []byte, ptr interface{}) (err error) {
-	return yaml.Unmarshal(blob, ptr)
-}
+var Decoder config.Decoder = yaml.Unmarshal
 
 // Encoder the yaml content encoder
-var Encoder config.Encoder = func(ptr interface{}) (out []byte, err error) {
-	return yaml.Marshal(ptr)
-}
+var Encoder config.Encoder = yaml.Marshal
 
 // Driver for yaml
 var Driver = &yamlDriver{config.Yaml}

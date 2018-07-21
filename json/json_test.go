@@ -1,14 +1,14 @@
 package json
 
 import (
-	"github.com/gookit/config"
 	"fmt"
+	"github.com/gookit/config"
+	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
-func Example()  {
-	config.SetOptions(&config.Options{
-		ParseEnv: true,
-	})
+func Example() {
+	config.WithOptions(config.WithParseEnv)
 
 	// add Decoder and Encoder
 	config.AddDriver(config.Json, Driver)
@@ -62,4 +62,11 @@ func Example()  {
 	// 	panic(err)
 	// }
 	// fmt.Printf("export config:\n%s", buf.String())
+}
+
+func TestDriver(t *testing.T) {
+	st := assert.New(t)
+
+	st.Equal("json", Driver.Name())
+	// st.IsType(new(Encoder), Driver.GetEncoder())
 }

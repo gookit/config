@@ -67,6 +67,7 @@ type Config struct {
 
 	// loaded config files
 	loadedFiles []string
+	initialized bool
 
 	// decoders["toml"] = func(blob []byte, v interface{}) (err error){}
 	// decoders["yaml"] = func(blob []byte, v interface{}) (err error){}
@@ -83,7 +84,7 @@ type Config struct {
 	sMapCache map[string]strMap
 }
 
-// New
+// New config instance
 func New(name string) *Config {
 	return &Config{
 		name: name,
@@ -98,11 +99,39 @@ func New(name string) *Config {
 	}
 }
 
+// NewEmpty config instance
+func NewEmpty(name string) *Config {
+	return &Config{
+		name: name,
+		data: make(map[string]interface{}),
+
+		// empty options
+		opts: &Options{},
+
+		// don't add any drivers
+		encoders: map[string]Encoder{},
+		decoders: map[string]Decoder{},
+	}
+}
+
+// NewWithOptions config instance
+func NewWithOptions(name string, opts ...func(*Options)) *Config {
+	c := New(name)
+	c.WithOptions(opts...)
+
+	return c
+}
+
 /*************************************************************
  * config setting
  *************************************************************/
 
-// SetOptions
+// Options get
+func (c *Config) Options() (*Options) {
+	return c.opts
+}
+
+// SetOptions set options
 func (c *Config) SetOptions(opts *Options) {
 	c.opts = opts
 
@@ -115,20 +144,36 @@ func (c *Config) SetOptions(opts *Options) {
 	}
 }
 
-// Name get config name
-func (c *Config) Name() string {
-	return c.name
+// WithParseEnv set parse env
+func WithParseEnv(opts *Options) {
+	opts.ParseEnv = true
 }
 
-// Data get all config data
-func (c *Config) Data() map[string]interface{} {
-	return c.data
+// WithReadonly set readonly
+func WithReadonly(opts *Options) {
+	opts.Readonly = true
 }
 
-// Readonly set readonly
-func (c *Config) Readonly(readonly bool) {
-	c.opts.Readonly = readonly
+// WithEnableCache set readonly
+func WithEnableCache(opts *Options) {
+	opts.EnableCache = true
 }
+
+// WithOptions
+func (c *Config) WithOptions(opts ...func(*Options)) {
+	if c.initialized {
+		panic("config: Cannot set options after initialization is complete")
+	}
+
+	// apply options
+	for _, opt := range opts {
+		opt(c.opts)
+	}
+}
+
+/*************************************************************
+ * config drivers
+ *************************************************************/
 
 // AddDriver set a decoder and encoder driver for a format.
 func (c *Config) AddDriver(format string, driver Driver) {
@@ -198,6 +243,16 @@ func (c *Config) HasEncoder(format string) bool {
 /*************************************************************
  * helper methods
  *************************************************************/
+
+// Name get config name
+func (c *Config) Name() string {
+	return c.name
+}
+
+// Data get all config data
+func (c *Config) Data() map[string]interface{} {
+	return c.data
+}
 
 // ToJson string
 func (c *Config) ToJson() string {

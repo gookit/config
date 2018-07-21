@@ -4,14 +4,13 @@ package config
 import "encoding/json"
 
 // JsonDecoder
-var JsonDecoder Decoder = func(blob []byte, v interface{}) (err error) {
-	return json.Unmarshal(blob, v)
-}
+var JsonDecoder Decoder = json.Unmarshal
 
 // JsonEncoder
-var JsonEncoder Encoder = func(v interface{}) (out []byte, err error) {
-	return json.Marshal(v)
-}
+var JsonEncoder Encoder = json.Marshal
+// var JsonEncoder Encoder = func(v interface{}) (out []byte, err error) {
+// 	return json.Marshal(v)
+// }
 
 // JsonDriver
 var JsonDriver = &jsonDriver{Json}

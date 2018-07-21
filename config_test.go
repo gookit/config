@@ -27,9 +27,7 @@ var jsonStr = `{
 }`
 
 func Example() {
-	SetOptions(&Options{
-		ParseEnv: true,
-	})
+	WithOptions(WithParseEnv)
 
 	// add Decoder and Encoder
 	// use yaml github.com/gookit/config/yaml
@@ -166,6 +164,23 @@ func TestBasic(t *testing.T) {
 	c := Default()
 	st.True(c.HasDecoder(Json))
 	st.True(c.HasEncoder(Json))
+	st.Equal("default", c.Name())
+
+	c = NewWithOptions("test", WithReadonly)
+	opts := c.Options()
+	st.True(opts.Readonly)
+	st.Equal(Json, opts.DumpFormat)
+	st.Equal(Json, opts.ReadFormat)
+
+	// empty
+	c = NewEmpty("test")
+	st.False(c.HasDecoder(Json))
+	st.Panics(func() {
+		c.AddDriver("invalid", JsonDriver)
+	})
+	c.AddDriver(Json, JsonDriver)
+	st.True(c.HasDecoder(Json))
+	st.True(c.HasEncoder(Json))
 }
 
 func TestLoad(t *testing.T) {
@@ -199,4 +214,11 @@ func TestLoad(t *testing.T) {
 		def := DefString("notExists", "defVal")
 		st.Equal("defVal", def)
 	}
+}
+
+func TestJsonDriver(t *testing.T) {
+	st := assert.New(t)
+
+	st.Equal("json", JsonDriver.Name())
+	// st.IsType(new(Encoder), JsonDriver.GetEncoder())
 }

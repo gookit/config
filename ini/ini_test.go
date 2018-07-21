@@ -1,14 +1,14 @@
 package ini
 
 import (
-	"github.com/gookit/config"
 	"fmt"
+	"github.com/gookit/config"
+	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
 func Example() {
-	config.SetOptions(&config.Options{
-		ParseEnv: true,
-	})
+	config.WithOptions(config.WithParseEnv)
 
 	// add Decoder and Encoder
 	config.AddDriver(config.Ini, Driver)
@@ -50,4 +50,11 @@ func Example() {
 	config.Set("name", "new name")
 	name, ok = config.String("name")
 	fmt.Printf("set string\n - ok: %v, val: %v\n", ok, name)
+}
+
+func TestDriver(t *testing.T) {
+	st := assert.New(t)
+
+	st.Equal("ini", Driver.Name())
+	// st.IsType(new(Encoder), JsonDriver.GetEncoder())
 }

@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/gookit/config"
+	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
 var yamlStr = `
@@ -22,6 +24,8 @@ arr1:
 `
 
 func Example() {
+	config.WithOptions(config.WithParseEnv)
+
 	// add yaml decoder
 	// only add decoder
 	// config.SetDecoder(config.Yaml, Decoder)
@@ -95,3 +99,11 @@ func Example_exportConfig() {
 	// debug: false
 	// ... ...
 }
+
+func TestDriver(t *testing.T) {
+	st := assert.New(t)
+
+	st.Equal("yaml", Driver.Name())
+	// st.IsType(new(Encoder), JsonDriver.GetEncoder())
+}
+
