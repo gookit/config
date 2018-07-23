@@ -8,12 +8,12 @@ import (
 )
 
 func Example() {
-	config.WithOptions(config.WithParseEnv)
+	config.WithOptions(config.ParseEnv)
 
 	// add Decoder and Encoder
-	config.AddDriver(config.Ini, Driver)
+	config.AddDriver(Driver)
 	// Or
-	// config.DecoderEncoder(config.Ini, ini.Decoder, ini.Encoder)
+	// config.SetEncoder(config.Ini, ini.Encoder)
 
 	err := config.LoadFiles("testdata/ini_base.ini")
 	if err != nil {
@@ -60,10 +60,7 @@ func TestDriver(t *testing.T) {
 
 	c := config.NewEmpty("test")
 	st.False(c.HasDecoder(config.Ini))
-	st.Panics(func() {
-		c.AddDriver("invalid", Driver)
-	})
-	c.AddDriver(config.Ini, Driver)
+	c.AddDriver(Driver)
 	st.True(c.HasDecoder(config.Ini))
 	st.True(c.HasEncoder(config.Ini))
 }

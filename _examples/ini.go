@@ -9,14 +9,12 @@ import (
 
 // go run ./examples/ini.go
 func main() {
-	config.SetOptions(&config.Options{
-		ParseEnv: true,
-	})
+	config.WithOptions(config.ParseEnv)
 
 	// add Decoder and Encoder
-	config.AddDriver(config.Ini, ini.Driver)
+	config.AddDriver(ini.Driver)
 	// Or
-	// config.DecoderEncoder(config.Ini, ini.Decoder, ini.Encoder)
+	// config.SetEncoder(config.Ini, ini.Encoder)
 
 	err := config.LoadFiles("testdata/ini_base.ini")
 	if err != nil {

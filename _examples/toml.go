@@ -8,14 +8,10 @@ import (
 
 // go run ./examples/toml.go
 func main() {
-	config.SetOptions(&config.Options{
-		ParseEnv: true,
-	})
+	config.WithOptions(config.ParseEnv)
 
 	// add Decoder and Encoder
-	config.AddDriver(config.Toml, toml.Driver)
-	// Or
-	// config.DecoderEncoder(config.Toml, toml.Decoder, toml.Encoder)
+	config.AddDriver(toml.Driver)
 
 	err := config.LoadFiles("testdata/toml_base.toml")
 	if err != nil {

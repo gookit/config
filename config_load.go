@@ -18,6 +18,7 @@ func (c *Config) LoadFiles(sourceFiles ...string) (err error) {
 		}
 	}
 
+	c.initialized = true
 	return
 }
 
@@ -30,6 +31,7 @@ func (c *Config) LoadExists(sourceFiles ...string) (err error) {
 		}
 	}
 
+	c.initialized = true
 	return
 }
 
@@ -73,6 +75,7 @@ func (c *Config) LoadData(dataSources ...interface{}) (err error) {
 		}
 	}
 
+	c.initialized = true
 	return
 }
 
@@ -96,6 +99,7 @@ func (c *Config) LoadSources(format string, src []byte, more ...[]byte) (err err
 		}
 	}
 
+	c.initialized = true
 	return
 }
 
@@ -113,6 +117,7 @@ func (c *Config) LoadStrings(format string, str string, more ...string) (err err
 		}
 	}
 
+	c.initialized = true
 	return
 }
 

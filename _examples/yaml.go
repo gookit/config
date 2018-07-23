@@ -8,16 +8,12 @@ import (
 
 // go run ./examples/yaml.go
 func main() {
-	config.SetOptions(&config.Options{
-		ParseEnv: true,
-	})
+	config.WithOptions(config.ParseEnv)
 
 	// only add decoder
 	// config.SetDecoder(config.Yaml, yaml.Decoder)
 	// Or
-	config.AddDriver(config.Yaml, yaml.Driver)
-	// Or
-	// config.DecoderEncoder(config.Yaml, yaml.Decoder, yaml.Encoder)
+	config.AddDriver(yaml.Driver)
 
 	err := config.LoadFiles("testdata/yml_base.yml")
 	if err != nil {

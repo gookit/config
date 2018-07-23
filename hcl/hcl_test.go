@@ -13,10 +13,8 @@ func TestDriver(t *testing.T) {
 
 	c := config.NewEmpty("test")
 	st.False(c.HasDecoder(config.Hcl))
-	st.Panics(func() {
-		c.AddDriver("invalid", Driver)
-	})
-	c.AddDriver(config.Hcl, Driver)
+
+	c.AddDriver(Driver)
 	st.True(c.HasDecoder(config.Hcl))
 	st.True(c.HasEncoder(config.Hcl))
 }

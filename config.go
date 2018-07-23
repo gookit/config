@@ -26,6 +26,7 @@ type intArr []int
 type strArr []string
 type intMap map[string]int
 type strMap map[string]string
+// type fmtName string
 
 // Driver
 type Driver interface {
@@ -131,31 +132,18 @@ func (c *Config) Options() (*Options) {
 	return c.opts
 }
 
-// SetOptions set options
-func (c *Config) SetOptions(opts *Options) {
-	c.opts = opts
-
-	if c.opts.DumpFormat == "" {
-		c.opts.DumpFormat = Json
-	}
-
-	if c.opts.ReadFormat == "" {
-		c.opts.ReadFormat = Json
-	}
-}
-
-// WithParseEnv set parse env
-func WithParseEnv(opts *Options) {
+// ParseEnv set parse env
+func ParseEnv(opts *Options) {
 	opts.ParseEnv = true
 }
 
-// WithReadonly set readonly
-func WithReadonly(opts *Options) {
+// Readonly set readonly
+func Readonly(opts *Options) {
 	opts.Readonly = true
 }
 
-// WithEnableCache set readonly
-func WithEnableCache(opts *Options) {
+// EnableCache set readonly
+func EnableCache(opts *Options) {
 	opts.EnableCache = true
 }
 
@@ -176,26 +164,10 @@ func (c *Config) WithOptions(opts ...func(*Options)) {
  *************************************************************/
 
 // AddDriver set a decoder and encoder driver for a format.
-func (c *Config) AddDriver(format string, driver Driver) {
-	format = fixFormat(format)
-	if format != driver.Name() {
-		panic(fmt.Sprintf(
-			"format name must be equals to the driver name. current format:%s driver:%s",
-			format,
-			driver.Name(),
-		))
-	}
-
+func (c *Config) AddDriver(driver Driver) {
+	format := driver.Name()
 	c.decoders[format] = driver.GetDecoder()
 	c.encoders[format] = driver.GetEncoder()
-}
-
-// DecoderEncoder set a decoder and encoder for a format.
-func (c *Config) DecoderEncoder(format string, decoder Decoder, encoder Encoder) {
-	format = fixFormat(format)
-
-	c.decoders[format] = decoder
-	c.encoders[format] = encoder
 }
 
 // HasDecoder has decoder
@@ -238,6 +210,19 @@ func (c *Config) HasEncoder(format string) bool {
 	_, ok := c.encoders[format]
 
 	return ok
+}
+
+// DelDriver delete driver of the format
+func (c *Config) DelDriver(format string) {
+	format = fixFormat(format)
+
+	if _, ok := c.decoders[format]; ok {
+		delete(c.decoders, format)
+	}
+
+	if _, ok := c.encoders[format]; ok {
+		delete(c.encoders, format)
+	}
 }
 
 /*************************************************************

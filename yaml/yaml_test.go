@@ -24,15 +24,13 @@ arr1:
 `
 
 func Example() {
-	config.WithOptions(config.WithParseEnv)
+	config.WithOptions(config.ParseEnv)
 
 	// add yaml decoder
 	// only add decoder
 	// config.SetDecoder(config.Yaml, Decoder)
 	// Or
-	config.AddDriver(config.Yaml, Driver)
-	// Or
-	// config.DecoderEncoder(config.Yaml, Decoder, Encoder)
+	config.AddDriver(Driver)
 
 	err := config.LoadFiles("testdata/yml_other.yml")
 	if err != nil {
@@ -108,10 +106,7 @@ func TestDriver(t *testing.T) {
 
 	c := config.NewEmpty("test")
 	st.False(c.HasDecoder(config.Yaml))
-	st.Panics(func() {
-		c.AddDriver("invalid", Driver)
-	})
-	c.AddDriver(config.Yaml, Driver)
+	c.AddDriver(Driver)
 	st.True(c.HasDecoder(config.Yaml))
 	st.True(c.HasEncoder(config.Yaml))
 }

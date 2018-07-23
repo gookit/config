@@ -6,20 +6,16 @@ about ini parse, please see https://github.com/gookit/ini/parser
 package ini
 
 import (
-	"errors"
 	"github.com/gookit/config"
 	"github.com/gookit/ini/parser"
 )
 
 // Decoder the ini content decoder
-var Decoder config.Decoder = func(blob []byte, ptr interface{}) (err error) {
-	return parser.Decode(blob, ptr)
-}
+var Decoder config.Decoder = parser.Decode
 
 // Encoder encode data to ini content
 var Encoder config.Encoder = func(ptr interface{}) (out []byte, err error) {
-	err = errors.New("INI: is not support encode data to INI")
-	return
+	return parser.Encode(ptr)
 }
 
 // Driver for ini

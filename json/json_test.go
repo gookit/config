@@ -8,12 +8,10 @@ import (
 )
 
 func Example() {
-	config.WithOptions(config.WithParseEnv)
+	config.WithOptions(config.ParseEnv)
 
 	// add Decoder and Encoder
-	config.AddDriver(config.Json, Driver)
-	// Or
-	// config.DecoderEncoder(config.Json, json.Decoder, json.Encoder)
+	config.AddDriver(Driver)
 
 	err := config.LoadFiles("testdata/json_base.json")
 	if err != nil {
@@ -71,10 +69,7 @@ func TestDriver(t *testing.T) {
 
 	c := config.NewEmpty("test")
 	st.False(c.HasDecoder(config.Json))
-	st.Panics(func() {
-		c.AddDriver("invalid", Driver)
-	})
-	c.AddDriver(config.Json, Driver)
+	c.AddDriver(Driver)
 	st.True(c.HasDecoder(config.Json))
 	st.True(c.HasEncoder(config.Json))
 }

@@ -25,12 +25,10 @@ org = "GitHub"
 `
 
 func Example() {
-	config.WithOptions(config.WithParseEnv)
+	config.WithOptions(config.ParseEnv)
 
 	// add Decoder and Encoder
-	config.AddDriver(config.Toml, Driver)
-	// Or
-	// config.DecoderEncoder(config.Toml, Decoder, Encoder)
+	config.AddDriver(Driver)
 
 	err := config.LoadFiles("testdata/toml_base.toml")
 	if err != nil {
@@ -95,10 +93,7 @@ func TestDriver(t *testing.T) {
 
 	c := config.NewEmpty("test")
 	st.False(c.HasDecoder(config.Toml))
-	st.Panics(func() {
-		c.AddDriver("invalid", Driver)
-	})
-	c.AddDriver(config.Toml, Driver)
+	c.AddDriver(Driver)
 	st.True(c.HasDecoder(config.Toml))
 	st.True(c.HasEncoder(config.Toml))
 }

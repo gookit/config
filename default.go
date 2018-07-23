@@ -14,9 +14,9 @@ func Default() *Config {
  * config setting for the default instance
  *************************************************************/
 
-// SetOptions set options
-func SetOptions(opts *Options) {
-	dc.SetOptions(opts)
+// GetOptions get options
+func GetOptions() *Options {
+	return  dc.Options()
 }
 
 // WithOptions with options
@@ -25,13 +25,8 @@ func WithOptions(opts ...func(*Options)) {
 }
 
 // AddDriver set a decoder and encoder driver for a format.
-func AddDriver(format string, driver Driver) {
-	dc.AddDriver(format, driver)
-}
-
-// DecoderEncoder set a decoder and encoder for a format.
-func DecoderEncoder(format string, decoder Decoder, encoder Encoder) {
-	dc.DecoderEncoder(format, decoder, encoder)
+func AddDriver(driver Driver) {
+	dc.AddDriver(driver)
 }
 
 // SetDecoder add/set a format decoder

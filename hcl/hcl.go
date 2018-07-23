@@ -12,9 +12,7 @@ import (
 )
 
 // Decoder the hcl content decoder
-var Decoder config.Decoder = func(blob []byte, ptr interface{}) (err error) {
-	return hcl.Unmarshal(blob, ptr)
-}
+var Decoder config.Decoder = hcl.Unmarshal
 
 // Encoder the hcl content encoder
 var Encoder config.Encoder = func(ptr interface{}) (out []byte, err error) {

@@ -8,14 +8,10 @@ import (
 
 // go run ./examples/json.go
 func main() {
-	config.SetOptions(&config.Options{
-		ParseEnv: true,
-	})
+	config.WithOptions(config.ParseEnv)
 
 	// add Decoder and Encoder
-	config.AddDriver(config.Json, json.Driver)
-	// Or
-	// config.DecoderEncoder(config.Json, json.Decoder, json.Encoder)
+	config.AddDriver(json.Driver)
 
 	err := config.LoadFiles("testdata/json_base.json")
 	if err != nil {

@@ -6,17 +6,13 @@ import (
 	"github.com/json-iterator/go"
 )
 
+var parser = jsoniter.ConfigCompatibleWithStandardLibrary
+
 // Decoder for json
-var Decoder config.Decoder = func(blob []byte, v interface{}) (err error) {
-	var parser = jsoniter.ConfigCompatibleWithStandardLibrary
-	return parser.Unmarshal(blob, v)
-}
+var Decoder config.Decoder = parser.Unmarshal
 
 // Encoder for json
-var Encoder config.Encoder = func(v interface{}) (out []byte, err error) {
-	var parser = jsoniter.ConfigCompatibleWithStandardLibrary
-	return parser.Marshal(v)
-}
+var Encoder config.Encoder = parser.Marshal
 
 // Driver for json
 var Driver = &jsonDriver{config.Json}

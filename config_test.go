@@ -27,7 +27,7 @@ var jsonStr = `{
 }`
 
 func Example() {
-	WithOptions(WithParseEnv)
+	WithOptions(ParseEnv)
 
 	// add Decoder and Encoder
 	// use yaml github.com/gookit/config/yaml
@@ -166,21 +166,11 @@ func TestBasic(t *testing.T) {
 	st.True(c.HasEncoder(Json))
 	st.Equal("default", c.Name())
 
-	c = NewWithOptions("test", WithReadonly)
+	c = NewWithOptions("test", Readonly)
 	opts := c.Options()
 	st.True(opts.Readonly)
 	st.Equal(Json, opts.DumpFormat)
 	st.Equal(Json, opts.ReadFormat)
-
-	// empty
-	c = NewEmpty("test")
-	st.False(c.HasDecoder(Json))
-	st.Panics(func() {
-		c.AddDriver("invalid", JsonDriver)
-	})
-	c.AddDriver(Json, JsonDriver)
-	st.True(c.HasDecoder(Json))
-	st.True(c.HasEncoder(Json))
 }
 
 func TestLoad(t *testing.T) {
@@ -201,24 +191,83 @@ func TestLoad(t *testing.T) {
 	})
 
 	st.NotEmpty(Data())
+	st.Nil(err)
 
-	if st.Nil(err) {
-		str, ok := String("name")
-		st.True(ok)
-		st.Equal("inhere", str)
+	c := New("test")
 
-		str, ok = String("notExists")
-		st.False(ok)
-		st.Equal("", str)
+	err = c.LoadFiles("not-exist.json")
+	st.Error(err)
 
-		def := DefString("notExists", "defVal")
-		st.Equal("defVal", def)
-	}
+	err = c.LoadFiles("testdata/json_error.json")
+	st.Error(err)
+
+	err = c.LoadStrings("invalid", jsonStr)
+	st.Error(err)
 }
 
 func TestJsonDriver(t *testing.T) {
 	st := assert.New(t)
 
 	st.Equal("json", JsonDriver.Name())
-	// st.IsType(new(Encoder), JsonDriver.GetEncoder())
+
+	// empty
+	c := NewEmpty("test")
+	st.False(c.HasDecoder(Json))
+	c.AddDriver(JsonDriver)
+	st.True(c.HasDecoder(Json))
+	st.True(c.HasEncoder(Json))
+}
+
+func TestDriver(t *testing.T) {
+	st := assert.New(t)
+
+	c := Default()
+	st.True(c.HasDecoder(Json))
+	st.True(c.HasEncoder(Json))
+
+	c.DelDriver(Json)
+	st.False(c.HasDecoder(Json))
+	st.False(c.HasEncoder(Json))
+
+	AddDriver(JsonDriver)
+	st.True(c.HasDecoder(Json))
+	st.True(c.HasEncoder(Json))
+}
+
+func TestOptions(t *testing.T) {
+	st := assert.New(t)
+
+	// options: ParseEnv
+	c := New("test")
+	c.WithOptions(ParseEnv)
+
+	st.True(c.Options().ParseEnv)
+
+	err := c.LoadStrings(Json, jsonStr)
+	st.Nil(err)
+
+	str, ok := c.String("envKey")
+	st.True(ok)
+	st.NotContains(str, "${")
+
+	str, ok = c.String("envKey1")
+	st.True(ok)
+	st.NotContains(str, "${")
+	st.Equal("defValue", str)
+
+	// options: Readonly
+	c = New("test")
+	c.WithOptions(Readonly)
+
+	st.True(c.Options().Readonly)
+
+	err = c.LoadStrings(Json, jsonStr)
+	st.Nil(err)
+
+	str, ok = c.String("name")
+	st.True(ok)
+	st.Equal("app", str)
+
+	err = c.Set("name", "new app")
+	st.Error(err)
 }
