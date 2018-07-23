@@ -176,13 +176,13 @@ func TestBasic(t *testing.T) {
 func TestLoad(t *testing.T) {
 	st := assert.New(t)
 
-	ClearAll()
-	err := LoadExists("testdata/json_base.json", "not-exist.json")
+	c := New("test")
+	err := c.LoadExists("testdata/json_base.json", "not-exist.json")
 	st.Nil(err)
 
-	ClearAll()
+	c.ClearAll()
 	// load map
-	err = LoadData(map[string]interface{}{
+	err = c.LoadData(map[string]interface{}{
 		"name":    "inhere",
 		"age":     28,
 		"working": true,
@@ -190,10 +190,10 @@ func TestLoad(t *testing.T) {
 		"info":    map[string]string{"k1": "a", "k2": "b"},
 	})
 
-	st.NotEmpty(Data())
+	st.NotEmpty(c.Data())
 	st.Nil(err)
 
-	c := New("test")
+	c = New("test")
 
 	err = c.LoadFiles("not-exist.json")
 	st.Error(err)
@@ -213,6 +213,7 @@ func TestJsonDriver(t *testing.T) {
 	// empty
 	c := NewEmpty("test")
 	st.False(c.HasDecoder(Json))
+
 	c.AddDriver(JsonDriver)
 	st.True(c.HasDecoder(Json))
 	st.True(c.HasEncoder(Json))

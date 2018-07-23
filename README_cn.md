@@ -137,6 +137,13 @@ set string
 - ok: true, val: new name
 ```
 
+## 单元测试
+
+```bash
+go test -cover ./hcl ./ini ./json ./toml ./yaml
+go test -cover
+```
+
 ## 有用的包
 
 ### Yaml 解析

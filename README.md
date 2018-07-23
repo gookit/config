@@ -133,6 +133,13 @@ set string
 - ok: true, val: new name
 ```
 
+## Run test
+
+```bash
+go test -cover ./hcl ./ini ./json ./toml ./yaml
+go test -cover
+```
+
 ## Useful packages
 
 ### Yaml parse

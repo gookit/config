@@ -17,5 +17,8 @@ func TestDriver(t *testing.T) {
 	c.AddDriver(Driver)
 	st.True(c.HasDecoder(config.Hcl))
 	st.True(c.HasEncoder(config.Hcl))
+
+	_,err := Encoder("some data")
+	st.Error(err)
 }
 

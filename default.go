@@ -34,19 +34,9 @@ func SetDecoder(format string, decoder Decoder) {
 	dc.SetDecoder(format, decoder)
 }
 
-// SetDecoders set decoders
-func SetDecoders(decoders map[string]Decoder) {
-	dc.SetDecoders(decoders)
-}
-
 // SetEncoder set a encoder for the format
 func SetEncoder(format string, encoder Encoder) {
 	dc.SetEncoder(format, encoder)
-}
-
-// SetEncoders set encoders
-func SetEncoders(encoders map[string]Encoder) {
-	dc.SetEncoders(encoders)
 }
 
 /*************************************************************
