@@ -12,7 +12,8 @@ golang应用程序配置管理工具库。
 - 支持数据覆盖合并
 - 支持按路径获取子级值, e.g `map.key` `arr.2`
 - 支持解析ENV变量名称. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
-- 通用的使用API `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
+- 简洁的使用API `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
+- 完善的单元测试(coverage > 90%)
 
 > **[EN README](README.md)**
 

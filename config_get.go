@@ -192,6 +192,7 @@ func (c *Config) Int(key string) (value int, ok bool) {
 		return value, true
 	}
 
+	ok = false
 	return
 }
 

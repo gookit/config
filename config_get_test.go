@@ -30,6 +30,10 @@ func TestGet(t *testing.T) {
 	st.False(ok)
 	st.Nil(val)
 
+	val, ok = Get("notExist.sub")
+	st.False(ok)
+	st.Nil(val)
+
 	val, ok = c.Get("arr1.100")
 	st.False(ok)
 	st.Nil(val)
@@ -47,6 +51,9 @@ func TestGet(t *testing.T) {
 	iv, ok := Int("age")
 	st.True(ok)
 	st.Equal(123, iv)
+
+	iv, ok = Int("name")
+	st.False(ok)
 
 	iv = DefInt("notExist", 34)
 	st.Equal(34, iv)
@@ -100,6 +107,9 @@ func TestGet(t *testing.T) {
 	st.True(ok)
 	st.Equal("app", val)
 
+	val, ok = String("arr1")
+	st.False(ok)
+
 	str, ok := String("notExists")
 	st.False(ok)
 	st.Equal("", str)
@@ -108,7 +118,7 @@ func TestGet(t *testing.T) {
 	st.Equal("defVal", str)
 
 	str = c.MustString("name")
-	st.Equal("app", val)
+	st.Equal("app", str)
 	str = c.MustString("notExist")
 	st.Equal("", str)
 
@@ -131,7 +141,10 @@ func TestGet(t *testing.T) {
 	st.Nil(err)
 
 	// get int arr
-	iarr, ok := Ints("notExist")
+	iarr, ok := Ints("name")
+	st.False(ok)
+
+	iarr, ok = Ints("notExist")
 	st.False(ok)
 
 	iarr, ok = Ints("iArr")
@@ -146,7 +159,9 @@ func TestGet(t *testing.T) {
 	st.False(ok)
 
 	// get int map
-	imp, ok := IntMap("notExist")
+	imp, ok := IntMap("name")
+	st.False(ok)
+	imp, ok = IntMap("notExist")
 	st.False(ok)
 
 	imp, ok = IntMap("iMap")
@@ -170,6 +185,9 @@ func TestGet(t *testing.T) {
 	err = c.LoadData(map[string]interface{}{
 		"newIArr": []int{2, 3},
 		"newSArr": []string{"a", "b"},
+		"newIArr1": []interface{}{12, 23},
+		"newIArr2": []interface{}{12, "abc"},
+		"invalidMap": map[string]int{"k": 1},
 		"yMap": map[interface{}]interface{}{
 			"k0": "v0",
 			"k1": 23,
@@ -187,6 +205,12 @@ func TestGet(t *testing.T) {
 	st.True(ok)
 	st.Equal("[2 3]", fmt.Sprintf("%v", iarr))
 
+	iarr,ok = Ints("newIArr1")
+	st.True(ok)
+	st.Equal("[12 23]", fmt.Sprintf("%v", iarr))
+	iarr,ok = Ints("newIArr2")
+	st.False(ok)
+
 	iv, ok = Int("newIArr.1")
 	st.True(ok)
 	st.Equal(3, iv)
@@ -199,6 +223,12 @@ func TestGet(t *testing.T) {
 	st.Equal("b", val)
 
 	val, ok = String("newSArr.100")
+	st.False(ok)
+
+	smp, ok = StringMap("invalidMap")
+	st.False(ok)
+
+	smp, ok = StringMap("yMap.notExist")
 	st.False(ok)
 
 	smp, ok = StringMap("yMap")

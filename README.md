@@ -13,6 +13,7 @@ golang application config manage tool library.
 - support get sub value by path, like `map.key` `arr.2`
 - support parse env name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
 - generic api `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
+- complete unit test(coverage > 90%)
 
 > **[中文说明](README_cn.md)**
 
