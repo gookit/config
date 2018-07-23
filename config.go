@@ -267,6 +267,11 @@ func (c *Config) DumpTo(out io.Writer, format string) (n int64, err error) {
 		return
 	}
 
+	// is empty
+	if len(c.data) == 0 {
+		return
+	}
+
 	// encode data to string
 	encoded, err := encoder(&c.data)
 	if err != nil {
@@ -305,12 +310,12 @@ func (c *Config) ClearCaches() {
 }
 
 // initCaches
-func (c *Config) initCaches() {
-	c.intCache = map[string]int{}
-	c.strCache = map[string]string{}
-	c.sArrCache = map[string]strArr{}
-	c.sMapCache = map[string]strMap{}
-}
+// func (c *Config) initCaches() {
+// 	c.intCache = map[string]int{}
+// 	c.strCache = map[string]string{}
+// 	c.sArrCache = map[string]strArr{}
+// 	c.sMapCache = map[string]strMap{}
+// }
 
 // fixFormat
 func fixFormat(f string) string {

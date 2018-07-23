@@ -39,6 +39,7 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 
 	keys := strings.Split(key, ".")
 	topK := keys[0]
+	paths := keys[1:]
 
 	var ok bool
 	var item interface{}
@@ -46,7 +47,7 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 	// find top item data based on top key
 	if item, ok = c.data[topK]; !ok {
 		// not found, is new add
-		c.data[topK] = buildValueByPath(keys[1:], val)
+		c.data[topK] = buildValueByPath(paths, val)
 		return
 	}
 
@@ -59,7 +60,7 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 		}
 
 		// create a new item for the topK
-		newItem := buildValueByPath(keys[1:], val)
+		newItem := buildValueByPath(paths, val)
 		// merge new item to old item
 		err = mergo.Merge(&dstItem, newItem, mergo.WithOverride)
 		if err != nil {
@@ -69,7 +70,7 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 		c.data[topK] = dstItem
 	case map[string]interface{}: // from json,toml
 		// create a new item for the topK
-		newItem := buildValueByPath(keys[1:], val)
+		newItem := buildValueByPath(paths, val)
 		// merge new item to old item
 		err = mergo.Merge(&typeData, newItem, mergo.WithOverride)
 		if err != nil {
@@ -110,7 +111,11 @@ func buildValueByPath(paths []string, val interface{}) (newItem map[string]inter
 
 	// multi nodes
 	for _, p := range paths {
-		newItem = map[string]interface{}{p: val}
+		if newItem == nil {
+			newItem = map[string]interface{}{p: val}
+		} else {
+			newItem = map[string]interface{}{p: newItem}
+		}
 	}
 
 	return

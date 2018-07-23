@@ -9,6 +9,8 @@ import (
 func TestSet(t *testing.T) {
 	st := assert.New(t)
 
+	c := Default()
+
 	// clear old
 	ClearAll()
 	// err := LoadFiles("testdata/json_base.json")
@@ -18,6 +20,58 @@ func TestSet(t *testing.T) {
 	val, ok := String("name")
 	st.True(ok)
 	st.Equal("app", val)
+
+	// empty key
+	err = Set("", "val")
+	st.Error(err)
+
+	// set new value: int
+	err = Set("newInt", 23)
+	if st.Nil(err) {
+		iv, ok := Int("newInt")
+		st.True(ok)
+		st.Equal(23, iv)
+	}
+
+	// set new value: int
+	err = Set("newBool", false)
+	if st.Nil(err) {
+		bv, ok := Bool("newBool")
+		st.True(ok)
+		st.False(bv)
+	}
+
+	// set new value: string
+	err = Set("newKey", "new val")
+	if st.Nil(err) {
+		val, ok = String("newKey")
+		st.True(ok)
+		st.Equal("new val", val)
+	}
+
+	// like yml decoded data
+	err = Set("ymlLike", map[interface{}]interface{}{"k": "v"})
+	st.Nil(err)
+	str := c.MustString("ymlLike.k")
+	st.Equal("v", str)
+
+	err = Set("ymlLike.nk", "nv")
+	st.Nil(err)
+	str = c.MustString("ymlLike.nk")
+	st.Equal("nv", str)
+
+	// disable setByPath
+	err = Set("some.key", "val", false)
+	if st.Nil(err) {
+		val, ok = String("some")
+		st.False(ok)
+		st.Equal("", val)
+
+		val, ok = String("some.key")
+		st.True(ok)
+		st.Equal("val", val)
+	}
+	// fmt.Printf("%#v\n", c.Data())
 
 	// set value
 	err = Set("name", "new name")
@@ -43,26 +97,23 @@ func TestSet(t *testing.T) {
 		st.Equal("new val", val)
 	}
 
-	// set new value: int
-	err = Set("newInt", 23)
+	// more path nodes
+	err = Set("map1.info.key", "val200")
 	if st.Nil(err) {
-		iv, ok := Int("newInt")
+		// fmt.Printf("%v\n", c.Data())
+		smp, ok := StringMap("map1.info")
 		st.True(ok)
-		st.Equal(23, iv)
+		st.Equal("val200", smp["key"])
+
+		str, ok = String("map1.info.key")
+		st.True(ok)
+		st.Equal("val200", str)
 	}
 
-	// set new value: int
-	err = Set("newBool", false)
+	// new map
+	err = Set("map2.key", "new val")
 	if st.Nil(err) {
-		bv, ok := Bool("newBool")
-		st.True(ok)
-		st.False(bv)
-	}
-
-	// set new value: string
-	err = Set("newKey", "new val")
-	if st.Nil(err) {
-		val, ok = String("newKey")
+		val, ok = String("map2.key")
 		st.True(ok)
 		st.Equal("new val", val)
 	}

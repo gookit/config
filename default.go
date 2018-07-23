@@ -142,8 +142,8 @@ func LoadStrings(format string, str string, more ...string) (err error) {
  *************************************************************/
 
 // Set val by key
-func Set(key string, val interface{}) (err error) {
-	return dc.Set(key, val)
+func Set(key string, val interface{}, setByPath ...bool) (err error) {
+	return dc.Set(key, val, setByPath ...)
 }
 
 // WriteTo a writer

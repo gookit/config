@@ -3,6 +3,7 @@ package config
 import (
 	"testing"
 	"github.com/stretchr/testify/assert"
+	"bytes"
 )
 
 
@@ -10,7 +11,11 @@ func TestDefaultLoad(t *testing.T) {
 	st := assert.New(t)
 
 	ClearAll()
-	err := LoadExists("testdata/json_base.json", "not-exist.json")
+	err := LoadFiles("testdata/json_base.json", "testdata/json_other.json")
+	st.Nil(err)
+
+	ClearAll()
+	err = LoadExists("testdata/json_base.json", "not-exist.json")
 	st.Nil(err)
 
 	ClearAll()
@@ -45,4 +50,15 @@ func TestSetDecoderEncoder(t *testing.T) {
 
 	at.True(c.HasDecoder(Json))
 	at.True(c.HasEncoder(Json))
+}
+
+func TestDefault(t *testing.T) {
+	at := assert.New(t)
+
+	ClearAll()
+	LoadStrings(Json, `{"name": "inhere"}`)
+
+	buf := &bytes.Buffer{}
+	_, err := WriteTo(buf)
+	at.Nil(err)
 }

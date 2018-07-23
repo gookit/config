@@ -193,12 +193,22 @@ func TestLoad(t *testing.T) {
 	st.NotEmpty(c.Data())
 	st.Nil(err)
 
+	st.Panics(func() {
+		c.WithOptions(ParseEnv)
+	})
+
+	err = c.LoadStrings(Json, `{"name": "inhere"}`, jsonStr)
+	st.Nil(err)
+
 	c = New("test")
 
 	err = c.LoadFiles("not-exist.json")
 	st.Error(err)
 
 	err = c.LoadFiles("testdata/json_error.json")
+	st.Error(err)
+
+	err = c.LoadExists("testdata/json_error.json")
 	st.Error(err)
 
 	err = c.LoadStrings("invalid", jsonStr)
@@ -231,6 +241,12 @@ func TestDriver(t *testing.T) {
 	st.False(c.HasEncoder(Json))
 
 	AddDriver(JsonDriver)
+	st.True(c.HasDecoder(Json))
+	st.True(c.HasEncoder(Json))
+
+	c.DelDriver(Json)
+	c.SetDecoders(map[string]Decoder{Json: JsonDecoder})
+	c.SetEncoders(map[string]Encoder{Json: JsonEncoder})
 	st.True(c.HasDecoder(Json))
 	st.True(c.HasEncoder(Json))
 }
@@ -271,4 +287,30 @@ func TestOptions(t *testing.T) {
 
 	err = c.Set("name", "new app")
 	st.Error(err)
+}
+
+func TestExport(t *testing.T) {
+	at := assert.New(t)
+
+	c := New("test")
+
+	str := c.ToJson()
+	at.Equal("", str)
+
+	c.LoadStrings(Json, jsonStr)
+
+	str = c.ToJson()
+	at.Contains(str, `"name":"app"`)
+
+	buf := &bytes.Buffer{}
+	_, err := c.WriteTo(buf)
+	at.Nil(err)
+
+	buf = &bytes.Buffer{}
+
+	_, err = c.DumpTo(buf, "invalid")
+	at.Error(err)
+
+	_, err = c.DumpTo(buf, Json)
+	at.Nil(err)
 }
