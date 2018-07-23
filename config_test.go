@@ -204,10 +204,13 @@ func TestLoad(t *testing.T) {
 	err = c.LoadStrings(Json, `{"name": "inhere"}`, jsonStr)
 	st.Nil(err)
 
-	err = c.LoadSources(Json, []byte(`{"name": "inhere"}`))
+	err = c.LoadSources(Json, []byte(`{"name": "inhere"}`), []byte(jsonStr))
 	st.Nil(err)
 
 	err = c.LoadSources(Json, []byte(`invalid`))
+	st.Error(err)
+
+	err = c.LoadSources(Json, []byte(`{"name": "inhere"}`), []byte(`invalid`))
 	st.Error(err)
 
 	c = New("test")

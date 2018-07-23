@@ -48,6 +48,11 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 	}
 
 	// find child
+	// NOTICE: don't merge case, will result in an error.
+	// e.g. case []int, []string
+	// OR
+	// case []int:
+	// case []string:
 	for _, k := range keys[1:] {
 		switch typeData := item.(type) {
 		case map[string]string: // is map(from Set)
@@ -65,26 +70,28 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 			if !ok {
 				return
 			}
-		case []interface{}: // is array(load from file)
+		case []int: // is array(is from Set)
 			i, err := strconv.Atoi(k)
-			if err != nil {
-				return
-			}
 
 			// 检查slice index是否存在
-			if len(typeData) < i {
+			if err != nil || len(typeData) < i {
+				ok = false
 				return
 			}
 
 			item = typeData[i]
 		case []string: // is array(is from Set)
 			i, err := strconv.Atoi(k)
-			if err != nil {
+			if err != nil || len(typeData) < i {
+				ok = false
 				return
 			}
 
-			// 检查slice index是否存在
-			if len(typeData) < i {
+			item = typeData[i]
+		case []interface{}: // is array(load from file)
+			i, err := strconv.Atoi(k)
+			if err != nil || len(typeData) < i {
+				ok = false
 				return
 			}
 
