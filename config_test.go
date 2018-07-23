@@ -181,6 +181,7 @@ func TestLoad(t *testing.T) {
 	st.Nil(err)
 
 	c.ClearAll()
+
 	// load map
 	err = c.LoadData(map[string]interface{}{
 		"name":    "inhere",
@@ -193,12 +194,21 @@ func TestLoad(t *testing.T) {
 	st.NotEmpty(c.Data())
 	st.Nil(err)
 
+	err = c.LoadData("invalid")
+	st.Error(err)
+
 	st.Panics(func() {
 		c.WithOptions(ParseEnv)
 	})
 
 	err = c.LoadStrings(Json, `{"name": "inhere"}`, jsonStr)
 	st.Nil(err)
+
+	err = c.LoadSources(Json, []byte(`{"name": "inhere"}`))
+	st.Nil(err)
+
+	err = c.LoadSources(Json, []byte(`invalid`))
+	st.Error(err)
 
 	c = New("test")
 

@@ -89,6 +89,10 @@ func TestSet(t *testing.T) {
 		st.Equal("new val", val)
 	}
 
+	// array only support add 1 level value
+	err = Set("arr1.1.key", "new val")
+	st.Error(err)
+
 	// set value to map: by path
 	err = Set("map1.key", "new val")
 	if st.Nil(err) {

@@ -56,6 +56,10 @@ func TestDefault(t *testing.T) {
 	at := assert.New(t)
 
 	ClearAll()
+	WithOptions(ParseEnv)
+
+	at.True(GetOptions().ParseEnv)
+
 	LoadStrings(Json, `{"name": "inhere"}`)
 
 	buf := &bytes.Buffer{}

@@ -88,6 +88,7 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 			c.data[topK] = typeData
 		} else {
 			err = errors.New("max allow 1 level for setting array value, current key: " + key)
+			return err
 		}
 	default:
 		err = errors.New("cannot setting value for the key: " + key)
