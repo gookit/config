@@ -8,6 +8,7 @@ var JsonDecoder Decoder = json.Unmarshal
 
 // JsonEncoder
 var JsonEncoder Encoder = json.Marshal
+
 // var JsonEncoder Encoder = func(v interface{}) (out []byte, err error) {
 // 	return json.Marshal(v)
 // }

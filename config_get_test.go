@@ -183,17 +183,17 @@ func TestGet(t *testing.T) {
 	// like load from yaml content
 	// c = New("test")
 	err = c.LoadData(map[string]interface{}{
-		"newIArr": []int{2, 3},
-		"newSArr": []string{"a", "b"},
-		"newIArr1": []interface{}{12, 23},
-		"newIArr2": []interface{}{12, "abc"},
+		"newIArr":    []int{2, 3},
+		"newSArr":    []string{"a", "b"},
+		"newIArr1":   []interface{}{12, 23},
+		"newIArr2":   []interface{}{12, "abc"},
 		"invalidMap": map[string]int{"k": 1},
 		"yMap": map[interface{}]interface{}{
 			"k0": "v0",
 			"k1": 23,
 		},
 		"yMap1": map[interface{}]interface{}{
-			"k": "v",
+			"k":  "v",
 			"k1": 23,
 			"k2": []interface{}{23, 45},
 		},
@@ -201,14 +201,14 @@ func TestGet(t *testing.T) {
 	})
 	st.Nil(err)
 
-	iarr,ok = Ints("newIArr")
+	iarr, ok = Ints("newIArr")
 	st.True(ok)
 	st.Equal("[2 3]", fmt.Sprintf("%v", iarr))
 
-	iarr,ok = Ints("newIArr1")
+	iarr, ok = Ints("newIArr1")
 	st.True(ok)
 	st.Equal("[12 23]", fmt.Sprintf("%v", iarr))
-	iarr,ok = Ints("newIArr2")
+	iarr, ok = Ints("newIArr2")
 	st.False(ok)
 
 	iv, ok = Int("newIArr.1")

@@ -26,6 +26,7 @@ type intArr []int
 type strArr []string
 type intMap map[string]int
 type strMap map[string]string
+
 // type fmtName string
 
 // Driver
@@ -128,7 +129,7 @@ func NewWithOptions(name string, opts ...func(*Options)) *Config {
  *************************************************************/
 
 // Options get
-func (c *Config) Options() (*Options) {
+func (c *Config) Options() *Options {
 	return c.opts
 }
 

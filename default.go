@@ -16,7 +16,7 @@ func Default() *Config {
 
 // GetOptions get options
 func GetOptions() *Options {
-	return  dc.Options()
+	return dc.Options()
 }
 
 // WithOptions with options
@@ -143,7 +143,7 @@ func LoadStrings(format string, str string, more ...string) (err error) {
 
 // Set val by key
 func Set(key string, val interface{}, setByPath ...bool) (err error) {
-	return dc.Set(key, val, setByPath ...)
+	return dc.Set(key, val, setByPath...)
 }
 
 // WriteTo a writer

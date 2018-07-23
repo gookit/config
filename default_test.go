@@ -1,11 +1,10 @@
 package config
 
 import (
-	"testing"
-	"github.com/stretchr/testify/assert"
 	"bytes"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
-
 
 func TestDefaultLoad(t *testing.T) {
 	st := assert.New(t)
