@@ -42,7 +42,7 @@ arr1:
     - val21
 ```
 
-- 使用, demo请看 [examples/yaml.go](examples/yaml.go):
+- 使用, demo请看 [_examples/yaml.go](_examples/yaml.go):
 
 ```go
 package main
@@ -157,7 +157,7 @@ go test -cover
 
 ### Ini 解析
 
-- [gookit/ini/parser](https://github.com/gookit/ini/parser) ini parser
+- [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser) ini parser
 
 ### 数据合并
 
