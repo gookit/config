@@ -113,7 +113,10 @@ func TestGet(t *testing.T) {
 	st.Equal("", str)
 
 	// get string array
-	arr, ok := Strings("arr1")
+	arr, ok := Strings("notExist")
+	st.False(ok)
+
+	arr, ok = Strings("arr1")
 	st.True(ok)
 	st.Equal(`[]string{"val", "val1", "val2"}`, fmt.Sprintf("%#v", arr))
 
@@ -165,6 +168,8 @@ func TestGet(t *testing.T) {
 	// like load from yaml content
 	// c = New("test")
 	err = c.LoadData(map[string]interface{}{
+		"newIArr": []int{2, 3},
+		"newSArr": []string{"a", "b"},
 		"yMap": map[interface{}]interface{}{
 			"k0": "v0",
 			"k1": 23,
@@ -177,6 +182,24 @@ func TestGet(t *testing.T) {
 		"yArr": []interface{}{23, 45, "val", map[string]interface{}{"k4": "v4"}},
 	})
 	st.Nil(err)
+
+	iarr,ok = Ints("newIArr")
+	st.True(ok)
+	st.Equal("[2 3]", fmt.Sprintf("%v", iarr))
+
+	iv, ok = Int("newIArr.1")
+	st.True(ok)
+	st.Equal(3, iv)
+
+	iv, ok = Int("newIArr.200")
+	st.False(ok)
+
+	val, ok = String("newSArr.1")
+	st.True(ok)
+	st.Equal("b", val)
+
+	val, ok = String("newSArr.100")
+	st.False(ok)
 
 	smp, ok = StringMap("yMap")
 	st.True(ok)
@@ -212,4 +235,37 @@ func TestConfig_MapStructure(t *testing.T) {
 	st.Equal(28, user.Age)
 	st.Equal("inhere", user.Name)
 	st.Equal("pingPong", user.Sports[0])
+}
+
+func TestEnableCache(t *testing.T) {
+	at := assert.New(t)
+
+	c := NewWithOptions("test", EnableCache)
+	err := c.LoadStrings(Json, jsonStr)
+	at.Nil(err)
+
+	str, ok := c.String("name")
+	at.True(ok)
+	at.Equal("app", str)
+
+	// re-get, from caches
+	str, ok = c.String("name")
+	at.True(ok)
+	at.Equal("app", str)
+
+	sArr, ok := c.Strings("arr1")
+	at.True(ok)
+	at.Equal("app", str)
+
+	// re-get, from caches
+	sArr, ok = c.Strings("arr1")
+	at.True(ok)
+	at.Equal("val1", sArr[1])
+
+	sMap, ok := c.StringMap("map1")
+	at.True(ok)
+	at.Equal("val1", sMap["key1"])
+	sMap, ok = c.StringMap("map1")
+	at.True(ok)
+	at.Equal("val1", sMap["key1"])
 }

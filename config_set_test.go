@@ -132,6 +132,10 @@ func TestSet(t *testing.T) {
 		val, ok = String("newArr.1")
 		st.True(ok)
 		st.Equal("b", val)
+
+		val, ok = String("newArr.100")
+		st.False(ok)
+		st.Equal("", val)
 	}
 
 	// set new value: map
@@ -145,5 +149,9 @@ func TestSet(t *testing.T) {
 		val, ok = String("newMap.k1")
 		st.True(ok)
 		st.Equal("a", val)
+
+		val, ok = String("newMap.notExist")
+		st.False(ok)
+		st.Equal("", val)
 	}
 }
