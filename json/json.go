@@ -15,7 +15,7 @@ var Decoder config.Decoder = parser.Unmarshal
 var Encoder config.Encoder = parser.Marshal
 
 // Driver for json
-var Driver = &jsonDriver{config.Json}
+var Driver = &jsonDriver{config.JSON}
 
 // jsonDriver for json format content
 type jsonDriver struct {

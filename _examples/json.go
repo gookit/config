@@ -55,7 +55,7 @@ func main() {
 
 	// if you want export config data
 	// buf := new(bytes.Buffer)
-	// _, err = config.DumpTo(buf, config.Json)
+	// _, err = config.DumpTo(buf, config.JSON)
 	// if err != nil {
 	// 	panic(err)
 	// }

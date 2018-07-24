@@ -131,8 +131,8 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 		decoder, ok = c.decoders[Hcl]
 	case Ini:
 		decoder, ok = c.decoders[Ini]
-	case Json:
-		decoder, ok = c.decoders[Json]
+	case JSON:
+		decoder, ok = c.decoders[JSON]
 	case Yaml, Yml:
 		decoder, ok = c.decoders[Yaml]
 	case Toml:

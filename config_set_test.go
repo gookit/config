@@ -14,7 +14,7 @@ func TestSet(t *testing.T) {
 	// clear old
 	ClearAll()
 	// err := LoadFiles("testdata/json_base.json")
-	err := LoadStrings(Json, jsonStr)
+	err := LoadStrings(JSON, jsonStr)
 	st.Nil(err)
 
 	val, ok := String("name")

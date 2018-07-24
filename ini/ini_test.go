@@ -56,7 +56,7 @@ func TestDriver(t *testing.T) {
 	st := assert.New(t)
 
 	st.Equal("ini", Driver.Name())
-	// st.IsType(new(Encoder), JsonDriver.GetEncoder())
+	// st.IsType(new(Encoder), JSONDriver.GetEncoder())
 
 	c := config.NewEmpty("test")
 	st.False(c.HasDecoder(config.Ini))

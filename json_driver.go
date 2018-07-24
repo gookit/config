@@ -3,18 +3,18 @@ package config
 // default json driver(encoder/decoder)
 import "encoding/json"
 
-// JsonDecoder
-var JsonDecoder Decoder = json.Unmarshal
+// JSONDecoder
+var JSONDecoder Decoder = json.Unmarshal
 
-// JsonEncoder
-var JsonEncoder Encoder = json.Marshal
+// JSONEncoder
+var JSONEncoder Encoder = json.Marshal
 
-// var JsonEncoder Encoder = func(v interface{}) (out []byte, err error) {
+// var JSONEncoder Encoder = func(v interface{}) (out []byte, err error) {
 // 	return json.Marshal(v)
 // }
 
-// JsonDriver
-var JsonDriver = &jsonDriver{Json}
+// JSONDriver
+var JSONDriver = &jsonDriver{JSON}
 
 // jsonDriver for json format content
 type jsonDriver struct {
@@ -28,10 +28,10 @@ func (d *jsonDriver) Name() string {
 
 // GetDecoder for json
 func (d *jsonDriver) GetDecoder() Decoder {
-	return JsonDecoder
+	return JSONDecoder
 }
 
 // GetEncoder for json
 func (d *jsonDriver) GetEncoder() Encoder {
-	return JsonEncoder
+	return JSONEncoder
 }

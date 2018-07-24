@@ -55,7 +55,7 @@ func Example() {
 
 	// if you want export config data
 	// buf := new(bytes.Buffer)
-	// _, err = config.DumpTo(buf, config.Json)
+	// _, err = config.DumpTo(buf, config.JSON)
 	// if err != nil {
 	// 	panic(err)
 	// }
@@ -68,8 +68,8 @@ func TestDriver(t *testing.T) {
 	st.Equal("json", Driver.Name())
 
 	c := config.NewEmpty("test")
-	st.False(c.HasDecoder(config.Json))
+	st.False(c.HasDecoder(config.JSON))
 	c.AddDriver(Driver)
-	st.True(c.HasDecoder(config.Json))
-	st.True(c.HasEncoder(config.Json))
+	st.True(c.HasDecoder(config.JSON))
+	st.True(c.HasEncoder(config.JSON))
 }

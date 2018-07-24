@@ -10,7 +10,7 @@ func TestGet(t *testing.T) {
 	st := assert.New(t)
 
 	ClearAll()
-	err := LoadStrings(Json, jsonStr)
+	err := LoadStrings(JSON, jsonStr)
 	st.Nil(err)
 
 	// fmt.Printf("%#v\n", Data())
@@ -134,7 +134,7 @@ func TestGet(t *testing.T) {
 	st.True(ok)
 	st.Equal("val1", val)
 
-	err = LoadStrings(Json, `{
+	err = LoadStrings(JSON, `{
 "iArr": [12, 34, 36],
 "iMap": {"k1": 12, "k2": 34, "k3": 36}
 }`)
@@ -250,7 +250,7 @@ func TestConfig_MapStructure(t *testing.T) {
 	st := assert.New(t)
 
 	cfg := New("test")
-	err := cfg.LoadStrings(Json, `{
+	err := cfg.LoadStrings(JSON, `{
 "age": 28,
 "name": "inhere",
 "sports": ["pingPong", "跑步"]
@@ -271,7 +271,7 @@ func TestEnableCache(t *testing.T) {
 	at := assert.New(t)
 
 	c := NewWithOptions("test", EnableCache)
-	err := c.LoadStrings(Json, jsonStr)
+	err := c.LoadStrings(JSON, jsonStr)
 	at.Nil(err)
 
 	str, ok := c.String("name")

@@ -1,11 +1,11 @@
 /*
-golang application config manage implement. support YAML,TOML,JSON,INI,HCL format.
+Go application config manage implement. support YAML,TOML,JSON,INI,HCL format.
 
 Source code and other details for the project are available at GitHub:
 
 	https://github.com/gookit/config
 
-Json format content example:
+JSON format content example:
 
 	{
 		"name": "app",

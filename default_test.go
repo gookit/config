@@ -36,19 +36,19 @@ func TestSetDecoderEncoder(t *testing.T) {
 	c := Default()
 	c.ClearAll()
 
-	at.True(c.HasDecoder(Json))
-	at.True(c.HasEncoder(Json))
+	at.True(c.HasDecoder(JSON))
+	at.True(c.HasEncoder(JSON))
 
-	c.DelDriver(Json)
+	c.DelDriver(JSON)
 
-	at.False(c.HasDecoder(Json))
-	at.False(c.HasEncoder(Json))
+	at.False(c.HasDecoder(JSON))
+	at.False(c.HasEncoder(JSON))
 
-	SetDecoder(Json, JsonDecoder)
-	SetEncoder(Json, JsonEncoder)
+	SetDecoder(JSON, JSONDecoder)
+	SetEncoder(JSON, JSONEncoder)
 
-	at.True(c.HasDecoder(Json))
-	at.True(c.HasEncoder(Json))
+	at.True(c.HasDecoder(JSON))
+	at.True(c.HasEncoder(JSON))
 }
 
 func TestDefault(t *testing.T) {
@@ -60,7 +60,7 @@ func TestDefault(t *testing.T) {
 
 	at.True(GetOptions().ParseEnv)
 
-	LoadStrings(Json, `{"name": "inhere"}`)
+	LoadStrings(JSON, `{"name": "inhere"}`)
 
 	buf := &bytes.Buffer{}
 	_, err := WriteTo(buf)

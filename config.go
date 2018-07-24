@@ -16,7 +16,7 @@ const (
 	Ini  = "ini"
 	Hcl  = "hcl"
 	Yml  = "yml"
-	Json = "json"
+	JSON = "json"
 	Yaml = "yaml"
 	Toml = "toml"
 )
@@ -93,11 +93,11 @@ func New(name string) *Config {
 		data: make(map[string]interface{}),
 
 		// init options
-		opts: &Options{DumpFormat: Json, ReadFormat: Json},
+		opts: &Options{DumpFormat: JSON, ReadFormat: JSON},
 
 		// default add json driver
-		encoders: map[string]Encoder{Json: JsonEncoder},
-		decoders: map[string]Decoder{Json: JsonDecoder},
+		encoders: map[string]Encoder{JSON: JSONEncoder},
+		decoders: map[string]Decoder{JSON: JSONDecoder},
 	}
 }
 
@@ -240,11 +240,11 @@ func (c *Config) Data() map[string]interface{} {
 	return c.data
 }
 
-// ToJson string
-func (c *Config) ToJson() string {
+// ToJSON string
+func (c *Config) ToJSON() string {
 	buf := &bytes.Buffer{}
 
-	_, err := c.DumpTo(buf, Json)
+	_, err := c.DumpTo(buf, JSON)
 	if err != nil {
 		return ""
 	}

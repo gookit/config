@@ -37,7 +37,7 @@ func Example() {
 	// use toml github.com/gookit/config/hcl
 	// AddDriver(Hcl, hcl.Driver)
 	// Or
-	// config.DecoderEncoder(config.Json, yaml.Decoder, yaml.Encoder)
+	// config.DecoderEncoder(config.JSON, yaml.Decoder, yaml.Encoder)
 
 	err := LoadFiles("testdata/json_base.json")
 	if err != nil {
@@ -53,7 +53,7 @@ func Example() {
 	}
 
 	// load from string
-	LoadSources(Json, []byte(jsonStr))
+	LoadSources(JSON, []byte(jsonStr))
 
 	// fmt.Printf("config data: \n %#v\n", Data())
 	fmt.Print("get config example:\n")
@@ -84,7 +84,7 @@ func Example() {
 
 	// if you want export config data
 	// buf := new(bytes.Buffer)
-	// _, err = config.DumpTo(buf, config.Json)
+	// _, err = config.DumpTo(buf, config.JSON)
 	// if err != nil {
 	// 	panic(err)
 	// }
@@ -110,7 +110,7 @@ func Example() {
 
 func ExampleConfig_DefBool() {
 	// load from string
-	LoadSources(Json, []byte(jsonStr))
+	LoadSources(JSON, []byte(jsonStr))
 
 	val, ok := Bool("debug")
 	fmt.Printf("get 'debug', ok: %v, val: %v\n", ok, val)
@@ -128,13 +128,13 @@ func Example_exportConfig() {
 
 	ClearAll()
 	// load from string
-	LoadStrings(Json, `{
+	LoadStrings(JSON, `{
 "name": "app",
 "age": 34
 }`)
 
 	buf := new(bytes.Buffer)
-	_, err := DumpTo(buf, Json)
+	_, err := DumpTo(buf, JSON)
 	if err != nil {
 		panic(err)
 	}
@@ -146,7 +146,7 @@ func Example_exportConfig() {
 }
 
 func BenchmarkGet(b *testing.B) {
-	err := LoadStrings(Json, jsonStr)
+	err := LoadStrings(JSON, jsonStr)
 	if err != nil {
 		panic(err)
 	}
@@ -162,15 +162,15 @@ func TestBasic(t *testing.T) {
 
 	ClearAll()
 	c := Default()
-	st.True(c.HasDecoder(Json))
-	st.True(c.HasEncoder(Json))
+	st.True(c.HasDecoder(JSON))
+	st.True(c.HasEncoder(JSON))
 	st.Equal("default", c.Name())
 
 	c = NewWithOptions("test", Readonly)
 	opts := c.Options()
 	st.True(opts.Readonly)
-	st.Equal(Json, opts.DumpFormat)
-	st.Equal(Json, opts.ReadFormat)
+	st.Equal(JSON, opts.DumpFormat)
+	st.Equal(JSON, opts.ReadFormat)
 }
 
 func TestLoad(t *testing.T) {
@@ -201,16 +201,16 @@ func TestLoad(t *testing.T) {
 		c.WithOptions(ParseEnv)
 	})
 
-	err = c.LoadStrings(Json, `{"name": "inhere"}`, jsonStr)
+	err = c.LoadStrings(JSON, `{"name": "inhere"}`, jsonStr)
 	st.Nil(err)
 
-	err = c.LoadSources(Json, []byte(`{"name": "inhere"}`), []byte(jsonStr))
+	err = c.LoadSources(JSON, []byte(`{"name": "inhere"}`), []byte(jsonStr))
 	st.Nil(err)
 
-	err = c.LoadSources(Json, []byte(`invalid`))
+	err = c.LoadSources(JSON, []byte(`invalid`))
 	st.Error(err)
 
-	err = c.LoadSources(Json, []byte(`{"name": "inhere"}`), []byte(`invalid`))
+	err = c.LoadSources(JSON, []byte(`{"name": "inhere"}`), []byte(`invalid`))
 	st.Error(err)
 
 	c = New("test")
@@ -228,40 +228,40 @@ func TestLoad(t *testing.T) {
 	st.Error(err)
 }
 
-func TestJsonDriver(t *testing.T) {
+func TestJSONDriver(t *testing.T) {
 	st := assert.New(t)
 
-	st.Equal("json", JsonDriver.Name())
+	st.Equal("json", JSONDriver.Name())
 
 	// empty
 	c := NewEmpty("test")
-	st.False(c.HasDecoder(Json))
+	st.False(c.HasDecoder(JSON))
 
-	c.AddDriver(JsonDriver)
-	st.True(c.HasDecoder(Json))
-	st.True(c.HasEncoder(Json))
+	c.AddDriver(JSONDriver)
+	st.True(c.HasDecoder(JSON))
+	st.True(c.HasEncoder(JSON))
 }
 
 func TestDriver(t *testing.T) {
 	st := assert.New(t)
 
 	c := Default()
-	st.True(c.HasDecoder(Json))
-	st.True(c.HasEncoder(Json))
+	st.True(c.HasDecoder(JSON))
+	st.True(c.HasEncoder(JSON))
 
-	c.DelDriver(Json)
-	st.False(c.HasDecoder(Json))
-	st.False(c.HasEncoder(Json))
+	c.DelDriver(JSON)
+	st.False(c.HasDecoder(JSON))
+	st.False(c.HasEncoder(JSON))
 
-	AddDriver(JsonDriver)
-	st.True(c.HasDecoder(Json))
-	st.True(c.HasEncoder(Json))
+	AddDriver(JSONDriver)
+	st.True(c.HasDecoder(JSON))
+	st.True(c.HasEncoder(JSON))
 
-	c.DelDriver(Json)
-	c.SetDecoders(map[string]Decoder{Json: JsonDecoder})
-	c.SetEncoders(map[string]Encoder{Json: JsonEncoder})
-	st.True(c.HasDecoder(Json))
-	st.True(c.HasEncoder(Json))
+	c.DelDriver(JSON)
+	c.SetDecoders(map[string]Decoder{JSON: JSONDecoder})
+	c.SetEncoders(map[string]Encoder{JSON: JSONEncoder})
+	st.True(c.HasDecoder(JSON))
+	st.True(c.HasEncoder(JSON))
 }
 
 func TestOptions(t *testing.T) {
@@ -273,7 +273,7 @@ func TestOptions(t *testing.T) {
 
 	st.True(c.Options().ParseEnv)
 
-	err := c.LoadStrings(Json, jsonStr)
+	err := c.LoadStrings(JSON, jsonStr)
 	st.Nil(err)
 
 	str, ok := c.String("envKey")
@@ -291,7 +291,7 @@ func TestOptions(t *testing.T) {
 
 	st.True(c.Options().Readonly)
 
-	err = c.LoadStrings(Json, jsonStr)
+	err = c.LoadStrings(JSON, jsonStr)
 	st.Nil(err)
 
 	str, ok = c.String("name")
@@ -307,12 +307,12 @@ func TestExport(t *testing.T) {
 
 	c := New("test")
 
-	str := c.ToJson()
+	str := c.ToJSON()
 	at.Equal("", str)
 
-	c.LoadStrings(Json, jsonStr)
+	c.LoadStrings(JSON, jsonStr)
 
-	str = c.ToJson()
+	str = c.ToJSON()
 	at.Contains(str, `"name":"app"`)
 
 	buf := &bytes.Buffer{}
@@ -324,6 +324,6 @@ func TestExport(t *testing.T) {
 	_, err = c.DumpTo(buf, "invalid")
 	at.Error(err)
 
-	_, err = c.DumpTo(buf, Json)
+	_, err = c.DumpTo(buf, JSON)
 	at.Nil(err)
 }
