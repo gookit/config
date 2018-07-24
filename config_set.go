@@ -14,10 +14,11 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 	if c.opts.Readonly {
 		err = errors.New("the config instance in 'readonly' mode")
 		return
-	} else {
-		c.lock.Lock()
-		defer c.lock.Unlock()
 	}
+
+	// open lock
+	c.lock.Lock()
+	defer c.lock.Unlock()
 
 	key = strings.Trim(strings.TrimSpace(key), ".")
 	if key == "" {

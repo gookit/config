@@ -1,5 +1,5 @@
 /*
-This is driver use INI format content as config source
+Package ini is driver use INI format content as config source
 
 about ini parse, please see https://github.com/gookit/ini/parser
 */

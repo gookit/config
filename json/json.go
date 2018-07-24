@@ -1,4 +1,4 @@
-// use the https://github.com/json-iterator/go for parse json
+// Package json use the https://github.com/json-iterator/go for parse json
 package json
 
 import (

@@ -3,10 +3,10 @@ package config
 // default json driver(encoder/decoder)
 import "encoding/json"
 
-// JSONDecoder
+// JSONDecoder for json decode
 var JSONDecoder Decoder = json.Unmarshal
 
-// JSONEncoder
+// JSONEncoder for json encode
 var JSONEncoder Encoder = json.Marshal
 
 // var JSONEncoder Encoder = func(v interface{}) (out []byte, err error) {

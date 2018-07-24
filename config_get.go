@@ -230,7 +230,7 @@ func (c *Config) DefInt64(key string, def int64) int64 {
 	return def
 }
 
-// MustInt get a int value, if not found return 0
+// MustInt64 get a int value, if not found return 0
 func (c *Config) MustInt64(key string) int64 {
 	return c.DefInt64(key, 0)
 }
@@ -432,12 +432,12 @@ func (c *Config) StringMap(key string) (mp map[string]string, ok bool) {
 	return
 }
 
-// MapStructure alias method of the 'GetStructure'
+// MapStructure alias method of the 'Structure'
 func (c *Config) MapStructure(key string, v interface{}) (err error) {
 	return c.Structure(key, v)
 }
 
-// GetStructure get config data and map to a structure.
+// Structure get config data and map to a structure.
 // usage:
 // 	dbInfo := Db{}
 // 	config.Structure("db", &dbInfo)

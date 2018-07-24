@@ -9,7 +9,7 @@ import (
 )
 
 // package version
-const Version = "1.0.3"
+const Version = "1.0.6"
 
 // supported config format
 const (
@@ -29,7 +29,7 @@ type strMap map[string]string
 
 // type fmtName string
 
-// Driver
+// Driver interface
 type Driver interface {
 	Name() string
 	GetDecoder() Decoder
@@ -56,7 +56,7 @@ type Options struct {
 	ReadFormat string
 }
 
-// Config
+// Config structure definition
 type Config struct {
 	// config instance name
 	name string
@@ -148,7 +148,7 @@ func EnableCache(opts *Options) {
 	opts.EnableCache = true
 }
 
-// WithOptions
+// WithOptions apply some options
 func (c *Config) WithOptions(opts ...func(*Options)) {
 	if c.initialized {
 		panic("config: Cannot set options after initialization is complete")

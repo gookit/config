@@ -1,5 +1,5 @@
 /*
-Go application config manage implement. support YAML,TOML,JSON,INI,HCL format.
+Package config is a go config management implement. support YAML,TOML,JSON,INI,HCL format.
 
 Source code and other details for the project are available at GitHub:
 

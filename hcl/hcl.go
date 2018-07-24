@@ -1,5 +1,5 @@
 /*
-This is driver use HCL format content as config source
+Package hcl is driver use HCL format content as config source
 
 about HCL, please see https://github.com/hashicorp/hcl
 */
