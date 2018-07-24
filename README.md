@@ -42,7 +42,7 @@ arr1:
     - val21
 ```
 
-- usage, see [examples/yaml.go](examples/yaml.go):
+- usage, see [_examples/yaml.go](_examples/yaml.go):
 
 ```go
 package main
@@ -153,7 +153,7 @@ go test -cover
 
 ### Ini parse
 
-- [gookit/ini/parser](https://github.com/gookit/ini/parser) ini parser
+- [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser) ini parser
 
 ### Data merge
 
@@ -161,7 +161,7 @@ go test -cover
 
 ### Ini config use
 
-- [gookit/ini](https://github.com/gookit/ini/parser) ini config manage
+- [gookit/ini](https://github.com/gookit/ini) ini config manage
 
 ## License
 
