@@ -13,7 +13,7 @@ var JSONEncoder Encoder = json.Marshal
 // 	return json.Marshal(v)
 // }
 
-// JSONDriver
+// JSONDriver instance fot json
 var JSONDriver = &jsonDriver{JSON}
 
 // jsonDriver for json format content

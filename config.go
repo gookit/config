@@ -8,10 +8,10 @@ import (
 	"sync"
 )
 
-// package version
+// Version is package version
 const Version = "1.0.6"
 
-// supported config format
+// There are supported config format
 const (
 	Ini  = "ini"
 	Hcl  = "hcl"

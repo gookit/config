@@ -3,8 +3,8 @@ package ini
 import (
 	"fmt"
 	"github.com/gookit/config"
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func Example() {

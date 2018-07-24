@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/gookit/config"
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 var yamlStr = `
@@ -110,4 +110,3 @@ func TestDriver(t *testing.T) {
 	st.True(c.HasDecoder(config.Yaml))
 	st.True(c.HasEncoder(config.Yaml))
 }
-

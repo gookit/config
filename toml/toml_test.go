@@ -3,8 +3,8 @@ package toml
 import (
 	"fmt"
 	"github.com/gookit/config"
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 var tomlStr = `
@@ -105,7 +105,7 @@ func TestDriver(t *testing.T) {
 	_, err = Encoder("invalid")
 	st.Error(err)
 
-	out, err := Encoder(map[string]interface{}{"k":"v"})
+	out, err := Encoder(map[string]interface{}{"k": "v"})
 	st.Nil(err)
 	st.Contains(string(out), `k = "v"`)
 }

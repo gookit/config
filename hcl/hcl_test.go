@@ -1,9 +1,9 @@
 package hcl
 
 import (
-	"testing"
-	"github.com/stretchr/testify/assert"
 	"github.com/gookit/config"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestDriver(t *testing.T) {
@@ -18,7 +18,6 @@ func TestDriver(t *testing.T) {
 	st.True(c.HasDecoder(config.Hcl))
 	st.True(c.HasEncoder(config.Hcl))
 
-	_,err := Encoder("some data")
+	_, err := Encoder("some data")
 	st.Error(err)
 }
-

@@ -20,7 +20,7 @@ var Encoder config.Encoder = func(ptr interface{}) (out []byte, err error) {
 	return
 }
 
-// Driver
+// Driver instance for hcl
 var Driver = &hclDriver{config.Hcl}
 
 // hclDriver for hcl format content
