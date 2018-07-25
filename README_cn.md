@@ -55,15 +55,11 @@ import (
 
 // go run ./examples/yaml.go
 func main() {
-	config.SetOptions(&config.Options{
-		ParseEnv: true, // 启用解析ENV变量
-	})
-	
-	// 除了json格式是内置的外，其他格式都需在使用前添加解析驱动
-	// config.SetDecoder(config.Yaml, yaml.Decoder)
-	config.AddDriver(config.Yaml, yaml.Driver)
-	// OR
-	// config.DecoderEncoder(config.Yaml, yaml.Decoder, yaml.Encoder)
+	config.WithOptions(config.ParseEnv)
+
+    // add driver for support yaml content
+    config.AddDriver(yaml.Driver)
+    // config.SetDecoder(config.Yaml, yaml.Decoder)
 
     // 加载配置，可以同时传入多个文件
 	err := config.LoadFiles("testdata/yml_base.yml")

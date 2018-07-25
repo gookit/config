@@ -11,7 +11,7 @@ golang application config manage tool library.
 - support multi file/data load
 - support data override merge
 - support get sub value by path, like `map.key` `arr.2`
-- support parse env name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
+- support parse ENV name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
 - generic api `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
 - complete unit test(coverage > 90%)
 
@@ -55,12 +55,11 @@ import (
 
 // go run ./examples/yaml.go
 func main() {
-	config.SetOptions(&config.Options{
-		ParseEnv: true,
-	})
+	config.WithOptions(config.ParseEnv)
 	
+	// add driver for support yaml content
+	config.AddDriver(yaml.Driver)
 	// config.SetDecoder(config.Yaml, yaml.Decoder)
-	config.DecoderEncoder(config.Yaml, yaml.Decoder, yaml.Encoder)
 
 	err := config.LoadFiles("testdata/yml_base.yml")
 	if err != nil {
