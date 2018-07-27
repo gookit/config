@@ -137,9 +137,12 @@ set string
 ## 单元测试
 
 ```bash
-go test -cover ./hcl ./ini ./json ./toml ./yaml
 go test -cover
+// contains all sub-folder
+go test -cover ./...
 ```
+
+- see coverage details: https://gocover.io/github.com/gookit/config
 
 ## 有用的包
 

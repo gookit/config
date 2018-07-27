@@ -126,6 +126,9 @@ func TestGet(t *testing.T) {
 	arr, ok := Strings("notExist")
 	st.False(ok)
 
+	arr, ok = Strings("map1")
+	st.False(ok)
+
 	arr, ok = Strings("arr1")
 	st.True(ok)
 	st.Equal(`[]string{"val", "val1", "val2"}`, fmt.Sprintf("%#v", arr))
@@ -140,7 +143,7 @@ func TestGet(t *testing.T) {
 }`)
 	st.Nil(err)
 
-	// get int arr
+	// Ints: get int arr
 	iarr, ok := Ints("name")
 	st.False(ok)
 
@@ -158,7 +161,7 @@ func TestGet(t *testing.T) {
 	iv, ok = Int("iArr.100")
 	st.False(ok)
 
-	// get int map
+	// IntMap: get int map
 	imp, ok := IntMap("name")
 	st.False(ok)
 	imp, ok = IntMap("notExist")
@@ -175,7 +178,14 @@ func TestGet(t *testing.T) {
 	iv, ok = Int("iMap.notExist")
 	st.False(ok)
 
-	// get string map
+	// set a intMap
+	Set("intMap0", map[string]int{"a": 1, "b": 2})
+	imp, ok = IntMap("intMap0")
+	st.True(ok)
+	st.NotEmpty(imp)
+	st.Equal(1, imp["a"])
+
+	// StringMap: get string map
 	smp, ok := StringMap("map1")
 	st.True(ok)
 	st.Equal("val1", smp["key1"])
@@ -197,6 +207,15 @@ func TestGet(t *testing.T) {
 			"k1": 23,
 			"k2": []interface{}{23, 45},
 		},
+		"yMap10": map[string]interface{}{
+			"k":  "v",
+			"k1": 23,
+			"k2": []interface{}{23, 45},
+		},
+		"yMap2": map[interface{}]interface{}{
+			"k":  2,
+			"k1": 23,
+		},
 		"yArr": []interface{}{23, 45, "val", map[string]interface{}{"k4": "v4"}},
 	})
 	st.Nil(err)
@@ -217,6 +236,17 @@ func TestGet(t *testing.T) {
 
 	iv, ok = Int("newIArr.200")
 	st.False(ok)
+
+	// invalid intMap
+	imp, ok = IntMap("yMap1")
+	st.False(ok)
+
+	imp, ok = IntMap("yMap10")
+	st.False(ok)
+
+	imp, ok = IntMap("yMap2")
+	st.True(ok)
+	st.Equal(2, imp["k"])
 
 	val, ok = String("newSArr.1")
 	st.True(ok)
@@ -240,12 +270,6 @@ func TestGet(t *testing.T) {
 	st.Equal("[23 45]", fmt.Sprintf("%v", iarr))
 }
 
-type user struct {
-	Age    int
-	Name   string
-	Sports []string
-}
-
 func TestConfig_MapStructure(t *testing.T) {
 	st := assert.New(t)
 
@@ -258,13 +282,38 @@ func TestConfig_MapStructure(t *testing.T) {
 
 	st.Nil(err)
 
-	user := &user{}
+	user := &struct {
+		Age    int
+		Name   string
+		Sports []string
+	}{}
+	// map all
 	err = cfg.MapStructure("", user)
 	st.Nil(err)
 
 	st.Equal(28, user.Age)
 	st.Equal("inhere", user.Name)
 	st.Equal("pingPong", user.Sports[0])
+
+	// map some
+	err = cfg.LoadStrings(JSON, `{
+"sec": {
+	"key": "val",
+	"age": 120,
+	"tags": [12, 34]
+}
+}`)
+	st.Nil(err)
+
+	some := struct {
+		Age  int
+		Kye  string
+		Tags []int
+	}{}
+	err = cfg.MapStructure("sec", &some)
+	st.Nil(err)
+	st.Equal(120, some.Age)
+	st.Equal(12, some.Tags[0])
 }
 
 func TestEnableCache(t *testing.T) {

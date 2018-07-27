@@ -133,12 +133,15 @@ set string
 - ok: true, val: new name
 ```
 
-## Run test
+## Run tests
 
 ```bash
-go test -cover ./hcl ./ini ./json ./toml ./yaml
 go test -cover
+// contains all sub-folder
+go test -cover ./...
 ```
+
+- see coverage details: https://gocover.io/github.com/gookit/config
 
 ## Useful packages
 

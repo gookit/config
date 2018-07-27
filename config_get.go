@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -125,31 +126,15 @@ func (c *Config) String(key string) (value string, ok bool) {
 	}
 
 	switch val.(type) {
-	case bool, int, int8, int32, int64,
-		// from json int always is float64
-		float32, float64:
+	// from json int always is float64
+	case bool, int, uint, int8, uint8, int16, uint16, int32, uint64, int64, float32, float64:
 		value = fmt.Sprintf("%v", val)
 	case string:
 		value = fmt.Sprintf("%v", val)
 
 		// if opts.ParseEnv is true
-		if c.opts.ParseEnv && strings.Index(value, "${") == 0 {
-			var name, def string
-			str := strings.Trim(strings.TrimSpace(value), "${}")
-			ss := strings.SplitN(str, "|", 2)
-
-			// ${NotExist|defValue}
-			if len(ss) == 2 {
-				name, def = strings.TrimSpace(ss[0]), strings.TrimSpace(ss[1])
-				// ${SHELL}
-			} else {
-				name = ss[0]
-			}
-
-			value = os.Getenv(name)
-			if value == "" {
-				value = def
-			}
+		if c.opts.ParseEnv {
+			value = c.parseEnvValue(value)
 		}
 	default:
 		ok = false
@@ -464,6 +449,46 @@ func (c *Config) Structure(key string, v interface{}) (err error) {
 	}
 
 	return
+}
+
+// parse env value, eg: "${SHELL}" ${NotExist|defValue}
+var envRegex = regexp.MustCompile(`\$\{([\w-| ]+)}`)
+
+// parse Env Value
+func (c *Config) parseEnvValue(val string) string {
+	if strings.Index(val, "${") == -1 {
+		return val
+	}
+
+	// nodes like: ${VAR} -> [${VAR}]
+	// val = "${GOPATH}/${APP_ENV | prod}/dir" -> [${GOPATH} ${APP_ENV | prod}]
+	vars := envRegex.FindAllString(val, -1)
+	if len(vars) == 0 {
+		return val
+	}
+
+	var oldNew []string
+	var name, def string
+	for _, fVar := range vars {
+		ss := strings.SplitN(fVar[2:len(fVar)-1], "|", 2)
+
+		// has default ${NotExist|defValue}
+		if len(ss) == 2 {
+			name, def = strings.TrimSpace(ss[0]), strings.TrimSpace(ss[1])
+		} else {
+			def = fVar
+			name = ss[0]
+		}
+
+		envVal := os.Getenv(name)
+		if envVal == "" {
+			envVal = def
+		}
+
+		oldNew = append(oldNew, fVar, envVal)
+	}
+
+	return strings.NewReplacer(oldNew...).Replace(val)
 }
 
 // format key

@@ -310,14 +310,6 @@ func (c *Config) ClearCaches() {
 	c.sArrCache = nil
 }
 
-// initCaches
-// func (c *Config) initCaches() {
-// 	c.intCache = map[string]int{}
-// 	c.strCache = map[string]string{}
-// 	c.sArrCache = map[string]strArr{}
-// 	c.sMapCache = map[string]strMap{}
-// }
-
 // fixFormat
 func fixFormat(f string) string {
 	if f == Yml {
