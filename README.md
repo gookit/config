@@ -17,6 +17,10 @@ golang application config manage tool library.
 
 > **[中文说明](README_cn.md)**
 
+## Only use INI
+
+> If you just want to use INI for simple config management, recommended use [gookit/ini](https://github.com/gookit/ini)
+
 ## Godoc
 
 - [godoc for gopkg](https://godoc.org/gopkg.in/gookit/config.v1)
