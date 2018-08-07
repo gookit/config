@@ -150,21 +150,10 @@ go test -cover ./...
 
 ## 有用的包
 
-### Yaml 解析
-
-- [go-yaml](https://github.com/go-yaml/yaml) yaml parser
-
-### Toml 解析
-
-- [go toml](https://github.com/BurntSushi/toml) toml parser
-
-### Ini 解析
-
-- [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser) ini parser
-
-### 数据合并
-
-- [mergo](https://github.com/imdario/mergo) merge data
+- Ini 解析 [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser)
+- Yaml 解析 [go-yaml](https://github.com/go-yaml/yaml)
+- Toml 解析 [go toml](https://github.com/BurntSushi/toml)
+- 数据合并 [mergo](https://github.com/imdario/mergo)
 
 ## 其他
 

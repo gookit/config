@@ -147,23 +147,12 @@ go test -cover ./...
 
 - see coverage details: https://gocover.io/github.com/gookit/config
 
-## Useful packages
+## Related packages
 
-### Yaml parse
-
-- [go-yaml](https://github.com/go-yaml/yaml) yaml parser
-
-### Toml parse
-
-- [go toml](https://github.com/BurntSushi/toml) toml parser
-
-### Ini parse
-
-- [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser) ini parser
-
-### Data merge
-
-- [mergo](https://github.com/imdario/mergo) merge data
+- Ini parse [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser)
+- Yaml parse [go-yaml](https://github.com/go-yaml/yaml)
+- Toml parse [go toml](https://github.com/BurntSushi/toml)
+- Data merge [mergo](https://github.com/imdario/mergo)
 
 ### Ini config use
 
