@@ -8,10 +8,10 @@
 golang应用程序配置管理工具库。
 
 - 支持多种格式: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`
-- 支持多文件/数据加载
-- 支持数据覆盖合并
-- 支持按路径获取子级值, e.g `map.key` `arr.2`
-- 支持解析ENV变量名称. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
+- 支持多个文件/数据加载
+- 支持数据覆盖合并，将按key自动合并
+- 支持按路径获取子级值。 e.g `map.key` `arr.2`
+- 支持解析ENV变量名称。 like `shell: ${SHELL}` -> `shell: /bin/zsh`
 - 简洁的使用API `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
 - 完善的单元测试(coverage > 90%)
 
@@ -34,7 +34,7 @@ golang应用程序配置管理工具库。
 name: app2
 debug: false
 baseKey: value2
-envKey: ${SHELL}
+shell: ${SHELL}
 envKey1: ${NotExist|defValue}
 
 map1:
@@ -46,7 +46,9 @@ arr1:
     - val21
 ```
 
-- 使用, demo请看 [_examples/yaml.go](_examples/yaml.go):
+### 载入数据
+
+> 示例代码请看 [_examples/yaml.go](_examples/yaml.go):
 
 ```go
 package main
@@ -54,16 +56,14 @@ package main
 import (
     "github.com/gookit/config"
     "github.com/gookit/config/yaml"
-    "fmt"
 )
 
 // go run ./examples/yaml.go
 func main() {
 	config.WithOptions(config.ParseEnv)
 
-    // add driver for support yaml content
+    // 添加驱动程序以支持yaml内容解析（除了JSON是默认支持，其他的则是按需使用）
     config.AddDriver(yaml.Driver)
-    // config.SetDecoder(config.Yaml, yaml.Decoder)
 
     // 加载配置，可以同时传入多个文件
 	err := config.LoadFiles("testdata/yml_base.yml")
@@ -80,62 +80,72 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	// fmt.Printf("config data: \n %#v\n", config.Data())
-	fmt.Print("get config example:\n")
-
-	name, ok := config.String("name")
-	fmt.Printf("get string\n - ok: %v, val: %v\n", ok, name)
-
-	arr1, ok := config.Strings("arr1")
-	fmt.Printf("get array\n - ok: %v, val: %#v\n", ok, arr1)
-
-	val0, ok := config.String("arr1.0")
-	fmt.Printf("get sub-value by path 'arr.index'\n - ok: %v, val: %#v\n", ok, val0)
-
-	map1, ok := config.StringMap("map1")
-	fmt.Printf("get map\n - ok: %v, val: %#v\n", ok, map1)
-
-	val0, ok = config.String("map1.key")
-	fmt.Printf("get sub-value by path 'map.key'\n - ok: %v, val: %#v\n", ok, val0)
-
-	// can parse env name(ParseEnv: true)
-	fmt.Printf("get env 'envKey' val: %s\n", config.DefString("envKey", ""))
-	fmt.Printf("get env 'envKey1' val: %s\n", config.DefString("envKey1", ""))
-
-	// set value
-	config.Set("name", "new name")
-	name, ok = config.String("name")
-	fmt.Printf("set string\n - ok: %v, val: %v\n", ok, name)
-	
-	// if you want export config data
-	// buf := new(bytes.Buffer)
-	// _, err = config.DumpTo(buf, config.Yaml)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// fmt.Printf("export config:\n%s", buf.String())
 }
 ```
 
-- 输出:
+### 读取数据
 
-```text
-get config example:
-get string
- - ok: true, val: app2
-get array
- - ok: true, val: []string{"val1", "val21"}
-get sub-value by path 'arr.index'
- - ok: true, val: "val1"
-get map
- - ok: true, val: map[string]string{"key":"val2", "key2":"val20"}
-get sub-value by path 'map.key'
- - ok: true, val: "val2"
-get env 'envKey' val: /bin/zsh
-get env 'envKey1' val: defValue
-set string
-- ok: true, val: new name
+- 获取整型
+
+```go
+age, ok := config.Int("age")
+fmt.Print(ok, age) // true 100
+```
+
+- 获取布尔值
+
+```go
+val, ok := config.Bool("debug")
+fmt.Print(ok, age) // true true
+```
+
+- 获取字符串
+
+```go
+name, ok := config.String("name")
+fmt.Print(ok, name) // true inhere
+```
+
+- 获取字符串数组
+
+```go
+arr1, ok := config.Strings("arr1")
+fmt.Printf("%v %#v", ok, arr1) // true []string{"val1", "val21"}
+```
+
+- 获取字符串KV映射
+
+```go
+val, ok := config.StringMap("map1")
+fmt.Printf("%v %#v",ok, val) // true map[string]string{"key":"val2", "key2":"val20"}
+```
+
+- 值包含ENV变量
+
+```go
+value, ok := config.String("shell")
+fmt.Print(ok, value) // true /bin/zsh
+```
+
+- 通过key路径获取值
+
+```go
+// from array
+value, ok := config.String("arr1.0")
+fmt.Print(ok, value) // true "val1"
+
+// from map
+value, ok := config.String("map1.key")
+fmt.Print(ok, value) // true "val2"
+```
+
+- 设置新的值
+
+```go
+// set value
+config.Set("name", "new name")
+name, ok = config.String("name")
+fmt.Print(ok, name) // true "new name"
 ```
 
 ## 单元测试
@@ -145,8 +155,6 @@ go test -cover
 // contains all sub-folder
 go test -cover ./...
 ```
-
-- see coverage details: https://gocover.io/github.com/gookit/config
 
 ## 有用的包
 
@@ -163,4 +171,4 @@ go test -cover ./...
 
 ## License
 
-MIT
+**MIT**
