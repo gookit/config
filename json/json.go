@@ -9,7 +9,10 @@ import (
 var parser = jsoniter.ConfigCompatibleWithStandardLibrary
 
 // Decoder for json
-var Decoder config.Decoder = parser.Unmarshal
+var Decoder config.Decoder = func(data []byte, v interface{}) (err error) {
+	str := config.ClearJSONComments(string(data))
+	return parser.Unmarshal([]byte(str), v)
+}
 
 // Encoder for json
 var Encoder config.Encoder = parser.Marshal

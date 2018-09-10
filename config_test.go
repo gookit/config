@@ -327,3 +327,77 @@ func TestExport(t *testing.T) {
 	_, err = c.DumpTo(buf, JSON)
 	at.Nil(err)
 }
+
+func TestClearJSONComments(t *testing.T) {
+	is := assert.New(t)
+
+	str := ClearJSONComments(`{"name":"app"}`)
+	is.Equal(`{"name":"app"}`, str)
+
+	givens := []string{
+		// single line comments
+		`{
+"name":"app" // comments
+}`,
+		`{
+// comments
+"name":"app" 
+}`,
+		`{"name":"app"} // comments
+`,
+		// multi line comments
+		`{"name":"app"} /* comments */
+`,
+		`/* comments */
+{"name":"app"}`,
+		`/* 
+comments 
+*/
+{"name":"app"}`,
+		`/** 
+comments 
+*/
+{"name":"app"}`,
+		`/** 
+comments 
+**/
+{"name":"app"}`,
+		`/** 
+* comments 
+**/
+{"name":"app"}`,
+		`/** 
+/* comments 
+**/
+{"name":"app"}`,
+		`/** 
+/* comments *
+**/
+{"name":"app"}`,
+	}
+	wants := []string{
+		`{
+"name":"app" }`,
+		`{
+"name":"app" 
+}`,
+		`{"name":"app"}`,
+		// multi line comments
+		`{"name":"app"}`,
+		`{"name":"app"}`,
+		`{"name":"app"}`,
+		`{"name":"app"}`,
+		`{"name":"app"}`,
+		`{"name":"app"}`,
+		`{"name":"app"}`,
+		`{"name":"app"}`,
+	}
+
+	for i, s := range givens {
+		is.Equal(wants[i], ClearJSONComments(s))
+	}
+
+	// must be end with new line
+	str = ClearJSONComments(`{"name":"app"} // comments`)
+	is.NotEqual(`{"name":"app"}`, str)
+}

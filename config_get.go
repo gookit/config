@@ -1,7 +1,6 @@
 package config
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"regexp"
@@ -20,8 +19,8 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 
 	// if not is readonly
 	if !c.opts.Readonly {
-		c.lock.Lock()
-		defer c.lock.Unlock()
+		c.lock.RLock()
+		defer c.lock.RUnlock()
 	}
 
 	// is top key
@@ -440,12 +439,12 @@ func (c *Config) Structure(key string, v interface{}) (err error) {
 	}
 
 	if ok {
-		blob, err := json.Marshal(data)
+		blob, err := JSONEncoder(data)
 		if err != nil {
 			return err
 		}
 
-		err = json.Unmarshal(blob, v)
+		err = JSONDecoder(blob, v)
 	}
 
 	return

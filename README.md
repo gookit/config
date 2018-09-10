@@ -8,6 +8,7 @@
 golang application config manage tool library. 
 
 - support multi format: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`
+  - `JSON` content support comments. will auto clear comments
 - support multi file/data load
 - support data override merge
 - support get sub value by path, like `map.key` `arr.2`

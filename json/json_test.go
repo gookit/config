@@ -70,6 +70,17 @@ func TestDriver(t *testing.T) {
 	c := config.NewEmpty("test")
 	st.False(c.HasDecoder(config.JSON))
 	c.AddDriver(Driver)
+
 	st.True(c.HasDecoder(config.JSON))
 	st.True(c.HasEncoder(config.JSON))
+
+	m := struct {
+		N string
+	}{}
+	err := Decoder([]byte(`{
+// comments
+"n":"v"}
+`), &m)
+	st.Nil(err)
+	st.Equal("v", m.N)
 }
