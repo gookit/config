@@ -85,7 +85,7 @@ func main() {
 }
 ```
 
-### 读取数据
+### 获取数据
 
 - 获取整型
 
@@ -149,6 +149,19 @@ config.Set("name", "new name")
 name, ok = config.String("name")
 fmt.Print(ok, name) // true "new name"
 ```
+
+## 从配置中获取值
+
+- `Bool(key string) (value bool, ok bool)`
+- `Int(key string) (value int, ok bool)`
+- `Int64(key string) (value int64, ok bool)`
+- `Ints(key string) (arr []int, ok bool)`
+- `IntMap(key string) (mp map[string]int, ok bool)`
+- `Float(key string) (value float64, ok bool)`
+- `String(key string) (value string, ok bool)`
+- `Strings(key string) (arr []string, ok bool)`
+- `StringMap(key string) (mp map[string]string, ok bool)`
+- `Get(key string, findByPath ...bool) (value interface{}, ok bool)`
 
 ## 单元测试
 

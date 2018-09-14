@@ -219,7 +219,7 @@ func (c *Config) MustInt64(key string) int64 {
 	return c.DefInt64(key, 0)
 }
 
-// Bool Looks up a value for a key in this section and attempts to parse that value as a boolean,
+// Bool looks up a value for a key in this section and attempts to parse that value as a boolean,
 // along with a boolean result similar to a map lookup.
 // of following(case insensitive):
 //  - true
@@ -260,6 +260,30 @@ func (c *Config) DefBool(key string, def bool) bool {
 // MustBool get a string value, if not found return false
 func (c *Config) MustBool(key string) bool {
 	return c.DefBool(key, false)
+}
+
+// Float get a float64 by key
+func (c *Config) Float(key string) (value float64, ok bool) {
+	str, ok := c.String(key)
+	if !ok {
+		return
+	}
+
+	value, err := strconv.ParseFloat(str, 64)
+	if err != nil {
+		ok = false
+	}
+
+	return
+}
+
+// DefFloat get a float value, if not found return default value
+func (c *Config) DefFloat(key string, def float64) float64 {
+	if value, ok := c.Float(key); ok {
+		return value
+	}
+
+	return def
 }
 
 /*************************************************************

@@ -109,6 +109,7 @@ func TestGet(t *testing.T) {
 
 	val, ok = String("arr1")
 	st.False(ok)
+	st.Equal("", val)
 
 	str, ok := String("notExists")
 	st.False(ok)
@@ -121,6 +122,22 @@ func TestGet(t *testing.T) {
 	st.Equal("app", str)
 	str = c.MustString("notExist")
 	st.Equal("", str)
+
+	// get float
+	c.Set("flVal", 23.45)
+	flt, ok := c.Float("flVal")
+	st.True(ok)
+	st.Equal(23.45, flt)
+
+	flt, ok = Float("name")
+	st.False(ok)
+	st.Equal(float64(0), flt)
+
+	flt = c.DefFloat("notExists", 0)
+	st.Equal(float64(0), flt)
+
+	flt = DefFloat("flVal", 0)
+	st.Equal(23.45, flt)
 
 	// get string array
 	arr, ok := Strings("notExist")

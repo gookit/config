@@ -78,6 +78,16 @@ func DefBool(key string, def bool) bool {
 	return dc.DefBool(key, def)
 }
 
+// Float get a bool by key
+func Float(key string) (value float64, ok bool) {
+	return dc.Float(key)
+}
+
+// DefFloat get a float64 value, if not found return default value
+func DefFloat(key string, def float64) float64 {
+	return dc.DefFloat(key, def)
+}
+
 // String get a string by key
 func String(key string) (value string, ok bool) {
 	return dc.String(key)
