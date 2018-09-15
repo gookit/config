@@ -150,7 +150,17 @@ name, ok = config.String("name")
 fmt.Print(ok, name) // true "new name"
 ```
 
-## 从配置中获取值
+## API方法参考
+
+### 载入配置
+
+- `LoadData(dataSource ...interface{}) (err error)`
+- `LoadExists(sourceFiles ...string) (err error)`
+- `LoadFiles(sourceFiles ...string) (err error)`
+- `LoadSources(format string, src []byte, more ...[]byte) (err error)`
+- `LoadStrings(format string, str string, more ...string) (err error)`
+
+### 获取值
 
 - `Bool(key string) (value bool, ok bool)`
 - `Int(key string) (value int, ok bool)`
@@ -162,6 +172,10 @@ fmt.Print(ok, name) // true "new name"
 - `Strings(key string) (arr []string, ok bool)`
 - `StringMap(key string) (mp map[string]string, ok bool)`
 - `Get(key string, findByPath ...bool) (value interface{}, ok bool)`
+
+### 设置值
+
+- `Set(key string, val interface{}, setByPath ...bool) (err error)`
 
 ## 单元测试
 

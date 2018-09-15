@@ -226,6 +226,12 @@ func TestLoad(t *testing.T) {
 
 	err = c.LoadStrings("invalid", jsonStr)
 	st.Error(err)
+
+	err = c.LoadStrings(JSON, "invalid")
+	st.Error(err)
+
+	err = c.LoadStrings(JSON, `{"name": "inhere"}`, "invalid")
+	st.Error(err)
 }
 
 func TestJSONDriver(t *testing.T) {

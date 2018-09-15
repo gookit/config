@@ -107,7 +107,7 @@ name, ok := config.String("name")
 fmt.Print(ok, name) // true inhere
 ```
 
-- get strings(array)
+- get strings(slice)
 
 ```go
 arr1, ok := config.Strings("arr1")
@@ -149,7 +149,17 @@ name, ok = config.String("name")
 fmt.Print(ok, name) // true "new name"
 ```
 
-## Getting Values From Config
+## API Methods Refer
+
+### Load Config
+
+- `LoadData(dataSource ...interface{}) (err error)`
+- `LoadExists(sourceFiles ...string) (err error)`
+- `LoadFiles(sourceFiles ...string) (err error)`
+- `LoadSources(format string, src []byte, more ...[]byte) (err error)`
+- `LoadStrings(format string, str string, more ...string) (err error)`
+
+### Getting Values
 
 - `Bool(key string) (value bool, ok bool)`
 - `Int(key string) (value int, ok bool)`
@@ -162,7 +172,11 @@ fmt.Print(ok, name) // true "new name"
 - `StringMap(key string) (mp map[string]string, ok bool)`
 - `Get(key string, findByPath ...bool) (value interface{}, ok bool)`
 
-## Run tests
+### Setting Values
+
+- `Set(key string, val interface{}, setByPath ...bool) (err error)`
+
+## Run Tests
 
 ```bash
 go test -cover
@@ -170,14 +184,14 @@ go test -cover
 go test -cover ./...
 ```
 
-## Related packages
+## Related Packages
 
 - Ini parse [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser)
 - Yaml parse [go-yaml](https://github.com/go-yaml/yaml)
 - Toml parse [go toml](https://github.com/BurntSushi/toml)
 - Data merge [mergo](https://github.com/imdario/mergo)
 
-### Ini config use
+### Ini Config Use
 
 - [gookit/ini](https://github.com/gookit/ini) ini config manage
 
