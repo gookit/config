@@ -9,7 +9,7 @@ import (
 )
 
 // Version is package version
-const Version = "1.0.6"
+const Version = "1.0.10"
 
 // There are supported config format
 const (
@@ -67,7 +67,7 @@ type Config struct {
 	// all config data
 	data map[string]interface{}
 
-	// loaded config files
+	// loaded config files records
 	loadedFiles []string
 	initialized bool
 
@@ -95,7 +95,7 @@ func New(name string) *Config {
 		// init options
 		opts: &Options{DumpFormat: JSON, ReadFormat: JSON},
 
-		// default add json driver
+		// default add JSON driver
 		encoders: map[string]Encoder{JSON: JSONEncoder},
 		decoders: map[string]Decoder{JSON: JSONDecoder},
 	}
@@ -120,7 +120,6 @@ func NewEmpty(name string) *Config {
 func NewWithOptions(name string, opts ...func(*Options)) *Config {
 	c := New(name)
 	c.WithOptions(opts...)
-
 	return c
 }
 
@@ -175,7 +174,6 @@ func (c *Config) AddDriver(driver Driver) {
 func (c *Config) HasDecoder(format string) bool {
 	format = fixFormat(format)
 	_, ok := c.decoders[format]
-
 	return ok
 }
 
@@ -209,7 +207,6 @@ func (c *Config) SetEncoders(encoders map[string]Encoder) {
 func (c *Config) HasEncoder(format string) bool {
 	format = fixFormat(format)
 	_, ok := c.encoders[format]
-
 	return ok
 }
 
@@ -286,6 +283,11 @@ func (c *Config) DumpTo(out io.Writer, format string) (n int64, err error) {
 	}
 
 	return int64(num), nil
+}
+
+// LoadedFiles get loaded files name
+func (c *Config) LoadedFiles() []string {
+	return c.loadedFiles
 }
 
 // ClearAll data and caches

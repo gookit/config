@@ -7,6 +7,8 @@
 
 golang应用程序配置管理工具库。
 
+> **[EN README](README.md)**
+
 - 支持多种格式: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`
   - `JSON` 内容支持注释，将自动清除注释
 - 支持多个文件/数据加载
@@ -15,8 +17,6 @@ golang应用程序配置管理工具库。
 - 支持解析ENV变量名称。 like `shell: ${SHELL}` -> `shell: /bin/zsh`
 - 简洁的使用API `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
 - 完善的单元测试(coverage > 90%)
-
-> **[EN README](README.md)**
 
 ## 只使用INI
 
@@ -185,18 +185,12 @@ go test -cover
 go test -cover ./...
 ```
 
-## 有用的包
+## 相关包
 
 - Ini 解析 [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser)
 - Yaml 解析 [go-yaml](https://github.com/go-yaml/yaml)
 - Toml 解析 [go toml](https://github.com/BurntSushi/toml)
 - 数据合并 [mergo](https://github.com/imdario/mergo)
-
-## 其他
-
-使用INI作为简单的配置管理
-
-- [gookit/ini](https://github.com/gookit/ini) 
 
 ## License
 

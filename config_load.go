@@ -2,11 +2,14 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"github.com/imdario/mergo"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 // LoadFiles load and parse config files
@@ -45,7 +48,7 @@ func (c *Config) loadFile(file string, loadExist bool) (err error) {
 			return nil
 		}
 
-		return
+		return err
 	}
 	defer fd.Close()
 
@@ -61,6 +64,36 @@ func (c *Config) loadFile(file string, loadExist bool) (err error) {
 		}
 
 		c.loadedFiles = append(c.loadedFiles, file)
+	}
+
+	return
+}
+
+// LoadRemote load config data from remote URL.
+// Usage:
+// 	c.LoadRemote(config.JSON, "http://abc.com/api-config.json")
+func (c *Config) LoadRemote(format, url string) (err error) {
+	// create http client
+	client := http.Client{Timeout: 900 * time.Second}
+	resp, err := client.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("remote resource is not exist, reply status code is not equals to 200")
+	}
+
+	// read response content
+	bts, err := ioutil.ReadAll(resp.Body)
+	if err == nil {
+		// parse file content
+		if err = c.parseSourceCode(format, bts); err != nil {
+			return
+		}
+
+		c.loadedFiles = append(c.loadedFiles, url)
 	}
 
 	return

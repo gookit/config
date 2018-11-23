@@ -110,7 +110,10 @@ func Example() {
 
 func ExampleConfig_DefBool() {
 	// load from string
-	LoadSources(JSON, []byte(jsonStr))
+	err := LoadSources(JSON, []byte(jsonStr))
+	if err != nil {
+		panic(err)
+	}
 
 	val, ok := Bool("debug")
 	fmt.Printf("get 'debug', ok: %v, val: %v\n", ok, val)
@@ -128,13 +131,16 @@ func Example_exportConfig() {
 
 	ClearAll()
 	// load from string
-	LoadStrings(JSON, `{
+	err := LoadStrings(JSON, `{
 "name": "app",
 "age": 34
 }`)
+	if err != nil {
+		panic(err)
+	}
 
 	buf := new(bytes.Buffer)
-	_, err := DumpTo(buf, JSON)
+	_, err = DumpTo(buf, JSON)
 	if err != nil {
 		panic(err)
 	}
@@ -174,11 +180,11 @@ func TestBasic(t *testing.T) {
 }
 
 func TestLoad(t *testing.T) {
-	st := assert.New(t)
+	is := assert.New(t)
 
 	c := New("test")
 	err := c.LoadExists("testdata/json_base.json", "not-exist.json")
-	st.Nil(err)
+	is.Nil(err)
 
 	c.ClearAll()
 
@@ -191,47 +197,81 @@ func TestLoad(t *testing.T) {
 		"info":    map[string]string{"k1": "a", "k2": "b"},
 	})
 
-	st.NotEmpty(c.Data())
-	st.Nil(err)
+	is.NotEmpty(c.Data())
+	is.Nil(err)
 
+	// LoadData
 	err = c.LoadData("invalid")
-	st.Error(err)
+	is.Error(err)
 
-	st.Panics(func() {
+	is.Panics(func() {
 		c.WithOptions(ParseEnv)
 	})
 
 	err = c.LoadStrings(JSON, `{"name": "inhere"}`, jsonStr)
-	st.Nil(err)
+	is.Nil(err)
 
+	// LoadSources
 	err = c.LoadSources(JSON, []byte(`{"name": "inhere"}`), []byte(jsonStr))
-	st.Nil(err)
+	is.Nil(err)
 
 	err = c.LoadSources(JSON, []byte(`invalid`))
-	st.Error(err)
+	is.Error(err)
 
 	err = c.LoadSources(JSON, []byte(`{"name": "inhere"}`), []byte(`invalid`))
-	st.Error(err)
+	is.Error(err)
 
 	c = New("test")
 
+	// LoadFiles
 	err = c.LoadFiles("not-exist.json")
-	st.Error(err)
+	is.Error(err)
 
 	err = c.LoadFiles("testdata/json_error.json")
-	st.Error(err)
+	is.Error(err)
 
 	err = c.LoadExists("testdata/json_error.json")
-	st.Error(err)
+	is.Error(err)
 
+	// LoadStrings
 	err = c.LoadStrings("invalid", jsonStr)
-	st.Error(err)
+	is.Error(err)
 
 	err = c.LoadStrings(JSON, "invalid")
-	st.Error(err)
+	is.Error(err)
 
 	err = c.LoadStrings(JSON, `{"name": "inhere"}`, "invalid")
-	st.Error(err)
+	is.Error(err)
+
+}
+
+func TestConfig_LoadRemote(t *testing.T) {
+	is := assert.New(t)
+
+	// load remote config
+	c := New("remote")
+	url := "https://raw.githubusercontent.com/gookit/config/master/testdata/json_base.json"
+	err := c.LoadRemote(JSON, url)
+	is.Nil(err)
+	is.Equal("123", c.DefString("age", ""))
+
+	is.Len(c.LoadedFiles(), 1)
+	is.Equal(url, c.LoadedFiles()[0])
+
+	// load invalid remote data
+	url1 := "https://raw.githubusercontent.com/gookit/config/master/testdata/json_error.json"
+	err = c.LoadRemote(JSON, url1)
+	is.Error(err)
+
+	// load not exist
+	url2 := "https://raw.githubusercontent.com/gookit/config/master/testdata/not-exist.txt"
+	err = c.LoadRemote(JSON, url2)
+	is.Error(err)
+
+	// invalid remote url
+	url3 := "invalid-url"
+	err = c.LoadRemote(JSON, url3)
+	is.Error(err)
 }
 
 func TestJSONDriver(t *testing.T) {
@@ -316,13 +356,14 @@ func TestExport(t *testing.T) {
 	str := c.ToJSON()
 	at.Equal("", str)
 
-	c.LoadStrings(JSON, jsonStr)
+	err := c.LoadStrings(JSON, jsonStr)
+	at.Nil(err)
 
 	str = c.ToJSON()
 	at.Contains(str, `"name":"app"`)
 
 	buf := &bytes.Buffer{}
-	_, err := c.WriteTo(buf)
+	_, err = c.WriteTo(buf)
 	at.Nil(err)
 
 	buf = &bytes.Buffer{}
