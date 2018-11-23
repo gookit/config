@@ -24,7 +24,7 @@ golang应用程序配置管理工具库。
 
 > 如果你仅仅想用INI来做简单配置管理，推荐使用 [gookit/ini](https://github.com/gookit/ini)
 
-## Godoc
+## GoDoc
 
 - [godoc for gopkg](https://godoc.org/gopkg.in/gookit/config.v1)
 - [godoc for github](https://godoc.org/github.com/gookit/config)

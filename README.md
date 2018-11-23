@@ -5,7 +5,9 @@
 [![Coverage Status](https://coveralls.io/repos/github/gookit/config/badge.svg?branch=master)](https://coveralls.io/github/gookit/config?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/gookit/config)](https://goreportcard.com/report/github.com/gookit/config)
 
-golang application config manage tool library. 
+Golang application config manage tool library. 
+
+> **[中文说明](README_cn.md)**
 
 - support multi format: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`
   - `JSON` content support comments. will auto clear comments
@@ -18,13 +20,11 @@ golang application config manage tool library.
 - generic api `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
 - complete unit test(coverage > 90%)
 
-> **[中文说明](README_cn.md)**
-
 ## Only use INI
 
 > If you just want to use INI for simple config management, recommended use [gookit/ini](https://github.com/gookit/ini)
 
-## Godoc
+## GoDoc
 
 - [godoc for gopkg](https://godoc.org/gopkg.in/gookit/config.v1)
 - [godoc for github](https://godoc.org/github.com/gookit/config)
