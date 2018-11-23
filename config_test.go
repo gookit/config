@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"os"
 	"testing"
 )
 
@@ -53,7 +54,10 @@ func Example() {
 	}
 
 	// load from string
-	LoadSources(JSON, []byte(jsonStr))
+	err = LoadSources(JSON, []byte(jsonStr))
+	if err != nil {
+		panic(err)
+	}
 
 	// fmt.Printf("config data: \n %#v\n", Data())
 	fmt.Print("get config example:\n")
@@ -274,6 +278,30 @@ func TestConfig_LoadRemote(t *testing.T) {
 	is.Error(err)
 }
 
+func TestConfig_LoadFlags(t *testing.T) {
+	is := assert.New(t)
+
+	// load flag info
+	c := New("flag")
+	bakArgs := os.Args
+	os.Args = []string{
+		"./cliapp",
+		"--name",  "my-app",
+		"--env", "dev",
+		"--debug", "true",
+	}
+
+	err := c.LoadFlags([]string{"name", "env", "debug"})
+	is.Nil(err)
+	is.Equal("my-app", c.DefString("name", ""))
+	is.Equal("dev", c.DefString("env", ""))
+	is.True(c.DefBool("debug", false))
+
+	fmt.Printf("%#v\n",c.Data())
+
+	os.Args = bakArgs
+}
+
 func TestJSONDriver(t *testing.T) {
 	st := assert.New(t)
 
@@ -322,7 +350,11 @@ func TestOptions(t *testing.T) {
 	err := c.LoadStrings(JSON, jsonStr)
 	st.Nil(err)
 
-	str, ok := c.String("envKey")
+	str, ok := c.String("name")
+	st.True(ok)
+	st.Equal("app", str)
+
+	str, ok = c.String("envKey")
 	st.True(ok)
 	st.NotContains(str, "${")
 
@@ -369,6 +401,9 @@ func TestExport(t *testing.T) {
 	buf = &bytes.Buffer{}
 
 	_, err = c.DumpTo(buf, "invalid")
+	at.Error(err)
+
+	_, err = c.DumpTo(buf, Yml)
 	at.Error(err)
 
 	_, err = c.DumpTo(buf, JSON)

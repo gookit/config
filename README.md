@@ -10,7 +10,9 @@ golang application config manage tool library.
 - support multi format: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`
   - `JSON` content support comments. will auto clear comments
 - support multi file/data load
-- support data override merge
+- support for loading configuration data from remote URLs
+- support for setting configuration data from command line arguments
+- support data overlay and merge, automatically load by key when loading multiple copies of data
 - support get sub value by path, like `map.key` `arr.2`
 - support parse ENV name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
 - generic api `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
@@ -154,8 +156,10 @@ fmt.Print(ok, name) // true "new name"
 ### Load Config
 
 - `LoadData(dataSource ...interface{}) (err error)`
+- `LoadFlags(keys []string) (err error)`
 - `LoadExists(sourceFiles ...string) (err error)`
 - `LoadFiles(sourceFiles ...string) (err error)`
+- `LoadRemote(format, url string) (err error)`
 - `LoadSources(format string, src []byte, more ...[]byte) (err error)`
 - `LoadStrings(format string, str string, more ...string) (err error)`
 

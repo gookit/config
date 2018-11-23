@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"github.com/imdario/mergo"
 	"io/ioutil"
@@ -95,6 +96,36 @@ func (c *Config) LoadRemote(format, url string) (err error) {
 
 		c.loadedFiles = append(c.loadedFiles, url)
 	}
+
+	return
+}
+
+// LoadFlags parse command line arguments, based on provide keys.
+// Usage:
+// 	c.LoadFlags([]string{"env", "debug"})
+func (c *Config) LoadFlags(keys []string) (err error) {
+	hash := map[string]*string{}
+	for _, key := range keys {
+		hash[key] = new(string)
+		defVal, _ := c.String(key)
+		flag.StringVar(hash[key], key, defVal, "")
+	}
+
+	flag.Parse()
+	flag.Visit(func(f *flag.Flag) {
+		name := f.Name
+		// name := strings.Replace(f.Name, "-", ".", -1)
+
+		// only get name in the keys.
+		if _, ok := hash[name]; !ok {
+			return
+		}
+
+		err = c.Set(name, f.Value.String())
+		if err != nil {
+			return
+		}
+	})
 
 	return
 }

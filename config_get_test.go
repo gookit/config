@@ -124,7 +124,8 @@ func TestGet(t *testing.T) {
 	st.Equal("", str)
 
 	// get float
-	c.Set("flVal", 23.45)
+	err = c.Set("flVal", 23.45)
+	st.Nil(err)
 	flt, ok := c.Float("flVal")
 	st.True(ok)
 	st.Equal(23.45, flt)
@@ -196,7 +197,8 @@ func TestGet(t *testing.T) {
 	st.False(ok)
 
 	// set a intMap
-	Set("intMap0", map[string]int{"a": 1, "b": 2})
+	err = Set("intMap0", map[string]int{"a": 1, "b": 2})
+	st.Nil(err)
 	imp, ok = IntMap("intMap0")
 	st.True(ok)
 	st.NotEmpty(imp)

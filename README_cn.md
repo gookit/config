@@ -12,7 +12,9 @@ golang应用程序配置管理工具库。
 - 支持多种格式: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`
   - `JSON` 内容支持注释，将自动清除注释
 - 支持多个文件/数据加载
-- 支持数据覆盖合并，将按key自动合并
+- 支持数据覆盖合并，加载多份数据时将按key自动合并
+- 支持从远程URL加载配置数据
+- 支持从命令行参数设置配置数据
 - 支持按路径获取子级值。 e.g `map.key` `arr.2`
 - 支持解析ENV变量名称。 like `shell: ${SHELL}` -> `shell: /bin/zsh`
 - 简洁的使用API `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
@@ -155,8 +157,10 @@ fmt.Print(ok, name) // true "new name"
 ### 载入配置
 
 - `LoadData(dataSource ...interface{}) (err error)`
+- `LoadFlags(keys []string) (err error)`
 - `LoadExists(sourceFiles ...string) (err error)`
 - `LoadFiles(sourceFiles ...string) (err error)`
+- `LoadRemote(format, url string) (err error)`
 - `LoadSources(format string, src []byte, more ...[]byte) (err error)`
 - `LoadStrings(format string, str string, more ...string) (err error)`
 
