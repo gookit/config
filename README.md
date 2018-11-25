@@ -95,42 +95,42 @@ age, ok := config.Int("age")
 fmt.Print(ok, age) // true 100
 ```
 
-- get bool
+- Get bool
 
 ```go
 val, ok := config.Bool("debug")
 fmt.Print(ok, age) // true true
 ```
 
-- get string
+- Get string
 
 ```go
 name, ok := config.String("name")
 fmt.Print(ok, name) // true inhere
 ```
 
-- get strings(slice)
+- Get strings(slice)
 
 ```go
 arr1, ok := config.Strings("arr1")
 fmt.Printf("%v %#v", ok, arr1) // true []string{"val1", "val21"}
 ```
 
-- get string map
+- Get string map
 
 ```go
 val, ok := config.StringMap("map1")
 fmt.Printf("%v %#v",ok, val) // true map[string]string{"key":"val2", "key2":"val20"}
 ```
 
-- value contains ENV var
+- Value contains ENV var
 
 ```go
 value, ok := config.String("shell")
 fmt.Print(ok, value) // true /bin/zsh
 ```
 
-- get value by key path
+- Get value by key path
 
 ```go
 // from array
@@ -142,7 +142,7 @@ value, ok := config.String("map1.key")
 fmt.Print(ok, value) // true "val2"
 ```
 
-- setting new value
+- Setting new value
 
 ```go
 // set value

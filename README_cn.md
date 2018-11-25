@@ -89,51 +89,32 @@ func main() {
 
 ### 获取数据
 
-- 获取整型
-
 ```go
+// 获取整型
 age, ok := config.Int("age")
 fmt.Print(ok, age) // true 100
-```
 
-- 获取布尔值
-
-```go
+// 获取布尔值
 val, ok := config.Bool("debug")
 fmt.Print(ok, age) // true true
-```
 
-- 获取字符串
-
-```go
+// 获取字符串
 name, ok := config.String("name")
 fmt.Print(ok, name) // true inhere
-```
 
-- 获取字符串数组
-
-```go
+// 获取字符串数组
 arr1, ok := config.Strings("arr1")
 fmt.Printf("%v %#v", ok, arr1) // true []string{"val1", "val21"}
-```
 
-- 获取字符串KV映射
-
-```go
+// 获取字符串KV映射
 val, ok := config.StringMap("map1")
 fmt.Printf("%v %#v",ok, val) // true map[string]string{"key":"val2", "key2":"val20"}
-```
 
-- 值包含ENV变量
-
-```go
+// 值包含ENV变量
 value, ok := config.String("shell")
 fmt.Print(ok, value) // true /bin/zsh
-```
 
-- 通过key路径获取值
-
-```go
+// 通过key路径获取值
 // from array
 value, ok := config.String("arr1.0")
 fmt.Print(ok, value) // true "val1"
@@ -143,7 +124,7 @@ value, ok := config.String("map1.key")
 fmt.Print(ok, value) // true "val2"
 ```
 
-- 设置新的值
+### 设置新的值
 
 ```go
 // set value
