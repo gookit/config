@@ -82,7 +82,7 @@ func Example() {
 	fmt.Printf("get env 'envKey1' val: %s\n", DefString("envKey1", ""))
 
 	// set value
-	Set("name", "new name")
+	_ = Set("name", "new name")
 	name, ok = String("name")
 	fmt.Printf("- set string\n ok: %v, val: %v\n", ok, name)
 
