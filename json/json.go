@@ -10,8 +10,8 @@ var parser = jsoniter.ConfigCompatibleWithStandardLibrary
 
 // Decoder for json
 var Decoder config.Decoder = func(data []byte, v interface{}) (err error) {
-	str := config.ClearJSONComments(string(data))
-	return parser.Unmarshal([]byte(str), v)
+	s := config.StripJSONComments(string(data))
+	return parser.Unmarshal([]byte(s), v)
 }
 
 // Encoder for json

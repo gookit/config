@@ -96,7 +96,6 @@ func (c *Config) LoadRemote(format, url string) (err error) {
 
 		c.loadedFiles = append(c.loadedFiles, url)
 	}
-
 	return
 }
 
@@ -115,7 +114,6 @@ func (c *Config) LoadFlags(keys []string) (err error) {
 	flag.Visit(func(f *flag.Flag) {
 		name := f.Name
 		// name := strings.Replace(f.Name, "-", ".", -1)
-
 		// only get name in the keys.
 		if _, ok := hash[name]; !ok {
 			return
@@ -144,7 +142,7 @@ func (c *Config) LoadData(dataSources ...interface{}) (err error) {
 }
 
 // LoadSources load data from byte content.
-// usage:
+// Usage:
 // 	config.LoadSources(config.Yml, []byte(`
 // 	name: blog
 // 	arr:

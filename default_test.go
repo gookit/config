@@ -60,7 +60,7 @@ func TestDefault(t *testing.T) {
 
 	at.True(GetOptions().ParseEnv)
 
-	LoadStrings(JSON, `{"name": "inhere"}`)
+	_ = LoadStrings(JSON, `{"name": "inhere"}`)
 
 	buf := &bytes.Buffer{}
 	_, err := WriteTo(buf)
