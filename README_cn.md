@@ -95,7 +95,7 @@ fmt.Print(ok, age) // true 100
 
 // 获取布尔值
 val, ok := config.Bool("debug")
-fmt.Print(ok, age) // true true
+fmt.Print(ok, val) // true true
 
 // 获取字符串
 name, ok := config.String("name")
