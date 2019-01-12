@@ -69,7 +69,6 @@ type Config struct {
 
 	// loaded config files records
 	loadedFiles []string
-	initialized bool
 
 	// decoders["toml"] = func(blob []byte, v interface{}) (err error){}
 	// decoders["yaml"] = func(blob []byte, v interface{}) (err error){}
@@ -149,8 +148,8 @@ func EnableCache(opts *Options) {
 
 // WithOptions apply some options
 func (c *Config) WithOptions(opts ...func(*Options)) {
-	if c.initialized {
-		panic("config: Cannot set options after initialization is complete")
+	if !c.IsEmpty() {
+		panic("config: Cannot set options after data has been loaded")
 	}
 
 	// apply options

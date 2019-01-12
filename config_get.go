@@ -440,6 +440,11 @@ func (c *Config) StringMap(key string) (mp map[string]string, ok bool) {
 	return
 }
 
+// MapStruct alias method of the 'Structure'
+func (c *Config) MapStruct(key string, v interface{}) (err error) {
+	return c.Structure(key, v)
+}
+
 // MapStructure alias method of the 'Structure'
 func (c *Config) MapStructure(key string, v interface{}) (err error) {
 	return c.Structure(key, v)
@@ -474,8 +479,13 @@ func (c *Config) Structure(key string, v interface{}) (err error) {
 	return
 }
 
+// IsEmpty of the config
+func (c *Config) IsEmpty() bool {
+	return len(c.data) == 0
+}
+
 // parse env value, eg: "${SHELL}" ${NotExist|defValue}
-var envRegex = regexp.MustCompile(`\$\{([\w-| ]+)}`)
+var envRegex = regexp.MustCompile(`\${([\w-| ]+)}`)
 
 // parse Env Value
 func (c *Config) parseEnvValue(val string) string {

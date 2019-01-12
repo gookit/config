@@ -8,6 +8,14 @@ import (
 	"strings"
 )
 
+// Readonly disable set data to config.
+// Usage:
+//	config.LoadFiles(a, b, c)
+//	config.Readonly()
+func (c *Config) Readonly() {
+	c.opts.Readonly = true
+}
+
 // Set a value by key string.
 func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error) {
 	// if is readonly
@@ -92,9 +100,8 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 			return err
 		}
 	default:
-		err = errors.New("cannot setting value for the key: " + key)
+		err = errors.New("not supported value type, cannot setting value for the key: " + key)
 	}
-
 	return
 }
 

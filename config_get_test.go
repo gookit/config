@@ -16,6 +16,8 @@ func TestGet(t *testing.T) {
 	// fmt.Printf("%#v\n", Data())
 	c := Default()
 
+	st.False(c.IsEmpty())
+
 	// error on get
 	_, ok := c.Get("")
 	st.False(ok)
@@ -307,7 +309,7 @@ func TestConfig_MapStructure(t *testing.T) {
 		Sports []string
 	}{}
 	// map all
-	err = cfg.MapStructure("", user)
+	err = cfg.MapStruct("", user)
 	st.Nil(err)
 
 	st.Equal(28, user.Age)

@@ -18,7 +18,7 @@ Golang application config manage tool library.
 - support get sub value by path, like `map.key` `arr.2`
 - support parse ENV name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
 - generic api `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
-- complete unit test(coverage > 90%)
+- complete unit test(code coverage > 95%)
 
 ## Only use INI
 
@@ -26,7 +26,6 @@ Golang application config manage tool library.
 
 ## GoDoc
 
-- [godoc for gopkg](https://godoc.org/gopkg.in/gookit/config.v1)
 - [godoc for github](https://godoc.org/github.com/gookit/config)
 
 ## Usage

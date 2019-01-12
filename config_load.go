@@ -16,26 +16,20 @@ import (
 // LoadFiles load and parse config files
 func (c *Config) LoadFiles(sourceFiles ...string) (err error) {
 	for _, file := range sourceFiles {
-		err = c.loadFile(file, false)
-		if err != nil {
+		if err = c.loadFile(file, false); err != nil {
 			return
 		}
 	}
-
-	c.initialized = true
 	return
 }
 
 // LoadExists load and parse config files, but will ignore not exists file.
 func (c *Config) LoadExists(sourceFiles ...string) (err error) {
 	for _, file := range sourceFiles {
-		err = c.loadFile(file, true)
-		if err != nil {
+		if err = c.loadFile(file, true); err != nil {
 			return
 		}
 	}
-
-	c.initialized = true
 	return
 }
 
@@ -48,7 +42,6 @@ func (c *Config) loadFile(file string, loadExist bool) (err error) {
 		if os.IsNotExist(err) && loadExist {
 			return nil
 		}
-
 		return err
 	}
 	defer fd.Close()
@@ -136,8 +129,6 @@ func (c *Config) LoadData(dataSources ...interface{}) (err error) {
 			return
 		}
 	}
-
-	c.initialized = true
 	return
 }
 
@@ -161,7 +152,6 @@ func (c *Config) LoadSources(format string, src []byte, more ...[]byte) (err err
 		}
 	}
 
-	c.initialized = true
 	return
 }
 
@@ -179,7 +169,6 @@ func (c *Config) LoadStrings(format string, str string, more ...string) (err err
 		}
 	}
 
-	c.initialized = true
 	return
 }
 

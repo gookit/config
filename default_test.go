@@ -55,7 +55,6 @@ func TestDefault(t *testing.T) {
 	at := assert.New(t)
 
 	ClearAll()
-	dc.initialized = false
 	WithOptions(ParseEnv)
 
 	at.True(GetOptions().ParseEnv)

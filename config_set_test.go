@@ -154,4 +154,10 @@ func TestSet(t *testing.T) {
 		st.False(ok)
 		st.Equal("", val)
 	}
+
+	st.Error(Set("name.sub", []int{2}))
+
+	// Readonly
+	Default().Readonly()
+	st.Error(Set("name", "new name"))
 }

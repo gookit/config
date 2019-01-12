@@ -18,7 +18,7 @@ golang应用程序配置管理工具库。
 - 支持按路径获取子级值。 e.g `map.key` `arr.2`
 - 支持解析ENV变量名称。 like `shell: ${SHELL}` -> `shell: /bin/zsh`
 - 简洁的使用API `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
-- 完善的单元测试(coverage > 90%)
+- 完善的单元测试(code coverage > 95%)
 
 ## 只使用INI
 
@@ -26,7 +26,6 @@ golang应用程序配置管理工具库。
 
 ## GoDoc
 
-- [godoc for gopkg](https://godoc.org/gopkg.in/gookit/config.v1)
 - [godoc for github](https://godoc.org/github.com/gookit/config)
 
 ## 快速使用
