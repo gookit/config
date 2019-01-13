@@ -116,7 +116,6 @@ func (c *Config) LoadFlags(keys []string) (err error) {
 		// ignore error
 		_ = c.Set(name, f.Value.String())
 	})
-
 	return
 }
 
@@ -150,7 +149,6 @@ func (c *Config) LoadSources(format string, src []byte, more ...[]byte) (err err
 			return
 		}
 	}
-
 	return
 }
 
@@ -167,7 +165,6 @@ func (c *Config) LoadStrings(format string, str string, more ...string) (err err
 			return
 		}
 	}
-
 	return
 }
 
