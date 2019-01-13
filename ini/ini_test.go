@@ -47,7 +47,7 @@ func Example() {
 	fmt.Printf("get env 'envKey1' val: %s\n", config.String("envKey1", ""))
 
 	// set value
-	_= config.Set("name", "new name")
+	_ = config.Set("name", "new name")
 	name = config.String("name")
 	fmt.Printf("set string\n - val: %v\n", name)
 }

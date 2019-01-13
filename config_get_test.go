@@ -59,6 +59,9 @@ func TestGet(t *testing.T) {
 	st.True(Exists("age"))
 	st.True(Exists("map1.key"))
 	st.True(Exists("arr1.1"))
+	st.False(Exists("arr1.1", false))
+	st.False(Exists("not-exist.sub"))
+	st.False(Exists(""))
 	st.False(Exists("not-exist"))
 
 	// get value
@@ -93,6 +96,7 @@ func TestGet(t *testing.T) {
 
 	// Ints: get int arr
 	iarr := Ints("name")
+	st.False(Exists("name.1"))
 	st.Empty(iarr)
 
 	iarr = Ints("notExist")
@@ -126,7 +130,7 @@ func TestGet(t *testing.T) {
 	err = Set("intMap0", map[string]int{"a": 1, "b": 2})
 	st.Nil(err)
 	imp = IntMap("intMap0")
-	
+
 	st.NotEmpty(imp)
 	st.Equal(1, imp["a"])
 
@@ -210,7 +214,7 @@ func TestGet(t *testing.T) {
 func TestInt(t *testing.T) {
 	st := assert.New(t)
 	ClearAll()
-	_= LoadStrings(JSON, jsonStr)
+	_ = LoadStrings(JSON, jsonStr)
 
 	st.True(Exists("age"))
 
@@ -235,7 +239,7 @@ func TestInt(t *testing.T) {
 func TestInt64(t *testing.T) {
 	st := assert.New(t)
 	ClearAll()
-	_= LoadStrings(JSON, jsonStr)
+	_ = LoadStrings(JSON, jsonStr)
 
 	// get int64
 	iv64 := Int64("age")
@@ -261,7 +265,7 @@ func TestInt64(t *testing.T) {
 func TestFloat(t *testing.T) {
 	st := assert.New(t)
 	ClearAll()
-	_= LoadStrings(JSON, jsonStr)
+	_ = LoadStrings(JSON, jsonStr)
 	c := Default()
 
 	// get float
@@ -276,6 +280,9 @@ func TestFloat(t *testing.T) {
 	flt = c.Float("notExists", 0)
 	st.Equal(float64(0), flt)
 
+	flt = c.Float("notExists", 10)
+	st.Equal(float64(10), flt)
+
 	flt = Float("flVal", 0)
 	st.Equal(23.45, flt)
 
@@ -285,7 +292,7 @@ func TestFloat(t *testing.T) {
 func TestString(t *testing.T) {
 	st := assert.New(t)
 	ClearAll()
-	_= LoadStrings(JSON, jsonStr)
+	_ = LoadStrings(JSON, jsonStr)
 
 	// get string
 	val := String("arr1")
@@ -309,7 +316,7 @@ func TestString(t *testing.T) {
 func TestBool(t *testing.T) {
 	st := assert.New(t)
 	ClearAll()
-	_= LoadStrings(JSON, jsonStr)
+	_ = LoadStrings(JSON, jsonStr)
 
 	// get bool
 	val := Get("debug")

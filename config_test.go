@@ -63,19 +63,19 @@ func Example() {
 	// fmt.Printf("config data: \n %#v\n", Data())
 	fmt.Print("get config example:\n")
 
-	name:= String("name")
+	name := String("name")
 	fmt.Printf("- get string\n val: %v\n", name)
 
-	arr1:= Strings("arr1")
+	arr1 := Strings("arr1")
 	fmt.Printf("- get array\n val: %#v\n", arr1)
 
-	val0:= String("arr1.0")
+	val0 := String("arr1.0")
 	fmt.Printf("- get sub-value by path 'arr.index'\n val: %#v\n", val0)
 
-	map1:= StringMap("map1")
+	map1 := StringMap("map1")
 	fmt.Printf("- get map\n val: %#v\n", map1)
 
-	val0= String("map1.key")
+	val0 = String("map1.key")
 	fmt.Printf("- get sub-value by path 'map.key'\n val: %#v\n", val0)
 
 	// can parse env name(ParseEnv: true)
@@ -84,7 +84,7 @@ func Example() {
 
 	// set value
 	_ = Set("name", "new name")
-	name= String("name")
+	name = String("name")
 	fmt.Printf("- set string\n val: %v\n", name)
 
 	// if you want export config data
@@ -425,13 +425,13 @@ func TestOptions(t *testing.T) {
 	err := c.LoadStrings(JSON, jsonStr)
 	st.Nil(err)
 
-	str:= c.String("name")
+	str := c.String("name")
 	st.Equal("app", str)
 
-	str= c.String("envKey")
+	str = c.String("envKey")
 	st.NotContains(str, "${")
 
-	str= c.String("invalidEnvKey")
+	str = c.String("invalidEnvKey")
 	st.Contains(str, "${")
 
 	str = c.String("envKey1")

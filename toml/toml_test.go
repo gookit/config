@@ -46,7 +46,7 @@ func Example() {
 	}
 
 	// load from string
-	_= config.LoadSources(config.Toml, []byte(tomlStr))
+	_ = config.LoadSources(config.Toml, []byte(tomlStr))
 
 	// fmt.Printf("config data: \n %#v\n", Data())
 	fmt.Print("get config example:\n")

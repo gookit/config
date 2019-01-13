@@ -186,7 +186,7 @@ func (c *Config) Readonly() {
  *************************************************************/
 
 // AddDriver set a decoder and encoder driver for a format.
-func AddDriver(driver Driver) {dc.AddDriver(driver) }
+func AddDriver(driver Driver) { dc.AddDriver(driver) }
 
 // AddDriver set a decoder and encoder driver for a format.
 func (c *Config) AddDriver(driver Driver) {
