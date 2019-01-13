@@ -356,36 +356,3 @@ func TestConfig_MapStructure(t *testing.T) {
 	st.Equal(120, some.Age)
 	st.Equal(12, some.Tags[0])
 }
-
-func TestEnableCache(t *testing.T) {
-	at := assert.New(t)
-
-	c := NewWithOptions("test", EnableCache)
-	err := c.LoadStrings(JSON, jsonStr)
-	at.Nil(err)
-
-	str, ok := c.String("name")
-	at.True(ok)
-	at.Equal("app", str)
-
-	// re-get, from caches
-	str, ok = c.String("name")
-	at.True(ok)
-	at.Equal("app", str)
-
-	sArr, ok := c.Strings("arr1")
-	at.True(ok)
-	at.Equal("app", str)
-
-	// re-get, from caches
-	sArr, ok = c.Strings("arr1")
-	at.True(ok)
-	at.Equal("val1", sArr[1])
-
-	sMap, ok := c.StringMap("map1")
-	at.True(ok)
-	at.Equal("val1", sMap["key1"])
-	sMap, ok = c.StringMap("map1")
-	at.True(ok)
-	at.Equal("val1", sMap["key1"])
-}

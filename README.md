@@ -9,15 +9,15 @@ Golang application config manage tool library.
 
 > **[中文说明](README_cn.md)**
 
-- support multi format: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`
+- Support multi format: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`
   - `JSON` content support comments. will auto clear comments
-- support multi file/data load
-- support for loading configuration data from remote URLs
-- support for setting configuration data from command line arguments(`flags`)
-- support data overlay and merge, automatically load by key when loading multiple copies of data
-- support get sub value by path, like `map.key` `arr.2`
-- support parse ENV name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
-- generic api `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
+- Support multi-file and multi-data loading
+- Support for loading configuration data from remote URLs
+- Support for setting configuration data from command line arguments(`flags`)
+- Support data overlay and merge, automatically load by key when loading multiple copies of data
+- Support get sub value by path, like `map.key` `arr.2`
+- Support parse ENV name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
+- Generic api `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
 - complete unit test(code coverage > 95%)
 
 ## Only use INI
@@ -154,9 +154,9 @@ fmt.Print(ok, name) // true "new name"
 
 ### Load Config
 
-- `LoadData(dataSource ...interface{}) (err error)`
-- `LoadFlags(keys []string) (err error)`
-- `LoadExists(sourceFiles ...string) (err error)`
+- `LoadData(dataSource ...interface{}) (err error)` Load from struts or maps
+- `LoadFlags(keys []string) (err error)` Load from cli flags
+- `LoadExists(sourceFiles ...string) (err error)` 
 - `LoadFiles(sourceFiles ...string) (err error)`
 - `LoadRemote(format, url string) (err error)`
 - `LoadSources(format string, src []byte, more ...[]byte) (err error)`
@@ -164,13 +164,20 @@ fmt.Print(ok, name) // true "new name"
 
 ### Getting Values
 
+> `DefXXX` get value with default value
+
 - `Bool(key string) (value bool, ok bool)`
+- `DefBool(key string, defVal ...bool) bool`
 - `Int(key string) (value int, ok bool)`
+- `DefInt(key string, defVal ...int) int`
 - `Int64(key string) (value int64, ok bool)`
+- `DefInt64(key string, defVal ...int64)`
 - `Ints(key string) (arr []int, ok bool)`
 - `IntMap(key string) (mp map[string]int, ok bool)`
 - `Float(key string) (value float64, ok bool)`
+- `DefFloat(key string, defVal ...float64) float64`
 - `String(key string) (value string, ok bool)`
+- `DefString(key string, defVal ...string) string`
 - `Strings(key string) (arr []string, ok bool)`
 - `StringMap(key string) (mp map[string]string, ok bool)`
 - `Get(key string, findByPath ...bool) (value interface{}, ok bool)`
@@ -178,6 +185,12 @@ fmt.Print(ok, name) // true "new name"
 ### Setting Values
 
 - `Set(key string, val interface{}, setByPath ...bool) (err error)`
+
+### Useful Methods
+
+- `AddDriver(driver Driver)`
+- `Data() map[string]interface{}`
+- `DumpTo(out io.Writer, format string) (n int64, err error)`
 
 ## Run Tests
 
@@ -190,6 +203,7 @@ go test -cover ./...
 ## Related Packages
 
 - Ini parse [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser)
+- Ini config [gookit/ini](https://github.com/gookit/ini)
 - Yaml parse [go-yaml](https://github.com/go-yaml/yaml)
 - Toml parse [go toml](https://github.com/BurntSushi/toml)
 - Data merge [mergo](https://github.com/imdario/mergo)

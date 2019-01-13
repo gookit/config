@@ -9,9 +9,9 @@ golang应用程序配置管理工具库。
 
 > **[EN README](README.md)**
 
-- 支持多种格式: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`
+- 支持多种格式: `JSON`(默认), `INI`, `YAML`, `TOML`, `HCL`
   - `JSON` 内容支持注释，将自动清除注释
-- 支持多个文件/数据加载
+- 支持多个文件、多数据加载
 - 支持数据覆盖合并，加载多份数据时将按key自动合并
 - 支持从远程URL加载配置数据
 - 支持从命令行参数设置配置数据
@@ -161,6 +161,12 @@ fmt.Print(ok, name) // true "new name"
 
 - `Set(key string, val interface{}, setByPath ...bool) (err error)`
 
+### 有用的方法
+
+- `AddDriver(driver Driver)`
+- `Data() map[string]interface{}`
+- `DumpTo(out io.Writer, format string) (n int64, err error)`
+
 ## 单元测试
 
 ```bash
@@ -171,6 +177,7 @@ go test -cover ./...
 
 ## 相关包
 
+- Ini 配置 [gookit/ini](https://github.com/gookit/ini)
 - Ini 解析 [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser)
 - Yaml 解析 [go-yaml](https://github.com/go-yaml/yaml)
 - Toml 解析 [go toml](https://github.com/BurntSushi/toml)

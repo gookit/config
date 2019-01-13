@@ -162,5 +162,6 @@ func TestSet(t *testing.T) {
 
 	// Readonly
 	Default().Readonly()
+	st.True(c.Options().Readonly)
 	st.Error(Set("name", "new name"))
 }

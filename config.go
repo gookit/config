@@ -9,7 +9,7 @@ import (
 )
 
 // Version is package version
-const Version = "1.0.12"
+const Version = "1.1.0"
 
 // There are supported config format
 const (
