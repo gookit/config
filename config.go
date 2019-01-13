@@ -9,7 +9,7 @@ import (
 )
 
 // Version is package version
-const Version = "1.0.10"
+const Version = "1.0.12"
 
 // There are supported config format
 const (
@@ -58,6 +58,7 @@ type Options struct {
 
 // Config structure definition
 type Config struct {
+	err error
 	// config instance name
 	name string
 	lock sync.RWMutex
@@ -236,6 +237,11 @@ func (c *Config) Data() map[string]interface{} {
 	return c.data
 }
 
+// Error get last error
+func (c *Config) Error() error {
+	return c.err
+}
+
 // ToJSON string
 func (c *Config) ToJSON() string {
 	buf := &bytes.Buffer{}
@@ -311,7 +317,17 @@ func (c *Config) ClearCaches() {
 	c.sArrCache = nil
 }
 
-// fixFormat
+// record error
+func (c *Config) addError(err error) {
+	c.err = err
+}
+
+// format and record error
+func (c *Config) addErrorf(format string, a ...interface{}) {
+	c.err = fmt.Errorf(format, a...)
+}
+
+// fix yaml format
 func fixFormat(f string) string {
 	if f == Yml {
 		f = Yaml

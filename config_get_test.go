@@ -70,6 +70,9 @@ func TestGet(t *testing.T) {
 	st.True(ok)
 	st.Equal(int64(123), iv64)
 
+	_, ok = Int64("name")
+	st.False(false)
+
 	iv64 = DefInt64("age", 34)
 	st.Equal(int64(123), iv64)
 	iv64 = DefInt64("notExist", 34)
@@ -289,6 +292,20 @@ func TestGet(t *testing.T) {
 	iarr, ok = Ints("yMap1.k2")
 	st.True(ok)
 	st.Equal("[23 45]", fmt.Sprintf("%v", iarr))
+}
+
+func TestConfigGetWithDefault(t *testing.T) {
+	ClearAll()
+	err := LoadStrings(JSON, jsonStr)
+	assert.Nil(t, err)
+
+	// fmt.Printf("%#v\n", Data())
+	c := Default()
+	assert.Equal(t, 0, c.DefInt("not-exist"))
+	assert.Equal(t, int64(0), c.DefInt64("not-exist"))
+	assert.Equal(t, float64(0), c.DefFloat("not-exist"))
+	assert.Equal(t, false, c.DefBool("not-exist"))
+	assert.Equal(t, "", c.DefString("not-exist"))
 }
 
 func TestConfig_MapStructure(t *testing.T) {

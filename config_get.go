@@ -76,6 +76,7 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 			// 检查slice index是否存在
 			if err != nil || len(typeData) < i {
 				ok = false
+				c.addError(err)
 				return
 			}
 
@@ -84,6 +85,7 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 			i, err := strconv.Atoi(k)
 			if err != nil || len(typeData) < i {
 				ok = false
+				c.addError(err)
 				return
 			}
 
@@ -92,12 +94,14 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 			i, err := strconv.Atoi(k)
 			if err != nil || len(typeData) < i {
 				ok = false
+				c.addError(err)
 				return
 			}
 
 			item = typeData[i]
 		default: // error
 			ok = false
+			c.addErrorf("cannot get value of the key '%s'", key)
 			return
 		}
 	}
@@ -136,6 +140,7 @@ func (c *Config) String(key string) (value string, ok bool) {
 			value = c.parseEnvValue(value)
 		}
 	default:
+		c.addErrorf("value cannot be convert to string of the key '%s'", key)
 		ok = false
 	}
 
@@ -175,6 +180,7 @@ func (c *Config) Int(key string) (value int, ok bool) {
 	}
 
 	if value, err := strconv.Atoi(rawVal); err == nil {
+		c.addError(err)
 		return value, true
 	}
 
@@ -202,7 +208,7 @@ func (c *Config) MustInt(key string) int {
 // Int64 get a int64 by key
 func (c *Config) Int64(key string) (value int64, ok bool) {
 	if intVal, ok := c.Int(key); ok {
-		value = int64(intVal)
+		return int64(intVal), true
 	}
 	return
 }
@@ -247,6 +253,7 @@ func (c *Config) Bool(key string) (value bool, ok bool) {
 	case "1", "true", "yes":
 		value = true
 	default:
+		c.addErrorf("the value '%s' cannot be convert to bool", lowerCase)
 		ok = false
 	}
 
@@ -279,6 +286,7 @@ func (c *Config) Float(key string) (value float64, ok bool) {
 
 	value, err := strconv.ParseFloat(str, 64)
 	if err != nil {
+		c.addError(err)
 		ok = false
 	}
 	return
@@ -316,12 +324,14 @@ func (c *Config) Ints(key string) (arr []int, ok bool) {
 			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
 			if err != nil {
 				ok = false
+				c.addError(err)
 				return
 			}
 
 			arr = append(arr, iv)
 		}
 	default:
+		c.addErrorf("value cannot be convert to []int, key is '%s'", key)
 		ok = false
 	}
 
@@ -344,6 +354,7 @@ func (c *Config) IntMap(key string) (mp map[string]int, ok bool) {
 			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
 			if err != nil {
 				ok = false
+				c.addError(err)
 				return
 			}
 			mp[k] = iv
@@ -354,6 +365,7 @@ func (c *Config) IntMap(key string) (mp map[string]int, ok bool) {
 			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
 			if err != nil {
 				ok = false
+				c.addError(err)
 				return
 			}
 
@@ -362,8 +374,8 @@ func (c *Config) IntMap(key string) (mp map[string]int, ok bool) {
 		}
 	default:
 		ok = false
+		c.addErrorf("value cannot be convert to map[string]int, key is '%s'", key)
 	}
-
 	return
 }
 
@@ -391,6 +403,7 @@ func (c *Config) Strings(key string) (arr []string, ok bool) {
 		}
 	default:
 		ok = false
+		c.addErrorf("value cannot be convert to []string, key is '%s'", key)
 	}
 
 	// add cache
@@ -401,7 +414,6 @@ func (c *Config) Strings(key string) (arr []string, ok bool) {
 
 		c.sArrCache[key] = arr
 	}
-
 	return
 }
 
@@ -436,6 +448,7 @@ func (c *Config) StringMap(key string) (mp map[string]string, ok bool) {
 		}
 	default:
 		ok = false
+		c.addErrorf("value cannot be convert to map[string]string, key is '%s'", key)
 	}
 
 	// add cache
@@ -446,7 +459,6 @@ func (c *Config) StringMap(key string) (mp map[string]string, ok bool) {
 
 		c.sMapCache[key] = mp
 	}
-
 	return
 }
 
@@ -465,9 +477,8 @@ func (c *Config) MapStructure(key string, v interface{}) (err error) {
 // 	dbInfo := Db{}
 // 	config.Structure("db", &dbInfo)
 func (c *Config) Structure(key string, v interface{}) (err error) {
+	var ok bool
 	var data interface{}
-
-	ok := false
 
 	// map all data
 	if key == "" {
@@ -485,7 +496,6 @@ func (c *Config) Structure(key string, v interface{}) (err error) {
 
 		err = JSONDecoder(blob, v)
 	}
-
 	return
 }
 

@@ -15,6 +15,7 @@ var jsonStr = `{
     "age": 123,
     "envKey": "${SHELL}",
     "envKey1": "${NotExist|defValue}",
+    "invalidEnvKey": "${noClose",
     "map1": {
         "key": "val",
         "key1": "val1",
@@ -175,6 +176,7 @@ func TestBasic(t *testing.T) {
 	st.True(c.HasDecoder(JSON))
 	st.True(c.HasEncoder(JSON))
 	st.Equal("default", c.Name())
+	st.NoError(c.Error())
 
 	c = NewWithOptions("test", Readonly)
 	opts := c.Options()
@@ -357,6 +359,10 @@ func TestOptions(t *testing.T) {
 	str, ok = c.String("envKey")
 	st.True(ok)
 	st.NotContains(str, "${")
+
+	str, ok = c.String("invalidEnvKey")
+	st.True(ok)
+	st.Contains(str, "${")
 
 	str, ok = c.String("envKey1")
 	st.True(ok)

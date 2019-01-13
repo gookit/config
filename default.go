@@ -49,7 +49,7 @@ func Get(key string, findByPath ...bool) (value interface{}, ok bool) {
 }
 
 // Int get a int by key
-func Int(key string) (value int, ok bool) {
+func Int(key string) (int, bool) {
 	return dc.Int(key)
 }
 
@@ -59,7 +59,7 @@ func DefInt(key string, defVal ...int) int {
 }
 
 // Int64 get a int64 by key
-func Int64(key string) (value int64, ok bool) {
+func Int64(key string) (int64, bool) {
 	return dc.Int64(key)
 }
 

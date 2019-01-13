@@ -126,7 +126,6 @@ func buildValueByPath(paths []string, val interface{}) (newItem map[string]inter
 			newItem = map[string]interface{}{p: newItem}
 		}
 	}
-
 	return
 }
 
