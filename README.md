@@ -13,7 +13,7 @@ Golang application config manage tool library.
   - `JSON` content support comments. will auto clear comments
 - support multi file/data load
 - support for loading configuration data from remote URLs
-- support for setting configuration data from command line arguments
+- support for setting configuration data from command line arguments(`flags`)
 - support data overlay and merge, automatically load by key when loading multiple copies of data
 - support get sub value by path, like `map.key` `arr.2`
 - support parse ENV name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`

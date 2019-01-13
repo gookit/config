@@ -147,17 +147,19 @@ func (c *Config) String(key string) (value string, ok bool) {
 
 		c.strCache[key] = value
 	}
-
 	return
 }
 
 // DefString get a string value, if not found return default value
-func (c *Config) DefString(key string, def string) string {
+func (c *Config) DefString(key string, defVal ...string) string {
 	if value, ok := c.String(key); ok {
 		return value
 	}
 
-	return def
+	if len(defVal) > 0 {
+		return defVal[0]
+	}
+	return ""
 }
 
 // MustString get a string value, if not found return empty string
@@ -181,12 +183,15 @@ func (c *Config) Int(key string) (value int, ok bool) {
 }
 
 // DefInt get a int value, if not found return default value
-func (c *Config) DefInt(key string, def int) int {
+func (c *Config) DefInt(key string, defVal ...int) int {
 	if value, ok := c.Int(key); ok {
 		return value
 	}
 
-	return def
+	if len(defVal) > 0 {
+		return defVal[0]
+	}
+	return 0
 }
 
 // MustInt get a int value, if not found return 0
@@ -196,22 +201,22 @@ func (c *Config) MustInt(key string) int {
 
 // Int64 get a int64 by key
 func (c *Config) Int64(key string) (value int64, ok bool) {
-	intVal, ok := c.Int(key)
-	if ok {
+	if intVal, ok := c.Int(key); ok {
 		value = int64(intVal)
 	}
-
 	return
 }
 
 // DefInt64 get a int64 with a default value
-func (c *Config) DefInt64(key string, def int64) int64 {
-	intVal, ok := c.Int(key)
-	if ok {
+func (c *Config) DefInt64(key string, defVal ...int64) int64 {
+	if intVal, ok := c.Int(key); ok {
 		return int64(intVal)
 	}
 
-	return def
+	if len(defVal) > 0 {
+		return defVal[0]
+	}
+	return 0
 }
 
 // MustInt64 get a int value, if not found return 0
@@ -249,12 +254,15 @@ func (c *Config) Bool(key string) (value bool, ok bool) {
 }
 
 // DefBool get a bool value, if not found return default value
-func (c *Config) DefBool(key string, def bool) bool {
+func (c *Config) DefBool(key string, defVal ...bool) bool {
 	if value, ok := c.Bool(key); ok {
 		return value
 	}
 
-	return def
+	if len(defVal) > 0 {
+		return defVal[0]
+	}
+	return false
 }
 
 // MustBool get a string value, if not found return false
@@ -273,17 +281,19 @@ func (c *Config) Float(key string) (value float64, ok bool) {
 	if err != nil {
 		ok = false
 	}
-
 	return
 }
 
 // DefFloat get a float value, if not found return default value
-func (c *Config) DefFloat(key string, def float64) float64 {
+func (c *Config) DefFloat(key string, defVal ...float64) float64 {
 	if value, ok := c.Float(key); ok {
 		return value
 	}
 
-	return def
+	if len(defVal) > 0 {
+		return defVal[0]
+	}
+	return 0
 }
 
 /*************************************************************

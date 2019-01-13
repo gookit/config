@@ -54,8 +54,8 @@ func Int(key string) (value int, ok bool) {
 }
 
 // DefInt get a int value, if not found return default value
-func DefInt(key string, def int) int {
-	return dc.DefInt(key, def)
+func DefInt(key string, defVal ...int) int {
+	return dc.DefInt(key, defVal...)
 }
 
 // Int64 get a int64 by key
@@ -64,8 +64,8 @@ func Int64(key string) (value int64, ok bool) {
 }
 
 // DefInt64 get a int64 with a default value
-func DefInt64(key string, def int64) int64 {
-	return dc.DefInt64(key, def)
+func DefInt64(key string, defVal ...int64) int64 {
+	return dc.DefInt64(key, defVal...)
 }
 
 // Bool get a bool by key
@@ -74,8 +74,8 @@ func Bool(key string) (value bool, ok bool) {
 }
 
 // DefBool get a bool value, if not found return default value
-func DefBool(key string, def bool) bool {
-	return dc.DefBool(key, def)
+func DefBool(key string, defVal ...bool) bool {
+	return dc.DefBool(key, defVal...)
 }
 
 // Float get a bool by key
@@ -84,8 +84,8 @@ func Float(key string) (value float64, ok bool) {
 }
 
 // DefFloat get a float64 value, if not found return default value
-func DefFloat(key string, def float64) float64 {
-	return dc.DefFloat(key, def)
+func DefFloat(key string, defVal ...float64) float64 {
+	return dc.DefFloat(key, defVal...)
 }
 
 // String get a string by key
@@ -94,8 +94,8 @@ func String(key string) (value string, ok bool) {
 }
 
 // DefString get a string value, if not found return default value
-func DefString(key string, def string) string {
-	return dc.DefString(key, def)
+func DefString(key string, defVal ...string) string {
+	return dc.DefString(key, defVal...)
 }
 
 // Ints  get config data as a int slice/array
@@ -122,28 +122,33 @@ func StringMap(key string) (mp map[string]string, ok bool) {
  * load config data to default instance
  *************************************************************/
 
+// LoadFlags load data from cli flags
+func LoadFlags(keys []string) error {
+	return dc.LoadFlags(keys)
+}
+
 // LoadFiles load one or multi files
-func LoadFiles(sourceFiles ...string) (err error) {
+func LoadFiles(sourceFiles ...string) error {
 	return dc.LoadFiles(sourceFiles...)
 }
 
 // LoadExists load one or multi files, will ignore not exist
-func LoadExists(sourceFiles ...string) (err error) {
+func LoadExists(sourceFiles ...string) error {
 	return dc.LoadExists(sourceFiles...)
 }
 
 // LoadData load one or multi data
-func LoadData(dataSource ...interface{}) (err error) {
+func LoadData(dataSource ...interface{}) error {
 	return dc.LoadData(dataSource...)
 }
 
 // LoadSources load one or multi byte data
-func LoadSources(format string, src []byte, more ...[]byte) (err error) {
+func LoadSources(format string, src []byte, more ...[]byte) error {
 	return dc.LoadSources(format, src, more...)
 }
 
 // LoadStrings load one or multi string
-func LoadStrings(format string, str string, more ...string) (err error) {
+func LoadStrings(format string, str string, more ...string) error {
 	return dc.LoadStrings(format, str, more...)
 }
 
@@ -152,7 +157,7 @@ func LoadStrings(format string, str string, more ...string) (err error) {
  *************************************************************/
 
 // Set val by key
-func Set(key string, val interface{}, setByPath ...bool) (err error) {
+func Set(key string, val interface{}, setByPath ...bool) error {
 	return dc.Set(key, val, setByPath...)
 }
 
