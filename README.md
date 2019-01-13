@@ -90,55 +90,55 @@ func main() {
 - get integer
 
 ```go
-age, ok := config.Int("age")
-fmt.Print(ok, age) // true 100
+age := config.Int("age")
+fmt.Print(age) // 100
 ```
 
 - Get bool
 
 ```go
-val, ok := config.Bool("debug")
-fmt.Print(ok, val) // true true
+val := config.Bool("debug")
+fmt.Print(val) // true
 ```
 
 - Get string
 
 ```go
-name, ok := config.String("name")
-fmt.Print(ok, name) // true inhere
+name := config.String("name")
+fmt.Print(name) // inhere
 ```
 
 - Get strings(slice)
 
 ```go
-arr1, ok := config.Strings("arr1")
-fmt.Printf("%v %#v", ok, arr1) // true []string{"val1", "val21"}
+arr1 := config.Strings("arr1")
+fmt.Printf("%v %#v", arr1) // []string{"val1", "val21"}
 ```
 
 - Get string map
 
 ```go
-val, ok := config.StringMap("map1")
-fmt.Printf("%v %#v",ok, val) // true map[string]string{"key":"val2", "key2":"val20"}
+val := config.StringMap("map1")
+fmt.Printf("%v %#v",val) // map[string]string{"key":"val2", "key2":"val20"}
 ```
 
 - Value contains ENV var
 
 ```go
-value, ok := config.String("shell")
-fmt.Print(ok, value) // true /bin/zsh
+value := config.String("shell")
+fmt.Print(value) // /bin/zsh
 ```
 
 - Get value by key path
 
 ```go
 // from array
-value, ok := config.String("arr1.0")
-fmt.Print(ok, value) // true "val1"
+value := config.String("arr1.0")
+fmt.Print(value) // "val1"
 
 // from map
-value, ok := config.String("map1.key")
-fmt.Print(ok, value) // true "val2"
+value := config.String("map1.key")
+fmt.Print(value) // "val2"
 ```
 
 - Setting new value
@@ -146,8 +146,8 @@ fmt.Print(ok, value) // true "val2"
 ```go
 // set value
 config.Set("name", "new name")
-name, ok = config.String("name")
-fmt.Print(ok, name) // true "new name"
+name = config.String("name")
+fmt.Print(name) // new name
 ```
 
 ## API Methods Refer
@@ -164,23 +164,21 @@ fmt.Print(ok, name) // true "new name"
 
 ### Getting Values
 
-> `DefXXX` get value with default value
-
-- `Bool(key string) (value bool, ok bool)`
+- `Bool(key string) (value bool)`
 - `DefBool(key string, defVal ...bool) bool`
-- `Int(key string) (value int, ok bool)`
+- `Int(key string) (value int)`
 - `DefInt(key string, defVal ...int) int`
-- `Int64(key string) (value int64, ok bool)`
+- `Int64(key string) (value int64)`
 - `DefInt64(key string, defVal ...int64)`
-- `Ints(key string) (arr []int, ok bool)`
-- `IntMap(key string) (mp map[string]int, ok bool)`
-- `Float(key string) (value float64, ok bool)`
+- `Ints(key string) (arr []int)`
+- `IntMap(key string) (mp map[string]int)`
+- `Float(key string) (value float64)`
 - `DefFloat(key string, defVal ...float64) float64`
-- `String(key string) (value string, ok bool)`
+- `String(key string) (value string)`
 - `DefString(key string, defVal ...string) string`
-- `Strings(key string) (arr []string, ok bool)`
-- `StringMap(key string) (mp map[string]string, ok bool)`
-- `Get(key string, findByPath ...bool) (value interface{}, ok bool)`
+- `Strings(key string) (arr []string)`
+- `StringMap(key string) (mp map[string]string)`
+- `Get(key string, findByPath ...bool) (value interface{})`
 
 ### Setting Values
 
