@@ -164,18 +164,13 @@ fmt.Print(name) // new name
 
 ### Getting Values
 
-- `Bool(key string) (value bool)`
-- `DefBool(key string, defVal ...bool) bool`
-- `Int(key string) (value int)`
-- `DefInt(key string, defVal ...int) int`
-- `Int64(key string) (value int64)`
-- `DefInt64(key string, defVal ...int64)`
+- `Bool(key string, defVal ...bool) bool`
+- `Int(key string, defVal ...int) int`
+- `Int64(key string, defVal ...int64)`
 - `Ints(key string) (arr []int)`
 - `IntMap(key string) (mp map[string]int)`
-- `Float(key string) (value float64)`
-- `DefFloat(key string, defVal ...float64) float64`
-- `String(key string) (value string)`
-- `DefString(key string, defVal ...string) string`
+- `Float(key string, defVal ...float64) float64`
+- `String(key string, defVal ...string) string`
 - `Strings(key string) (arr []string)`
 - `StringMap(key string) (mp map[string]string)`
 - `Get(key string, findByPath ...bool) (value interface{})`
