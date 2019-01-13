@@ -98,19 +98,19 @@ func Example() {
 	// Out:
 	// get config example:
 	// - get string
-	//  ok: true, val: app
+	//  val: app
 	// - get array
-	//  ok: true, val: []string{"val", "val1", "val2"}
+	//  val: []string{"val", "val1", "val2"}
 	// - get sub-value by path 'arr.index'
-	//  ok: true, val: "val"
+	//  val: "val"
 	// - get map
-	//  ok: true, val: map[string]string{"key":"val", "key1":"val1", "key2":"val2"}
+	//  val: map[string]string{"key":"val", "key1":"val1", "key2":"val2"}
 	// - get sub-value by path 'map.key'
-	//  ok: true, val: "val"
+	//  val: "val"
 	// get env 'envKey' val: /bin/zsh
 	// get env 'envKey1' val: defValue
 	// - set string
-	//  ok: true, val: new name
+	//  val: new name
 }
 
 func ExampleConfig_DefBool() {
@@ -126,7 +126,7 @@ func ExampleConfig_DefBool() {
 	fmt.Printf("get 'debug' with default, val: %v\n", val1)
 
 	// Output:
-	// get 'debug', ok: true, val: true
+	// get 'debug', val: true
 	// get 'debug' with default, val: true
 }
 

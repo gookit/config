@@ -170,17 +170,17 @@ func TestGet(t *testing.T) {
 	iarr = Ints("newIArr1")
 	st.Equal("[12 23]", fmt.Sprintf("%v", iarr))
 	iarr = Ints("newIArr2")
-	st.Nil(iarr)
+	st.Empty(iarr)
 
 	iv = Int("newIArr.1")
 	st.Equal(3, iv)
 
 	iv = Int("newIArr.200")
-	st.Nil(iv)
+	st.Equal(0, iv)
 
 	// invalid intMap
 	imp = IntMap("yMap1")
-	st.Nil(imp)
+	st.Empty(imp)
 
 	imp = IntMap("yMap10")
 	st.Empty(imp)
@@ -289,7 +289,7 @@ func TestString(t *testing.T) {
 
 	// get string
 	val := String("arr1")
-	st.Equal("", val)
+	st.Equal("[val val1 val2]", val)
 
 	str := String("notExists")
 	st.Equal("", str)

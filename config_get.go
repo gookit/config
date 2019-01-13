@@ -381,8 +381,8 @@ func (c *Config) Ints(key string) (arr []int) {
 			// iv, err := strconv.Atoi(v.(string))
 			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
 			if err != nil {
-				ok = false
 				c.addError(err)
+				arr = arr[0:0] // reset
 				return
 			}
 
@@ -413,6 +413,7 @@ func (c *Config) IntMap(key string) (mp map[string]int) {
 			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
 			if err != nil {
 				c.addError(err)
+				mp = map[string]int{} // reset
 				return
 			}
 			mp[k] = iv
@@ -423,6 +424,7 @@ func (c *Config) IntMap(key string) (mp map[string]int) {
 			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
 			if err != nil {
 				c.addError(err)
+				mp = map[string]int{} // reset
 				return
 			}
 
