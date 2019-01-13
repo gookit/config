@@ -8,6 +8,11 @@ import (
 	"strings"
 )
 
+// Set val by key
+func Set(key string, val interface{}, setByPath ...bool) error {
+	return dc.Set(key, val, setByPath...)
+}
+
 // Set a value by key string.
 func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error) {
 	// if is readonly
@@ -20,7 +25,7 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
-	key = strings.Trim(strings.TrimSpace(key), ".")
+	key = formatKey(key)
 	if key == "" {
 		err = errors.New("the config key is cannot be empty")
 		return

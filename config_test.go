@@ -63,29 +63,29 @@ func Example() {
 	// fmt.Printf("config data: \n %#v\n", Data())
 	fmt.Print("get config example:\n")
 
-	name, ok := String("name")
-	fmt.Printf("- get string\n ok: %v, val: %v\n", ok, name)
+	name:= String("name")
+	fmt.Printf("- get string\n val: %v\n", name)
 
-	arr1, ok := Strings("arr1")
-	fmt.Printf("- get array\n ok: %v, val: %#v\n", ok, arr1)
+	arr1:= Strings("arr1")
+	fmt.Printf("- get array\n val: %#v\n", arr1)
 
-	val0, ok := String("arr1.0")
-	fmt.Printf("- get sub-value by path 'arr.index'\n ok: %v, val: %#v\n", ok, val0)
+	val0:= String("arr1.0")
+	fmt.Printf("- get sub-value by path 'arr.index'\n val: %#v\n", val0)
 
-	map1, ok := StringMap("map1")
-	fmt.Printf("- get map\n ok: %v, val: %#v\n", ok, map1)
+	map1:= StringMap("map1")
+	fmt.Printf("- get map\n val: %#v\n", map1)
 
-	val0, ok = String("map1.key")
-	fmt.Printf("- get sub-value by path 'map.key'\n ok: %v, val: %#v\n", ok, val0)
+	val0= String("map1.key")
+	fmt.Printf("- get sub-value by path 'map.key'\n val: %#v\n", val0)
 
 	// can parse env name(ParseEnv: true)
-	fmt.Printf("get env 'envKey' val: %s\n", DefString("envKey", ""))
-	fmt.Printf("get env 'envKey1' val: %s\n", DefString("envKey1", ""))
+	fmt.Printf("get env 'envKey' val: %s\n", String("envKey", ""))
+	fmt.Printf("get env 'envKey1' val: %s\n", String("envKey1", ""))
 
 	// set value
 	_ = Set("name", "new name")
-	name, ok = String("name")
-	fmt.Printf("- set string\n ok: %v, val: %v\n", ok, name)
+	name= String("name")
+	fmt.Printf("- set string\n val: %v\n", name)
 
 	// if you want export config data
 	// buf := new(bytes.Buffer)
@@ -120,9 +120,9 @@ func ExampleConfig_DefBool() {
 		panic(err)
 	}
 
-	val, ok := Bool("debug")
-	fmt.Printf("get 'debug', ok: %v, val: %v\n", ok, val)
-	val1 := DefBool("debug", false)
+	val := Bool("debug")
+	fmt.Printf("get 'debug', val: %v\n", val)
+	val1 := Bool("debug", false)
 	fmt.Printf("get 'debug' with default, val: %v\n", val1)
 
 	// Output:
@@ -183,6 +183,66 @@ func TestBasic(t *testing.T) {
 	st.True(opts.Readonly)
 	st.Equal(JSON, opts.DumpFormat)
 	st.Equal(JSON, opts.ReadFormat)
+}
+
+func TestDefaultLoad(t *testing.T) {
+	st := assert.New(t)
+
+	ClearAll()
+	err := LoadFiles("testdata/json_base.json", "testdata/json_other.json")
+	st.Nil(err)
+
+	ClearAll()
+	err = LoadExists("testdata/json_base.json", "not-exist.json")
+	st.Nil(err)
+
+	ClearAll()
+	// load map
+	err = LoadData(map[string]interface{}{
+		"name":    "inhere",
+		"age":     28,
+		"working": true,
+		"tags":    []string{"a", "b"},
+		"info":    map[string]string{"k1": "a", "k2": "b"},
+	})
+	st.NotEmpty(Data())
+	st.Nil(err)
+}
+
+func TestSetDecoderEncoder(t *testing.T) {
+	at := assert.New(t)
+
+	c := Default()
+	c.ClearAll()
+
+	at.True(c.HasDecoder(JSON))
+	at.True(c.HasEncoder(JSON))
+
+	c.DelDriver(JSON)
+
+	at.False(c.HasDecoder(JSON))
+	at.False(c.HasEncoder(JSON))
+
+	SetDecoder(JSON, JSONDecoder)
+	SetEncoder(JSON, JSONEncoder)
+
+	at.True(c.HasDecoder(JSON))
+	at.True(c.HasEncoder(JSON))
+}
+
+func TestDefault(t *testing.T) {
+	at := assert.New(t)
+
+	ClearAll()
+	WithOptions(ParseEnv)
+
+	at.True(GetOptions().ParseEnv)
+
+	_ = LoadStrings(JSON, `{"name": "inhere"}`)
+
+	buf := &bytes.Buffer{}
+	_, err := WriteTo(buf)
+	at.Nil(err)
 }
 
 func TestLoad(t *testing.T) {
@@ -259,7 +319,7 @@ func TestConfig_LoadRemote(t *testing.T) {
 	url := "https://raw.githubusercontent.com/gookit/config/master/testdata/json_base.json"
 	err := c.LoadRemote(JSON, url)
 	is.Nil(err)
-	is.Equal("123", c.DefString("age", ""))
+	is.Equal("123", c.String("age", ""))
 
 	is.Len(c.LoadedFiles(), 1)
 	is.Equal(url, c.LoadedFiles()[0])
@@ -276,7 +336,7 @@ func TestConfig_LoadRemote(t *testing.T) {
 
 	// invalid remote url
 	url3 := "invalid-url"
-	err = c.LoadRemote(JSON, url3)
+	err = LoadRemote(JSON, url3)
 	is.Error(err)
 }
 
@@ -296,9 +356,9 @@ func TestConfig_LoadFlags(t *testing.T) {
 	// load flag info
 	err := LoadFlags([]string{"name", "env", "debug"})
 	is.Nil(err)
-	is.Equal("my-app", c.DefString("name", ""))
-	is.Equal("dev", c.DefString("env", ""))
-	is.True(c.DefBool("debug", false))
+	is.Equal("my-app", c.String("name", ""))
+	is.Equal("dev", c.String("env", ""))
+	is.True(c.Bool("debug", false))
 
 	// set sub key
 	c = New("flag")
@@ -307,10 +367,10 @@ func TestConfig_LoadFlags(t *testing.T) {
 		"./cliapp",
 		"--map1.key", "new val",
 	}
-	is.Equal("val", c.DefString("map1.key"))
+	is.Equal("val", c.String("map1.key"))
 	err = c.LoadFlags([]string{"--map1.key"})
 	is.NoError(err)
-	is.Equal("new val", c.DefString("map1.key"))
+	is.Equal("new val", c.String("map1.key"))
 	// fmt.Println(err)
 	// fmt.Printf("%#v\n", c.Data())
 
@@ -365,20 +425,16 @@ func TestOptions(t *testing.T) {
 	err := c.LoadStrings(JSON, jsonStr)
 	st.Nil(err)
 
-	str, ok := c.String("name")
-	st.True(ok)
+	str:= c.String("name")
 	st.Equal("app", str)
 
-	str, ok = c.String("envKey")
-	st.True(ok)
+	str= c.String("envKey")
 	st.NotContains(str, "${")
 
-	str, ok = c.String("invalidEnvKey")
-	st.True(ok)
+	str= c.String("invalidEnvKey")
 	st.Contains(str, "${")
 
-	str, ok = c.String("envKey1")
-	st.True(ok)
+	str = c.String("envKey1")
 	st.NotContains(str, "${")
 	st.Equal("defValue", str)
 
@@ -391,8 +447,7 @@ func TestOptions(t *testing.T) {
 	err = c.LoadStrings(JSON, jsonStr)
 	st.Nil(err)
 
-	str, ok = c.String("name")
-	st.True(ok)
+	str = c.String("name")
 	st.Equal("app", str)
 
 	err = c.Set("name", "new app")
@@ -406,29 +461,23 @@ func TestEnableCache(t *testing.T) {
 	err := c.LoadStrings(JSON, jsonStr)
 	at.Nil(err)
 
-	str, ok := c.String("name")
-	at.True(ok)
+	str := c.String("name")
 	at.Equal("app", str)
 
 	// re-get, from caches
-	str, ok = c.String("name")
-	at.True(ok)
+	str = c.String("name")
 	at.Equal("app", str)
 
-	sArr, ok := c.Strings("arr1")
-	at.True(ok)
+	sArr := c.Strings("arr1")
 	at.Equal("app", str)
 
 	// re-get, from caches
-	sArr, ok = c.Strings("arr1")
-	at.True(ok)
+	sArr = c.Strings("arr1")
 	at.Equal("val1", sArr[1])
 
-	sMap, ok := c.StringMap("map1")
-	at.True(ok)
+	sMap := c.StringMap("map1")
 	at.Equal("val1", sMap["key1"])
-	sMap, ok = c.StringMap("map1")
-	at.True(ok)
+	sMap = c.StringMap("map1")
 	at.Equal("val1", sMap["key1"])
 
 	c.ClearAll()

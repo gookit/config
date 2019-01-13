@@ -6,6 +6,45 @@ import (
 	"testing"
 )
 
+func TestConfig_GetValue(t *testing.T) {
+	st := assert.New(t)
+
+	ClearAll()
+	err := LoadStrings(JSON, jsonStr)
+	st.Nil(err)
+
+	c := Default()
+
+	// error on get
+	_, ok := GetValue("")
+	st.False(ok)
+
+	_, ok = c.GetValue("notExist")
+	st.False(ok)
+	_, ok = c.GetValue("name.sub")
+	st.False(ok)
+	st.Error(c.Error())
+
+	_, ok = c.GetValue("map1.key", false)
+	st.False(ok)
+
+	val, ok := GetValue("map1.notExist")
+	st.False(ok)
+	st.Nil(val)
+
+	val, ok = GetValue("notExist.sub")
+	st.False(ok)
+	st.Nil(val)
+
+	val, ok = c.GetValue("arr1.100")
+	st.False(ok)
+	st.Nil(val)
+
+	val, ok = c.GetValue("arr1.notExist")
+	st.False(ok)
+	st.Nil(val)
+}
+
 func TestGet(t *testing.T) {
 	st := assert.New(t)
 
@@ -17,150 +56,33 @@ func TestGet(t *testing.T) {
 	c := Default()
 
 	st.False(c.IsEmpty())
+	st.True(Exists("age"))
+	st.True(Exists("map1.key"))
+	st.True(Exists("arr1.1"))
+	st.False(Exists("not-exist"))
 
-	// error on get
-	_, ok := c.Get("")
-	st.False(ok)
-
-	_, ok = c.Get("notExist")
-	st.False(ok)
-	_, ok = c.Get("name.sub")
-	st.False(ok)
-	st.Error(c.Error())
-
-	_, ok = c.Get("map1.key", false)
-	st.False(ok)
-
-	val, ok := Get("map1.notExist")
-	st.False(ok)
-	st.Nil(val)
-
-	val, ok = Get("notExist.sub")
-	st.False(ok)
-	st.Nil(val)
-
-	val, ok = c.Get("arr1.100")
-	st.False(ok)
-	st.Nil(val)
-
-	val, ok = c.Get("arr1.notExist")
-	st.False(ok)
-	st.Nil(val)
-
-	// get int
-	val, ok = Get("age")
-	st.True(ok)
+	// get value
+	val := Get("age")
 	st.Equal(float64(123), val)
 	st.Equal("float64", fmt.Sprintf("%T", val))
 
-	iv, ok := Int("age")
-	st.True(ok)
-	st.Equal(123, iv)
+	val = Get("not-exist")
+	st.Nil(val)
 
-	iv, ok = Int("name")
-	st.False(ok)
-
-	iv = DefInt("notExist", 34)
-	st.Equal(34, iv)
-
-	iv = c.MustInt("age")
-	st.Equal(123, iv)
-	iv = c.MustInt("notExist")
-	st.Equal(0, iv)
-
-	// get int64
-	iv64, ok := Int64("age")
-	st.True(ok)
-	st.Equal(int64(123), iv64)
-
-	_, ok = Int64("name")
-	st.False(false)
-
-	iv64 = DefInt64("age", 34)
-	st.Equal(int64(123), iv64)
-	iv64 = DefInt64("notExist", 34)
-	st.Equal(int64(34), iv64)
-
-	iv64 = c.MustInt64("age")
-	st.Equal(int64(123), iv64)
-	iv64 = c.MustInt64("notExist")
-	st.Equal(int64(0), iv64)
-
-	// get bool
-	val, ok = Get("debug")
-	st.True(ok)
-	st.Equal(true, val)
-
-	bv, ok := Bool("debug")
-	st.True(ok)
-	st.Equal(true, bv)
-
-	bv, ok = Bool("age")
-	st.False(ok)
-	st.Equal(false, bv)
-
-	bv = DefBool("debug", false)
-	st.Equal(true, bv)
-
-	bv = DefBool("notExist", false)
-	st.Equal(false, bv)
-
-	bv = c.MustBool("debug")
-	st.True(bv)
-	bv = c.MustBool("notExist")
-	st.False(bv)
-
-	// get string
-	val, ok = Get("name")
-	st.True(ok)
+	val = Get("name")
 	st.Equal("app", val)
 
-	val, ok = String("arr1")
-	st.False(ok)
-	st.Equal("", val)
-
-	str, ok := String("notExists")
-	st.False(ok)
-	st.Equal("", str)
-
-	str = DefString("notExists", "defVal")
-	st.Equal("defVal", str)
-
-	str = c.MustString("name")
-	st.Equal("app", str)
-	str = c.MustString("notExist")
-	st.Equal("", str)
-
-	// get float
-	err = c.Set("flVal", 23.45)
-	st.Nil(err)
-	flt, ok := c.Float("flVal")
-	st.True(ok)
-	st.Equal(23.45, flt)
-
-	flt, ok = Float("name")
-	st.False(ok)
-	st.Equal(float64(0), flt)
-
-	flt = c.DefFloat("notExists", 0)
-	st.Equal(float64(0), flt)
-
-	flt = DefFloat("flVal", 0)
-	st.Equal(23.45, flt)
-
 	// get string array
-	arr, ok := Strings("notExist")
-	st.False(ok)
+	arr := Strings("notExist")
+	st.Empty(arr)
 
-	arr, ok = Strings("map1")
-	st.False(ok)
+	arr = Strings("map1")
+	st.Empty(arr)
 
-	arr, ok = Strings("arr1")
-	st.True(ok)
+	arr = Strings("arr1")
 	st.Equal(`[]string{"val", "val1", "val2"}`, fmt.Sprintf("%#v", arr))
 
-	val, ok = String("arr1.1")
-	st.True(ok)
+	val = String("arr1.1")
 	st.Equal("val1", val)
 
 	err = LoadStrings(JSON, `{
@@ -170,51 +92,46 @@ func TestGet(t *testing.T) {
 	st.Nil(err)
 
 	// Ints: get int arr
-	iarr, ok := Ints("name")
-	st.False(ok)
+	iarr := Ints("name")
+	st.Empty(iarr)
 
-	iarr, ok = Ints("notExist")
-	st.False(ok)
+	iarr = Ints("notExist")
+	st.Empty(iarr)
 
-	iarr, ok = Ints("iArr")
-	st.True(ok)
+	iarr = Ints("iArr")
 	st.Equal(`[]int{12, 34, 36}`, fmt.Sprintf("%#v", iarr))
 
-	iv, ok = Int("iArr.1")
-	st.True(ok)
+	iv := Int("iArr.1")
 	st.Equal(34, iv)
 
-	iv, ok = Int("iArr.100")
-	st.False(ok)
+	iv = Int("iArr.100")
+	st.Equal(0, iv)
 
 	// IntMap: get int map
-	imp, ok := IntMap("name")
-	st.False(ok)
-	imp, ok = IntMap("notExist")
-	st.False(ok)
+	imp := IntMap("name")
+	st.Empty(imp)
+	imp = IntMap("notExist")
+	st.Empty(imp)
 
-	imp, ok = IntMap("iMap")
-	st.True(ok)
+	imp = IntMap("iMap")
 	st.NotEmpty(imp)
 
-	iv, ok = Int("iMap.k2")
-	st.True(ok)
+	iv = Int("iMap.k2")
 	st.Equal(34, iv)
 
-	iv, ok = Int("iMap.notExist")
-	st.False(ok)
+	iv = Int("iMap.notExist")
+	st.Equal(0, iv)
 
 	// set a intMap
 	err = Set("intMap0", map[string]int{"a": 1, "b": 2})
 	st.Nil(err)
-	imp, ok = IntMap("intMap0")
-	st.True(ok)
+	imp = IntMap("intMap0")
+	
 	st.NotEmpty(imp)
 	st.Equal(1, imp["a"])
 
 	// StringMap: get string map
-	smp, ok := StringMap("map1")
-	st.True(ok)
+	smp := StringMap("map1")
 	st.Equal("val1", smp["key1"])
 
 	// like load from yaml content
@@ -247,74 +164,184 @@ func TestGet(t *testing.T) {
 	})
 	st.Nil(err)
 
-	iarr, ok = Ints("newIArr")
-	st.True(ok)
+	iarr = Ints("newIArr")
 	st.Equal("[2 3]", fmt.Sprintf("%v", iarr))
 
-	iarr, ok = Ints("newIArr1")
-	st.True(ok)
+	iarr = Ints("newIArr1")
 	st.Equal("[12 23]", fmt.Sprintf("%v", iarr))
-	iarr, ok = Ints("newIArr2")
-	st.False(ok)
+	iarr = Ints("newIArr2")
+	st.Nil(iarr)
 
-	iv, ok = Int("newIArr.1")
-	st.True(ok)
+	iv = Int("newIArr.1")
 	st.Equal(3, iv)
 
-	iv, ok = Int("newIArr.200")
-	st.False(ok)
+	iv = Int("newIArr.200")
+	st.Nil(iv)
 
 	// invalid intMap
-	imp, ok = IntMap("yMap1")
-	st.False(ok)
+	imp = IntMap("yMap1")
+	st.Nil(imp)
 
-	imp, ok = IntMap("yMap10")
-	st.False(ok)
+	imp = IntMap("yMap10")
+	st.Empty(imp)
 
-	imp, ok = IntMap("yMap2")
-	st.True(ok)
+	imp = IntMap("yMap2")
 	st.Equal(2, imp["k"])
 
-	val, ok = String("newSArr.1")
-	st.True(ok)
+	val = String("newSArr.1")
 	st.Equal("b", val)
 
-	val, ok = String("newSArr.100")
-	st.False(ok)
+	val = String("newSArr.100")
+	st.Equal("", val)
 
-	smp, ok = StringMap("invalidMap")
-	st.False(ok)
+	smp = StringMap("invalidMap")
+	st.Nil(smp)
 
-	smp, ok = StringMap("yMap.notExist")
-	st.False(ok)
+	smp = StringMap("yMap.notExist")
+	st.Nil(smp)
 
-	smp, ok = StringMap("yMap")
-	st.True(ok)
+	smp = StringMap("yMap")
 	st.Equal("v0", smp["k0"])
 
-	iarr, ok = Ints("yMap1.k2")
-	st.True(ok)
+	iarr = Ints("yMap1.k2")
 	st.Equal("[23 45]", fmt.Sprintf("%v", iarr))
 }
 
-func TestConfigGetWithDefault(t *testing.T) {
+func TestInt(t *testing.T) {
+	st := assert.New(t)
 	ClearAll()
-	err := LoadStrings(JSON, jsonStr)
-	assert.Nil(t, err)
+	_= LoadStrings(JSON, jsonStr)
 
-	// fmt.Printf("%#v\n", Data())
+	st.True(Exists("age"))
+
+	iv := Int("age")
+	st.Equal(123, iv)
+
+	iv = Int("name")
+	st.Equal(0, iv)
+
+	iv = Int("notExist", 34)
+	st.Equal(34, iv)
+
 	c := Default()
-	assert.Equal(t, 0, c.DefInt("not-exist"))
-	assert.Equal(t, int64(0), c.DefInt64("not-exist"))
-	assert.Equal(t, float64(0), c.DefFloat("not-exist"))
-	assert.Equal(t, false, c.DefBool("not-exist"))
-	assert.Equal(t, "", c.DefString("not-exist"))
+	iv = c.Int("age")
+	st.Equal(123, iv)
+	iv = c.Int("notExist")
+	st.Equal(0, iv)
+
+	ClearAll()
+}
+
+func TestInt64(t *testing.T) {
+	st := assert.New(t)
+	ClearAll()
+	_= LoadStrings(JSON, jsonStr)
+
+	// get int64
+	iv64 := Int64("age")
+	st.Equal(int64(123), iv64)
+
+	iv64 = Int64("name")
+	st.Equal(iv64, int64(0))
+
+	iv64 = Int64("age", 34)
+	st.Equal(int64(123), iv64)
+	iv64 = Int64("notExist", 34)
+	st.Equal(int64(34), iv64)
+
+	c := Default()
+	iv64 = c.Int64("age")
+	st.Equal(int64(123), iv64)
+	iv64 = c.Int64("notExist")
+	st.Equal(int64(0), iv64)
+
+	ClearAll()
+}
+
+func TestFloat(t *testing.T) {
+	st := assert.New(t)
+	ClearAll()
+	_= LoadStrings(JSON, jsonStr)
+	c := Default()
+
+	// get float
+	err := c.Set("flVal", 23.45)
+	st.Nil(err)
+	flt := c.Float("flVal")
+	st.Equal(23.45, flt)
+
+	flt = Float("name")
+	st.Equal(float64(0), flt)
+
+	flt = c.Float("notExists", 0)
+	st.Equal(float64(0), flt)
+
+	flt = Float("flVal", 0)
+	st.Equal(23.45, flt)
+
+	ClearAll()
+}
+
+func TestString(t *testing.T) {
+	st := assert.New(t)
+	ClearAll()
+	_= LoadStrings(JSON, jsonStr)
+
+	// get string
+	val := String("arr1")
+	st.Equal("", val)
+
+	str := String("notExists")
+	st.Equal("", str)
+
+	str = String("notExists", "defVal")
+	st.Equal("defVal", str)
+
+	c := Default()
+	str = c.String("name")
+	st.Equal("app", str)
+	str = c.String("notExist")
+	st.Equal("", str)
+
+	ClearAll()
+}
+
+func TestBool(t *testing.T) {
+	st := assert.New(t)
+	ClearAll()
+	_= LoadStrings(JSON, jsonStr)
+
+	// get bool
+	val := Get("debug")
+	st.Equal(true, val)
+
+	bv := Bool("debug")
+	st.Equal(true, bv)
+
+	bv = Bool("age")
+	st.Equal(false, bv)
+
+	bv = Bool("debug", false)
+	st.Equal(true, bv)
+
+	bv = Bool("notExist", false)
+	st.Equal(false, bv)
+
+	c := Default()
+	bv = c.Bool("debug")
+	st.True(bv)
+	bv = c.Bool("notExist")
+	st.False(bv)
+
+	ClearAll()
 }
 
 func TestConfig_MapStructure(t *testing.T) {
 	st := assert.New(t)
 
-	cfg := New("test")
+	cfg := Default()
+	cfg.ClearAll()
+
 	err := cfg.LoadStrings(JSON, `{
 "age": 28,
 "name": "inhere",
@@ -329,7 +356,7 @@ func TestConfig_MapStructure(t *testing.T) {
 		Sports []string
 	}{}
 	// map all
-	err = cfg.MapStruct("", user)
+	err = MapStruct("", user)
 	st.Nil(err)
 
 	st.Equal(28, user.Age)
@@ -355,4 +382,6 @@ func TestConfig_MapStructure(t *testing.T) {
 	st.Nil(err)
 	st.Equal(120, some.Age)
 	st.Equal(12, some.Tags[0])
+
+	cfg.ClearAll()
 }

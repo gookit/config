@@ -14,10 +14,103 @@ var (
 	// errNotFound   = errors.New("this key does not exist in the configuration data")
 )
 
+// Exists key exists check
+func Exists(key string, findByPath ...bool) (ok bool) {
+	return dc.Exists(key, findByPath...)
+}
+
+// Exists key exists check
+func (c *Config) Exists(key string, findByPath ...bool) (ok bool) {
+	if key = formatKey(key); key == "" {
+		return
+	}
+
+	if _, ok = c.data[key]; ok {
+		return
+	}
+
+	// disable find by path.
+	if len(findByPath) > 0 && !findByPath[0] {
+		return
+	}
+
+	// has sub key? eg. "lang.dir"
+	if !strings.Contains(key, ".") {
+		return
+	}
+
+	keys := strings.Split(key, ".")
+	topK := keys[0]
+
+	// find top item data based on top key
+	var item interface{}
+	if item, ok = c.data[topK]; !ok {
+		return
+	}
+	for _, k := range keys[1:] {
+		switch typeData := item.(type) {
+		case map[string]string: // is map(from Set)
+			if item, ok = typeData[k]; !ok {
+				return
+			}
+		case map[string]interface{}: // is map(decode from toml/json)
+			if item, ok = typeData[k]; !ok {
+				return
+			}
+		case map[interface{}]interface{}: // is map(decode from yaml)
+			if item, ok = typeData[k]; !ok {
+				return
+			}
+		case []int: // is array(is from Set)
+			i, err := strconv.Atoi(k)
+
+			// check slice index
+			if err != nil || len(typeData) < i {
+				ok = false
+				return
+			}
+		case []string: // is array(is from Set)
+			i, err := strconv.Atoi(k)
+			if err != nil || len(typeData) < i {
+				ok = false
+				return
+			}
+		case []interface{}: // is array(load from file)
+			i, err := strconv.Atoi(k)
+			if err != nil || len(typeData) < i {
+				ok = false
+				return
+			}
+		default: // error
+			ok = false
+			return
+		}
+	}
+	return true
+}
+
+/*************************************************************
+ * read config data
+ *************************************************************/
+
 // Get config value by key string, support get sub-value by key path(eg. 'map.key'),
 // ok is true, find value from config
 // ok is false, not found or error
-func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool) {
+func Get(key string, findByPath ...bool) interface{} { return dc.Get(key, findByPath...) }
+
+// Get config value by key
+func (c *Config) Get(key string, findByPath ...bool) interface{} {
+	val, _ := c.GetValue(key, findByPath...)
+	return val
+}
+
+// GetValue get value by given key string.
+func GetValue(key string, findByPath ...bool) (value interface{}, ok bool) {
+	return dc.GetValue(key, findByPath...)
+}
+
+// GetValue get value by given key string.
+func (c *Config) GetValue(key string, findByPath ...bool) (value interface{}, ok bool) {
 	key = formatKey(key)
 	if key == "" {
 		c.addError(errInvalidKey)
@@ -117,11 +210,24 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 }
 
 /*************************************************************
- * config get(basic data type)
+ * read config (basic data type)
  *************************************************************/
 
 // String get a string by key
-func (c *Config) String(key string) (value string, ok bool) {
+func String(key string, defVal ...string) string { return dc.String(key, defVal...) }
+
+// String get a string by key, if not found return default value
+func (c *Config) String(key string, defVal ...string) (value string) {
+	var ok bool
+
+	value, ok = c.getString(key)
+	if !ok && len(defVal) > 0 { // give default value
+		value = defVal[0]
+	}
+	return
+}
+
+func (c *Config) getString(key string) (value string, ok bool) {
 	// find from cache
 	if c.opts.EnableCache && len(c.strCache) > 0 {
 		value, ok = c.strCache[key]
@@ -130,7 +236,7 @@ func (c *Config) String(key string) (value string, ok bool) {
 		}
 	}
 
-	val, ok := c.Get(key)
+	val, ok := c.GetValue(key)
 	if !ok {
 		return
 	}
@@ -142,13 +248,11 @@ func (c *Config) String(key string) (value string, ok bool) {
 	case string:
 		value = fmt.Sprintf("%v", val)
 
-		// if opts.ParseEnv is true
 		if c.opts.ParseEnv {
 			value = c.parseEnvValue(value)
 		}
 	default:
-		c.addErrorf("value cannot be convert to string of the key '%s'", key)
-		ok = false
+		value = fmt.Sprintf("%v", val)
 	}
 
 	// add cache
@@ -156,86 +260,73 @@ func (c *Config) String(key string) (value string, ok bool) {
 		if c.strCache == nil {
 			c.strCache = make(map[string]string)
 		}
-
 		c.strCache[key] = value
 	}
 	return
 }
 
-// DefString get a string value, if not found return default value
-func (c *Config) DefString(key string, defVal ...string) string {
-	if value, ok := c.String(key); ok {
-		return value
-	}
-
-	if len(defVal) > 0 {
-		return defVal[0]
-	}
-	return ""
-}
-
-// MustString get a string value, if not found return empty string
-func (c *Config) MustString(key string) string {
-	return c.DefString(key, "")
-}
-
 // Int get a int by key
-func (c *Config) Int(key string) (value int, ok bool) {
-	rawVal, ok := c.String(key)
-	if !ok {
+func Int(key string, defVal ...int) int { return dc.Int(key, defVal...) }
+
+// Int get a int value, if not found return default value
+func (c *Config) Int(key string, defVal ...int) (value int) {
+	rawVal, exist := c.getString(key)
+	if !exist {
+		if len(defVal) > 0 {
+			return defVal[0]
+		}
 		return
 	}
 
-	if value, err := strconv.Atoi(rawVal); err == nil {
+	value, err := strconv.Atoi(rawVal)
+	if err != nil {
 		c.addError(err)
-		return value, true
-	}
-
-	ok = false
-	return
-}
-
-// DefInt get a int value, if not found return default value
-func (c *Config) DefInt(key string, defVal ...int) int {
-	if value, ok := c.Int(key); ok {
-		return value
-	}
-
-	if len(defVal) > 0 {
-		return defVal[0]
-	}
-	return 0
-}
-
-// MustInt get a int value, if not found return 0
-func (c *Config) MustInt(key string) int {
-	return c.DefInt(key, 0)
-}
-
-// Int64 get a int64 by key
-func (c *Config) Int64(key string) (value int64, ok bool) {
-	if intVal, ok := c.Int(key); ok {
-		return int64(intVal), true
 	}
 	return
 }
 
-// DefInt64 get a int64 with a default value
-func (c *Config) DefInt64(key string, defVal ...int64) int64 {
-	if intVal, ok := c.Int(key); ok {
-		return int64(intVal)
+// Int64 get a int value, if not found return default value
+func Int64(key string, defVal ...int64) int64 { return dc.Int64(key, defVal...) }
+
+// Int64 get a int value, if not found return default value
+func (c *Config) Int64(key string, defVal ...int64) (value int64) {
+	rawVal, exist := c.getString(key)
+	if !exist {
+		if len(defVal) > 0 {
+			return defVal[0]
+		}
+		return
 	}
 
-	if len(defVal) > 0 {
-		return defVal[0]
+	value, err := strconv.ParseInt(rawVal, 10, 0)
+	if err != nil {
+		c.addError(err)
 	}
-	return 0
+	return
 }
 
-// MustInt64 get a int value, if not found return 0
-func (c *Config) MustInt64(key string) int64 {
-	return c.DefInt64(key, 0)
+// Float get a float64 value, if not found return default value
+func Float(key string, defVal ...float64) float64 { return dc.Float(key, defVal...) }
+
+// Float get a float64 by key
+func (c *Config) Float(key string, defVal ...float64) (value float64) {
+	str, ok := c.getString(key)
+	if !ok {
+		if len(defVal) > 0 {
+			return defVal[0]
+		}
+		return
+	}
+
+	value, err := strconv.ParseFloat(str, 64)
+	if err != nil {
+		c.addError(err)
+	}
+	return
 }
+
+// Bool get a bool value, if not found return default value
+func Bool(key string, defVal ...bool) bool { return dc.Bool(key, defVal...) }
 
 // Bool looks up a value for a key in this section and attempts to parse that value as a boolean,
 // along with a boolean result similar to a map lookup.
@@ -247,9 +338,12 @@ func (c *Config) MustInt64(key string) int64 {
 //  - 1
 //  - 0
 // The `ok` boolean will be false in the event that the value could not be parsed as a bool
-func (c *Config) Bool(key string) (value bool, ok bool) {
-	rawVal, ok := c.String(key)
+func (c *Config) Bool(key string, defVal ...bool) (value bool) {
+	rawVal, ok := c.getString(key)
 	if !ok {
+		if len(defVal) > 0 {
+			return defVal[0]
+		}
 		return
 	}
 
@@ -261,63 +355,20 @@ func (c *Config) Bool(key string) (value bool, ok bool) {
 		value = true
 	default:
 		c.addErrorf("the value '%s' cannot be convert to bool", lowerCase)
-		ok = false
-	}
-
-	return
-}
-
-// DefBool get a bool value, if not found return default value
-func (c *Config) DefBool(key string, defVal ...bool) bool {
-	if value, ok := c.Bool(key); ok {
-		return value
-	}
-
-	if len(defVal) > 0 {
-		return defVal[0]
-	}
-	return false
-}
-
-// MustBool get a string value, if not found return false
-func (c *Config) MustBool(key string) bool {
-	return c.DefBool(key, false)
-}
-
-// Float get a float64 by key
-func (c *Config) Float(key string) (value float64, ok bool) {
-	str, ok := c.String(key)
-	if !ok {
-		return
-	}
-
-	value, err := strconv.ParseFloat(str, 64)
-	if err != nil {
-		c.addError(err)
-		ok = false
 	}
 	return
-}
-
-// DefFloat get a float value, if not found return default value
-func (c *Config) DefFloat(key string, defVal ...float64) float64 {
-	if value, ok := c.Float(key); ok {
-		return value
-	}
-
-	if len(defVal) > 0 {
-		return defVal[0]
-	}
-	return 0
 }
 
 /*************************************************************
- * config get(complex data type)
+ * read config (complex data type)
  *************************************************************/
 
 // Ints get config data as a int slice/array
-func (c *Config) Ints(key string) (arr []int, ok bool) {
-	rawVal, ok := c.Get(key)
+func Ints(key string) []int { return dc.Ints(key) }
+
+// Ints get config data as a int slice/array
+func (c *Config) Ints(key string) (arr []int) {
+	rawVal, ok := c.GetValue(key)
 	if !ok {
 		return
 	}
@@ -339,14 +390,16 @@ func (c *Config) Ints(key string) (arr []int, ok bool) {
 		}
 	default:
 		c.addErrorf("value cannot be convert to []int, key is '%s'", key)
-		ok = false
 	}
 	return
 }
 
 // IntMap get config data as a map[string]int
-func (c *Config) IntMap(key string) (mp map[string]int, ok bool) {
-	rawVal, ok := c.Get(key)
+func IntMap(key string) map[string]int { return dc.IntMap(key) }
+
+// IntMap get config data as a map[string]int
+func (c *Config) IntMap(key string) (mp map[string]int) {
+	rawVal, ok := c.GetValue(key)
 	if !ok {
 		return
 	}
@@ -359,7 +412,6 @@ func (c *Config) IntMap(key string) (mp map[string]int, ok bool) {
 		for k, v := range typeData {
 			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
 			if err != nil {
-				ok = false
 				c.addError(err)
 				return
 			}
@@ -370,7 +422,6 @@ func (c *Config) IntMap(key string) (mp map[string]int, ok bool) {
 		for k, v := range typeData {
 			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
 			if err != nil {
-				ok = false
 				c.addError(err)
 				return
 			}
@@ -379,14 +430,17 @@ func (c *Config) IntMap(key string) (mp map[string]int, ok bool) {
 			mp[sk] = iv
 		}
 	default:
-		ok = false
 		c.addErrorf("value cannot be convert to map[string]int, key is '%s'", key)
 	}
 	return
 }
 
+// Strings get strings by key
+func Strings(key string) []string { return dc.Strings(key) }
+
 // Strings get config data as a string slice/array
-func (c *Config) Strings(key string) (arr []string, ok bool) {
+func (c *Config) Strings(key string) (arr []string) {
+	var ok bool
 	// find from cache
 	if c.opts.EnableCache && len(c.sArrCache) > 0 {
 		arr, ok = c.sArrCache[key]
@@ -395,7 +449,7 @@ func (c *Config) Strings(key string) (arr []string, ok bool) {
 		}
 	}
 
-	rawVal, ok := c.Get(key)
+	rawVal, ok := c.GetValue(key)
 	if !ok {
 		return
 	}
@@ -408,23 +462,27 @@ func (c *Config) Strings(key string) (arr []string, ok bool) {
 			arr = append(arr, fmt.Sprintf("%v", v))
 		}
 	default:
-		ok = false
 		c.addErrorf("value cannot be convert to []string, key is '%s'", key)
+		return
 	}
 
 	// add cache
-	if ok && c.opts.EnableCache {
+	if c.opts.EnableCache {
 		if c.sArrCache == nil {
 			c.sArrCache = make(map[string]strArr)
 		}
-
 		c.sArrCache[key] = arr
 	}
 	return
 }
 
 // StringMap get config data as a map[string]string
-func (c *Config) StringMap(key string) (mp map[string]string, ok bool) {
+func StringMap(key string) map[string]string { return dc.StringMap(key) }
+
+// StringMap get config data as a map[string]string
+func (c *Config) StringMap(key string) (mp map[string]string) {
+	var ok bool
+
 	// find from cache
 	if c.opts.EnableCache && len(c.sMapCache) > 0 {
 		mp, ok = c.sMapCache[key]
@@ -433,7 +491,7 @@ func (c *Config) StringMap(key string) (mp map[string]string, ok bool) {
 		}
 	}
 
-	rawVal, ok := c.Get(key)
+	rawVal, ok := c.GetValue(key)
 	if !ok {
 		return
 	}
@@ -453,20 +511,22 @@ func (c *Config) StringMap(key string) (mp map[string]string, ok bool) {
 			mp[sk] = fmt.Sprintf("%v", v)
 		}
 	default:
-		ok = false
 		c.addErrorf("value cannot be convert to map[string]string, key is '%s'", key)
+		return
 	}
 
 	// add cache
-	if ok && c.opts.EnableCache {
+	if c.opts.EnableCache {
 		if c.sMapCache == nil {
 			c.sMapCache = make(map[string]strMap)
 		}
-
 		c.sMapCache[key] = mp
 	}
 	return
 }
+
+// MapStruct alias method of the 'Structure'
+func MapStruct(key string, v interface{}) error { return dc.Structure(key, v) }
 
 // MapStruct alias method of the 'Structure'
 func (c *Config) MapStruct(key string, v interface{}) (err error) {
@@ -491,7 +551,7 @@ func (c *Config) Structure(key string, v interface{}) (err error) {
 		ok = true
 		data = c.data
 	} else {
-		data, ok = c.Get(key)
+		data, ok = c.GetValue(key)
 	}
 
 	if ok {
@@ -503,11 +563,6 @@ func (c *Config) Structure(key string, v interface{}) (err error) {
 		err = JSONDecoder(blob, v)
 	}
 	return
-}
-
-// IsEmpty of the config
-func (c *Config) IsEmpty() bool {
-	return len(c.data) == 0
 }
 
 // parse env value, eg: "${SHELL}" ${NotExist|defValue}

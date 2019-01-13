@@ -29,6 +29,9 @@ type strMap map[string]string
 
 // type fmtName string
 
+// This is a default config manager instance
+var dc = New("default")
+
 // Driver interface
 type Driver interface {
 	Name() string
@@ -123,6 +126,11 @@ func NewWithOptions(name string, opts ...func(*Options)) *Config {
 	return c
 }
 
+// Default get the default instance
+func Default() *Config {
+	return dc
+}
+
 /*************************************************************
  * config setting
  *************************************************************/
@@ -142,6 +150,9 @@ func EnableCache(opts *Options) {
 	opts.EnableCache = true
 }
 
+// WithOptions with options
+func WithOptions(opts ...func(*Options)) { dc.WithOptions(opts...) }
+
 // WithOptions apply some options
 func (c *Config) WithOptions(opts ...func(*Options)) {
 	if !c.IsEmpty() {
@@ -154,6 +165,9 @@ func (c *Config) WithOptions(opts ...func(*Options)) {
 	}
 }
 
+// GetOptions get options
+func GetOptions() *Options { return dc.Options() }
+
 // Options get
 func (c *Config) Options() *Options {
 	return c.opts
@@ -161,8 +175,8 @@ func (c *Config) Options() *Options {
 
 // Readonly disable set data to config.
 // Usage:
-//	config.LoadFiles(a, b, c)
-//	config.Readonly()
+// 	config.LoadFiles(a, b, c)
+// 	config.Readonly()
 func (c *Config) Readonly() {
 	c.opts.Readonly = true
 }
@@ -170,6 +184,9 @@ func (c *Config) Readonly() {
 /*************************************************************
  * config drivers
  *************************************************************/
+
+// AddDriver set a decoder and encoder driver for a format.
+func AddDriver(driver Driver) {dc.AddDriver(driver) }
 
 // AddDriver set a decoder and encoder driver for a format.
 func (c *Config) AddDriver(driver Driver) {
@@ -185,6 +202,11 @@ func (c *Config) HasDecoder(format string) bool {
 	return ok
 }
 
+// SetDecoder add/set a format decoder
+func SetDecoder(format string, decoder Decoder) {
+	dc.SetDecoder(format, decoder)
+}
+
 // SetDecoder set decoder
 func (c *Config) SetDecoder(format string, decoder Decoder) {
 	format = fixFormat(format)
@@ -196,6 +218,11 @@ func (c *Config) SetDecoders(decoders map[string]Decoder) {
 	for format, decoder := range decoders {
 		c.SetDecoder(format, decoder)
 	}
+}
+
+// SetEncoder set a encoder for the format
+func SetEncoder(format string, encoder Encoder) {
+	dc.SetEncoder(format, encoder)
 }
 
 // SetEncoder set a encoder for the format
@@ -240,6 +267,9 @@ func (c *Config) Name() string {
 	return c.name
 }
 
+// Data return all config data
+func Data() map[string]interface{} { return dc.Data() }
+
 // Data get all config data
 func (c *Config) Data() map[string]interface{} {
 	return c.data
@@ -248,6 +278,11 @@ func (c *Config) Data() map[string]interface{} {
 // Error get last error
 func (c *Config) Error() error {
 	return c.err
+}
+
+// IsEmpty of the config
+func (c *Config) IsEmpty() bool {
+	return len(c.data) == 0
 }
 
 // ToJSON string
@@ -262,10 +297,16 @@ func (c *Config) ToJSON() string {
 	return buf.String()
 }
 
+// WriteTo a writer
+func WriteTo(out io.Writer) (int64, error) { return dc.WriteTo(out) }
+
 // WriteTo Write out config data representing the current state to a writer.
 func (c *Config) WriteTo(out io.Writer) (n int64, err error) {
 	return c.DumpTo(out, c.opts.DumpFormat)
 }
+
+// DumpTo a writer and use format
+func DumpTo(out io.Writer, format string) (int64, error) { return dc.DumpTo(out, format) }
 
 // DumpTo use the format(json,yaml,toml) dump config data to a writer
 func (c *Config) DumpTo(out io.Writer, format string) (n int64, err error) {
@@ -304,6 +345,9 @@ func (c *Config) LoadedFiles() []string {
 }
 
 // ClearAll data and caches
+func ClearAll() { dc.ClearAll() }
+
+// ClearAll data and caches
 func (c *Config) ClearAll() {
 	c.ClearData()
 	c.ClearCaches()
@@ -327,6 +371,10 @@ func (c *Config) ClearCaches() {
 		c.sArrCache = nil
 	}
 }
+
+/*************************************************************
+ * helper methods/functions
+ *************************************************************/
 
 // record error
 func (c *Config) addError(err error) {
