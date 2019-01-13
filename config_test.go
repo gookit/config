@@ -283,8 +283,8 @@ func TestConfig_LoadRemote(t *testing.T) {
 func TestConfig_LoadFlags(t *testing.T) {
 	is := assert.New(t)
 
-	// load flag info
-	c := New("flag")
+	ClearAll()
+	c := Default()
 	bakArgs := os.Args
 	os.Args = []string{
 		"./cliapp",
@@ -293,13 +293,26 @@ func TestConfig_LoadFlags(t *testing.T) {
 		"--debug", "true",
 	}
 
-	err := c.LoadFlags([]string{"name", "env", "debug"})
+	// load flag info
+	err := LoadFlags([]string{"name", "env", "debug"})
 	is.Nil(err)
 	is.Equal("my-app", c.DefString("name", ""))
 	is.Equal("dev", c.DefString("env", ""))
 	is.True(c.DefBool("debug", false))
 
-	fmt.Printf("%#v\n", c.Data())
+	// set sub key
+	c = New("flag")
+	_ = c.LoadStrings(JSON, jsonStr)
+	os.Args = []string{
+		"./cliapp",
+		"--map1.key", "new val",
+	}
+	is.Equal("val", c.DefString("map1.key"))
+	err = c.LoadFlags([]string{"--map1.key"})
+	is.NoError(err)
+	is.Equal("new val", c.DefString("map1.key"))
+	// fmt.Println(err)
+	// fmt.Printf("%#v\n", c.Data())
 
 	os.Args = bakArgs
 }

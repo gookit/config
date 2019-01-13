@@ -44,7 +44,7 @@ func SetEncoder(format string, encoder Encoder) {
  *************************************************************/
 
 // Get get a value by key
-func Get(key string, findByPath ...bool) (value interface{}, ok bool) {
+func Get(key string, findByPath ...bool) (interface{}, bool) {
 	return dc.Get(key, findByPath...)
 }
 
@@ -69,7 +69,7 @@ func DefInt64(key string, defVal ...int64) int64 {
 }
 
 // Bool get a bool by key
-func Bool(key string) (value bool, ok bool) {
+func Bool(key string) (bool, bool) {
 	return dc.Bool(key)
 }
 
@@ -79,7 +79,7 @@ func DefBool(key string, defVal ...bool) bool {
 }
 
 // Float get a bool by key
-func Float(key string) (value float64, ok bool) {
+func Float(key string) (float64, bool) {
 	return dc.Float(key)
 }
 
@@ -89,7 +89,7 @@ func DefFloat(key string, defVal ...float64) float64 {
 }
 
 // String get a string by key
-func String(key string) (value string, ok bool) {
+func String(key string) (string, bool) {
 	return dc.String(key)
 }
 
@@ -99,22 +99,22 @@ func DefString(key string, defVal ...string) string {
 }
 
 // Ints  get config data as a int slice/array
-func Ints(key string) (arr []int, ok bool) {
+func Ints(key string) ([]int, bool) {
 	return dc.Ints(key)
 }
 
 // IntMap get config data as a map[string]int
-func IntMap(key string) (mp map[string]int, ok bool) {
+func IntMap(key string) (map[string]int, bool) {
 	return dc.IntMap(key)
 }
 
 // Strings get strings by key
-func Strings(key string) (arr []string, ok bool) {
+func Strings(key string) ([]string, bool) {
 	return dc.Strings(key)
 }
 
 // StringMap get config data as a map[string]string
-func StringMap(key string) (mp map[string]string, ok bool) {
+func StringMap(key string) (map[string]string, bool) {
 	return dc.StringMap(key)
 }
 
@@ -167,7 +167,7 @@ func WriteTo(out io.Writer) (n int64, err error) {
 }
 
 // DumpTo a writer and use format
-func DumpTo(out io.Writer, format string) (n int64, err error) {
+func DumpTo(out io.Writer, format string) (int64, error) {
 	return dc.DumpTo(out, format)
 }
 

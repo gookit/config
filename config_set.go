@@ -8,14 +8,6 @@ import (
 	"strings"
 )
 
-// Readonly disable set data to config.
-// Usage:
-//	config.LoadFiles(a, b, c)
-//	config.Readonly()
-func (c *Config) Readonly() {
-	c.opts.Readonly = true
-}
-
 // Set a value by key string.
 func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error) {
 	// if is readonly
@@ -81,7 +73,7 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 		// create a new item for the topK
 		newItem := buildValueByPath(paths, val)
 		// merge new item to old item
-		err = mergo.Merge(&typeData, newItem, mergo.WithOverride)
+		err = mergo.Merge(&typeData, &newItem, mergo.WithOverride)
 		if err != nil {
 			return
 		}
@@ -100,7 +92,9 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 			return err
 		}
 	default:
-		err = errors.New("not supported value type, cannot setting value for the key: " + key)
+		// as an top key
+		c.data[key] = val
+		// err = errors.New("not supported value type, cannot setting value for the key: " + key)
 	}
 	return
 }

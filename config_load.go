@@ -98,6 +98,7 @@ func (c *Config) LoadRemote(format, url string) (err error) {
 func (c *Config) LoadFlags(keys []string) (err error) {
 	hash := map[string]*string{}
 	for _, key := range keys {
+		key = strings.Trim(key, "-")
 		hash[key] = new(string)
 		defVal, _ := c.String(key)
 		flag.StringVar(hash[key], key, defVal, "")
@@ -112,10 +113,8 @@ func (c *Config) LoadFlags(keys []string) (err error) {
 			return
 		}
 
-		err = c.Set(name, f.Value.String())
-		if err != nil {
-			return
-		}
+		// ignore error
+		_ = c.Set(name, f.Value.String())
 	})
 
 	return

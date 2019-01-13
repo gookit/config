@@ -24,6 +24,9 @@ func TestGet(t *testing.T) {
 
 	_, ok = c.Get("notExist")
 	st.False(ok)
+	_, ok = c.Get("name.sub")
+	st.False(ok)
+	st.Error(c.Error())
 
 	_, ok = c.Get("map1.key", false)
 	st.False(ok)

@@ -1,11 +1,17 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
+)
+
+var (
+	errInvalidKey = errors.New("invalid config key string")
+	// errNotFound   = errors.New("this key does not exist in the configuration data")
 )
 
 // Get config value by key string, support get sub-value by key path(eg. 'map.key'),
@@ -14,6 +20,7 @@ import (
 func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool) {
 	key = formatKey(key)
 	if key == "" {
+		c.addError(errInvalidKey)
 		return
 	}
 
@@ -30,11 +37,13 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 
 	// disable find by path.
 	if len(findByPath) > 0 && !findByPath[0] {
+		// c.addError(errNotFound)
 		return
 	}
 
 	// has sub key? eg. "lang.dir"
 	if !strings.Contains(key, ".") {
+		// c.addError(errNotFound)
 		return
 	}
 
@@ -44,6 +53,7 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 	// find top item data based on top key
 	var item interface{}
 	if item, ok = c.data[topK]; !ok {
+		// c.addError(errNotFound)
 		return
 	}
 
@@ -56,24 +66,21 @@ func (c *Config) Get(key string, findByPath ...bool) (value interface{}, ok bool
 	for _, k := range keys[1:] {
 		switch typeData := item.(type) {
 		case map[string]string: // is map(from Set)
-			item, ok = typeData[k]
-			if !ok {
+			if item, ok = typeData[k]; !ok {
 				return
 			}
 		case map[string]interface{}: // is map(decode from toml/json)
-			item, ok = typeData[k]
-			if !ok {
+			if item, ok = typeData[k]; !ok {
 				return
 			}
 		case map[interface{}]interface{}: // is map(decode from yaml)
-			item, ok = typeData[k]
-			if !ok {
+			if item, ok = typeData[k]; !ok {
 				return
 			}
 		case []int: // is array(is from Set)
 			i, err := strconv.Atoi(k)
 
-			// 检查slice index是否存在
+			// check slice index
 			if err != nil || len(typeData) < i {
 				ok = false
 				c.addError(err)
@@ -334,7 +341,6 @@ func (c *Config) Ints(key string) (arr []int, ok bool) {
 		c.addErrorf("value cannot be convert to []int, key is '%s'", key)
 		ok = false
 	}
-
 	return
 }
 

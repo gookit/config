@@ -127,11 +127,6 @@ func NewWithOptions(name string, opts ...func(*Options)) *Config {
  * config setting
  *************************************************************/
 
-// Options get
-func (c *Config) Options() *Options {
-	return c.opts
-}
-
 // ParseEnv set parse env
 func ParseEnv(opts *Options) {
 	opts.ParseEnv = true
@@ -157,6 +152,19 @@ func (c *Config) WithOptions(opts ...func(*Options)) {
 	for _, opt := range opts {
 		opt(c.opts)
 	}
+}
+
+// Options get
+func (c *Config) Options() *Options {
+	return c.opts
+}
+
+// Readonly disable set data to config.
+// Usage:
+//	config.LoadFiles(a, b, c)
+//	config.Readonly()
+func (c *Config) Readonly() {
+	c.opts.Readonly = true
 }
 
 /*************************************************************
@@ -301,6 +309,7 @@ func (c *Config) ClearAll() {
 	c.ClearCaches()
 
 	c.loadedFiles = []string{}
+	c.opts.Readonly = false
 }
 
 // ClearData clear data
@@ -311,10 +320,12 @@ func (c *Config) ClearData() {
 
 // ClearCaches clear caches
 func (c *Config) ClearCaches() {
-	c.intCache = nil
-	c.strCache = nil
-	c.sMapCache = nil
-	c.sArrCache = nil
+	if c.opts.EnableCache {
+		c.intCache = nil
+		c.strCache = nil
+		c.sMapCache = nil
+		c.sArrCache = nil
+	}
 }
 
 // record error
