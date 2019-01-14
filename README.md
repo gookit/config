@@ -9,6 +9,8 @@ Golang application config manage tool library.
 
 > **[中文说明](README_cn.md)**
 
+## Features
+
 - Support multi format: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`
   - `JSON` content support comments. will auto clear comments
 - Support multi-file and multi-data loading
@@ -18,8 +20,10 @@ Golang application config manage tool library.
 - Support data overlay and merge, automatically load by key when loading multiple copies of data
 - Support get sub value by path, like `map.key` `arr.2`
 - Support parse ENV name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
-- Generic api `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
+- Generic api `Get` `Int` `Float` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
 - Complete unit test(code coverage > 95%)
+
+> Provide a sub-package `dotenv` that supports importing data from files (eg `.env`) to ENV
 
 ## Only use INI
 

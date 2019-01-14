@@ -21,6 +21,8 @@
 - 简洁的使用API `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
 - 完善的单元测试(code coverage > 95%)
 
+> 提供一个子包`dotenv`，支持从文件（eg `.env`）中导入数据到ENV
+
 ## 只使用INI
 
 > 如果你仅仅想用INI来做简单配置管理，推荐使用 [gookit/ini](https://github.com/gookit/ini)
