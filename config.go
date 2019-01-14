@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
+	"strings"
 	"sync"
 )
 
@@ -384,6 +386,19 @@ func (c *Config) addError(err error) {
 // format and record error
 func (c *Config) addErrorf(format string, a ...interface{}) {
 	c.err = fmt.Errorf(format, a...)
+}
+
+// GetEnv get os ENV value by name
+func GetEnv(name string, defVal ...string) (val string) {
+	name = strings.ToUpper(name)
+	if val = os.Getenv(name); val != "" {
+		return
+	}
+
+	if len(defVal) > 0 {
+		val = defVal[0]
+	}
+	return
 }
 
 // fix yaml format

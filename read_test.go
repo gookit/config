@@ -27,22 +27,29 @@ func TestConfig_GetValue(t *testing.T) {
 
 	_, ok = c.GetValue("map1.key", false)
 	st.False(ok)
+	st.False(Exists("map1.key", false))
 
 	val, ok := GetValue("map1.notExist")
-	st.False(ok)
 	st.Nil(val)
+	st.False(ok)
+	st.False(Exists("map1.notExist"))
 
 	val, ok = GetValue("notExist.sub")
 	st.False(ok)
 	st.Nil(val)
+	st.False(Exists("notExist.sub"))
 
 	val, ok = c.GetValue("arr1.100")
-	st.False(ok)
 	st.Nil(val)
+	st.False(ok)
+	st.False(Exists("arr1.100"))
 
 	val, ok = c.GetValue("arr1.notExist")
-	st.False(ok)
 	st.Nil(val)
+	st.False(ok)
+	st.False(Exists("arr1.notExist"))
+
+	ClearAll()
 }
 
 func TestGet(t *testing.T) {
@@ -122,17 +129,22 @@ func TestGet(t *testing.T) {
 
 	iv = Int("iMap.k2")
 	st.Equal(34, iv)
+	st.True(Exists("iMap.k2"))
 
 	iv = Int("iMap.notExist")
 	st.Equal(0, iv)
+	st.False(Exists("iMap.notExist"))
 
 	// set a intMap
 	err = Set("intMap0", map[string]int{"a": 1, "b": 2})
 	st.Nil(err)
-	imp = IntMap("intMap0")
 
+	imp = IntMap("intMap0")
 	st.NotEmpty(imp)
 	st.Equal(1, imp["a"])
+	st.Equal(2, Get("intMap0.b"))
+	st.True(Exists("intMap0.a"))
+	st.False(Exists("intMap0.c"))
 
 	// StringMap: get string map
 	smp := StringMap("map1")
@@ -177,9 +189,11 @@ func TestGet(t *testing.T) {
 	st.Empty(iarr)
 
 	iv = Int("newIArr.1")
+	st.True(Exists("newIArr.1"))
 	st.Equal(3, iv)
 
 	iv = Int("newIArr.200")
+	st.False(Exists("newIArr.200"))
 	st.Equal(0, iv)
 
 	// invalid intMap
@@ -193,9 +207,11 @@ func TestGet(t *testing.T) {
 	st.Equal(2, imp["k"])
 
 	val = String("newSArr.1")
+	st.True(Exists("newSArr.1"))
 	st.Equal("b", val)
 
 	val = String("newSArr.100")
+	st.False(Exists("newSArr.100"))
 	st.Equal("", val)
 
 	smp = StringMap("invalidMap")
@@ -205,6 +221,8 @@ func TestGet(t *testing.T) {
 	st.Nil(smp)
 
 	smp = StringMap("yMap")
+	st.True(Exists("yMap.k0"))
+	st.False(Exists("yMap.k100"))
 	st.Equal("v0", smp["k0"])
 
 	iarr = Ints("yMap1.k2")
@@ -277,7 +295,7 @@ func TestFloat(t *testing.T) {
 	flt = Float("name")
 	st.Equal(float64(0), flt)
 
-	flt = c.Float("notExists", 0)
+	flt = c.Float("notExists")
 	st.Equal(float64(0), flt)
 
 	flt = c.Float("notExists", 10)
@@ -316,7 +334,7 @@ func TestString(t *testing.T) {
 func TestBool(t *testing.T) {
 	st := assert.New(t)
 	ClearAll()
-	_ = LoadStrings(JSON, jsonStr)
+	_ = LoadSources(JSON, []byte(jsonStr))
 
 	// get bool
 	val := Get("debug")
@@ -385,7 +403,7 @@ func TestConfig_MapStructure(t *testing.T) {
 		Kye  string
 		Tags []int
 	}{}
-	err = cfg.MapStructure("sec", &some)
+	err = cfg.MapStruct("sec", &some)
 	st.Nil(err)
 	st.Equal(120, some.Age)
 	st.Equal(12, some.Tags[0])

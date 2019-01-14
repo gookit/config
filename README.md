@@ -12,13 +12,14 @@ Golang application config manage tool library.
 - Support multi format: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`
   - `JSON` content support comments. will auto clear comments
 - Support multi-file and multi-data loading
+- Support loading configuration from os ENV
 - Support for loading configuration data from remote URLs
 - Support for setting configuration data from command line arguments(`flags`)
 - Support data overlay and merge, automatically load by key when loading multiple copies of data
 - Support get sub value by path, like `map.key` `arr.2`
 - Support parse ENV name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
 - Generic api `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
-- complete unit test(code coverage > 95%)
+- Complete unit test(code coverage > 95%)
 
 ## Only use INI
 
@@ -150,10 +151,41 @@ name = config.String("name")
 fmt.Print(name) // new name
 ```
 
+## Load from flags
+
+> Support simple flags parameter parsing, loading
+
+```go
+// flags like: --name inhere --env dev --age 99 --debug
+
+// load flag info
+keys := []string{"name", "env", "age:int" "debug:bool"}
+err := config.LoadFlags(keys)
+
+// read
+config.String("name") // "inhere"
+config.String("env") // "dev"
+config.Int("age") // 99
+config.Bool("debug") // true
+```
+
+## Load from ENV
+
+```go
+// os env: APP_NAME=config APP_DEBUG=true
+// load ENV info
+config.LoadOSEnv([]string{"app_name", "app_debug"})
+
+// read
+config.Bool("app_debug") // true
+config.String("app_name") // "config"
+```
+
 ## API Methods Refer
 
 ### Load Config
 
+- `LoadOSEnv(keys []string)` Load from os ENV
 - `LoadData(dataSource ...interface{}) (err error)` Load from struts or maps
 - `LoadFlags(keys []string) (err error)` Load from cli flags
 - `LoadExists(sourceFiles ...string) (err error)` 
@@ -166,7 +198,8 @@ fmt.Print(name) // new name
 
 - `Bool(key string, defVal ...bool) bool`
 - `Int(key string, defVal ...int) int`
-- `Int64(key string, defVal ...int64)`
+- `Uint(key string, defVal ...uint) uint`
+- `Int64(key string, defVal ...int64) int64`
 - `Ints(key string) (arr []int)`
 - `IntMap(key string) (mp map[string]int)`
 - `Float(key string, defVal ...float64) float64`
@@ -181,8 +214,10 @@ fmt.Print(name) // new name
 
 ### Useful Methods
 
+- `Getenv(driver Driver)`
 - `AddDriver(driver Driver)`
 - `Data() map[string]interface{}`
+- `Exists(key string, findByPath ...bool) bool`
 - `DumpTo(out io.Writer, format string) (n int64, err error)`
 
 ## Run Tests

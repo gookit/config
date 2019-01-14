@@ -11,6 +11,7 @@ import (
 
 // DefaultName default file name
 var DefaultName = ".env"
+
 // OnlyLoadExists load on file exists
 var OnlyLoadExists bool
 
@@ -38,6 +39,18 @@ func LoadExists(dir string, filenames ...string) error {
 	return Load(dir, filenames...)
 }
 
+// LoadFromMap load data from given string map
+func LoadFromMap(kv map[string]string) (err error) {
+	for key, val := range kv {
+		key = strings.ToUpper(key)
+		err = os.Setenv(key, val)
+		if err != nil {
+			break
+		}
+	}
+	return
+}
+
 // load and parse .env file data to os ENV
 func loadFile(file string) (err error) {
 	// open file
@@ -61,13 +74,7 @@ func loadFile(file string) (err error) {
 
 	// set data to os ENV
 	if mp, ok := p.SimpleData()[p.DefSection]; ok {
-		for key, val := range mp {
-			key = strings.ToUpper(key)
-			err = os.Setenv(key, val)
-			if err != nil {
-				break
-			}
-		}
+		err = LoadFromMap(mp)
 	}
 	return
 }

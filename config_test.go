@@ -3,8 +3,8 @@ package config
 import (
 	"bytes"
 	"fmt"
+	"github.com/gookit/config/dotnev"
 	"github.com/stretchr/testify/assert"
-	"os"
 	"testing"
 )
 
@@ -113,23 +113,6 @@ func Example() {
 	//  val: new name
 }
 
-func ExampleConfig_DefBool() {
-	// load from string
-	err := LoadSources(JSON, []byte(jsonStr))
-	if err != nil {
-		panic(err)
-	}
-
-	val := Bool("debug")
-	fmt.Printf("get 'debug', val: %v\n", val)
-	val1 := Bool("debug", false)
-	fmt.Printf("get 'debug' with default, val: %v\n", val1)
-
-	// Output:
-	// get 'debug', val: true
-	// get 'debug' with default, val: true
-}
-
 func Example_exportConfig() {
 	// Notice: before dump please set driver encoder
 	// SetEncoder(Yaml, yaml.Encoder)
@@ -185,28 +168,15 @@ func TestBasic(t *testing.T) {
 	st.Equal(JSON, opts.ReadFormat)
 }
 
-func TestDefaultLoad(t *testing.T) {
-	st := assert.New(t)
-
-	ClearAll()
-	err := LoadFiles("testdata/json_base.json", "testdata/json_other.json")
-	st.Nil(err)
-
-	ClearAll()
-	err = LoadExists("testdata/json_base.json", "not-exist.json")
-	st.Nil(err)
-
-	ClearAll()
-	// load map
-	err = LoadData(map[string]interface{}{
-		"name":    "inhere",
-		"age":     28,
-		"working": true,
-		"tags":    []string{"a", "b"},
-		"info":    map[string]string{"k1": "a", "k2": "b"},
+func TestGetEnv(t *testing.T) {
+	_ = dotnev.LoadFromMap(map[string]string{
+		"app_name":  "config",
+		"app_debug": "true",
 	})
-	st.NotEmpty(Data())
-	st.Nil(err)
+
+	assert.Equal(t, "config", GetEnv("app_name"))
+	assert.Equal(t, "true", GetEnv("app_debug"))
+	assert.Equal(t, "defVal", GetEnv("not-exsit", "defVal"))
 }
 
 func TestSetDecoderEncoder(t *testing.T) {
@@ -243,138 +213,6 @@ func TestDefault(t *testing.T) {
 	buf := &bytes.Buffer{}
 	_, err := WriteTo(buf)
 	at.Nil(err)
-}
-
-func TestLoad(t *testing.T) {
-	is := assert.New(t)
-
-	c := New("test")
-	err := c.LoadExists("testdata/json_base.json", "not-exist.json")
-	is.Nil(err)
-
-	c.ClearAll()
-
-	// load map
-	err = c.LoadData(map[string]interface{}{
-		"name":    "inhere",
-		"age":     28,
-		"working": true,
-		"tags":    []string{"a", "b"},
-		"info":    map[string]string{"k1": "a", "k2": "b"},
-	})
-
-	is.NotEmpty(c.Data())
-	is.Nil(err)
-
-	// LoadData
-	err = c.LoadData("invalid")
-	is.Error(err)
-
-	is.Panics(func() {
-		c.WithOptions(ParseEnv)
-	})
-
-	err = c.LoadStrings(JSON, `{"name": "inhere"}`, jsonStr)
-	is.Nil(err)
-
-	// LoadSources
-	err = c.LoadSources(JSON, []byte(`{"name": "inhere"}`), []byte(jsonStr))
-	is.Nil(err)
-
-	err = c.LoadSources(JSON, []byte(`invalid`))
-	is.Error(err)
-
-	err = c.LoadSources(JSON, []byte(`{"name": "inhere"}`), []byte(`invalid`))
-	is.Error(err)
-
-	c = New("test")
-
-	// LoadFiles
-	err = c.LoadFiles("not-exist.json")
-	is.Error(err)
-
-	err = c.LoadFiles("testdata/json_error.json")
-	is.Error(err)
-
-	err = c.LoadExists("testdata/json_error.json")
-	is.Error(err)
-
-	// LoadStrings
-	err = c.LoadStrings("invalid", jsonStr)
-	is.Error(err)
-
-	err = c.LoadStrings(JSON, "invalid")
-	is.Error(err)
-
-	err = c.LoadStrings(JSON, `{"name": "inhere"}`, "invalid")
-	is.Error(err)
-
-}
-
-func TestConfig_LoadRemote(t *testing.T) {
-	is := assert.New(t)
-
-	// load remote config
-	c := New("remote")
-	url := "https://raw.githubusercontent.com/gookit/config/master/testdata/json_base.json"
-	err := c.LoadRemote(JSON, url)
-	is.Nil(err)
-	is.Equal("123", c.String("age", ""))
-
-	is.Len(c.LoadedFiles(), 1)
-	is.Equal(url, c.LoadedFiles()[0])
-
-	// load invalid remote data
-	url1 := "https://raw.githubusercontent.com/gookit/config/master/testdata/json_error.json"
-	err = c.LoadRemote(JSON, url1)
-	is.Error(err)
-
-	// load not exist
-	url2 := "https://raw.githubusercontent.com/gookit/config/master/testdata/not-exist.txt"
-	err = c.LoadRemote(JSON, url2)
-	is.Error(err)
-
-	// invalid remote url
-	url3 := "invalid-url"
-	err = LoadRemote(JSON, url3)
-	is.Error(err)
-}
-
-func TestConfig_LoadFlags(t *testing.T) {
-	is := assert.New(t)
-
-	ClearAll()
-	c := Default()
-	bakArgs := os.Args
-	os.Args = []string{
-		"./cliapp",
-		"--name", "my-app",
-		"--env", "dev",
-		"--debug", "true",
-	}
-
-	// load flag info
-	err := LoadFlags([]string{"name", "env", "debug"})
-	is.Nil(err)
-	is.Equal("my-app", c.String("name", ""))
-	is.Equal("dev", c.String("env", ""))
-	is.True(c.Bool("debug", false))
-
-	// set sub key
-	c = New("flag")
-	_ = c.LoadStrings(JSON, jsonStr)
-	os.Args = []string{
-		"./cliapp",
-		"--map1.key", "new val",
-	}
-	is.Equal("val", c.String("map1.key"))
-	err = c.LoadFlags([]string{"--map1.key"})
-	is.NoError(err)
-	is.Equal("new val", c.String("map1.key"))
-	// fmt.Println(err)
-	// fmt.Printf("%#v\n", c.Data())
-
-	os.Args = bakArgs
 }
 
 func TestJSONDriver(t *testing.T) {

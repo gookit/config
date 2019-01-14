@@ -47,7 +47,7 @@ func LoadRemote(format, url string) error { return dc.LoadRemote(format, url) }
 // 	c.LoadRemote(config.JSON, "http://abc.com/api-config.json")
 func (c *Config) LoadRemote(format, url string) (err error) {
 	// create http client
-	client := http.Client{Timeout: 900 * time.Second}
+	client := http.Client{Timeout: 300 * time.Second}
 	resp, err := client.Get(url)
 	if err != nil {
 		return err
@@ -55,7 +55,7 @@ func (c *Config) LoadRemote(format, url string) (err error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("remote resource is not exist, reply status code is not equals to 200")
+		return fmt.Errorf("fetch remote resource error, reply status code is not equals to 200")
 	}
 
 	// read response content
@@ -65,10 +65,29 @@ func (c *Config) LoadRemote(format, url string) (err error) {
 		if err = c.parseSourceCode(format, bts); err != nil {
 			return
 		}
-
 		c.loadedFiles = append(c.loadedFiles, url)
 	}
 	return
+}
+
+// LoadOSEnv load data from OS ENV
+func LoadOSEnv(keys []string) { dc.LoadOSEnv(keys) }
+
+// LoadOSEnv load data from os ENV
+func (c *Config) LoadOSEnv(keys []string) {
+	for _, key := range keys {
+		val := os.Getenv(strings.ToUpper(key))
+		_ = c.Set(key, val)
+	}
+}
+
+// support bound types for CLI flags vars
+var validTypes = map[string]int{
+	"int":  1,
+	"uint": 1,
+	"bool": 1,
+	// string is default
+	"string": 1,
 }
 
 // LoadFlags load data from cli flags
@@ -76,16 +95,36 @@ func LoadFlags(keys []string) error { return dc.LoadFlags(keys) }
 
 // LoadFlags parse command line arguments, based on provide keys.
 // Usage:
-// 	c.LoadFlags([]string{"env", "debug"})
+//	// debug flag is bool type
+// 	c.LoadFlags([]string{"env", "debug:bool"})
 func (c *Config) LoadFlags(keys []string) (err error) {
-	hash := map[string]*string{}
+	hash := map[string]interface{}{}
+
+	// bind vars
 	for _, key := range keys {
-		key = strings.Trim(key, "-")
-		defVal := c.String(key)
-		hash[key] = new(string)
-		flag.StringVar(hash[key], key, defVal, "")
+		key, typ := parseVarNameAndType(key)
+
+		switch typ {
+		case "int":
+			ptr := new(int)
+			flag.IntVar(ptr, key, c.Int(key), "")
+			hash[key] = ptr
+		case "uint":
+			ptr := new(uint)
+			flag.UintVar(ptr, key, c.Uint(key), "")
+			hash[key] = ptr
+		case "bool":
+			ptr := new(bool)
+			flag.BoolVar(ptr, key, c.Bool(key), "")
+			hash[key] = ptr
+		default: // as string
+			ptr := new(string)
+			flag.StringVar(ptr, key, c.String(key), "")
+			hash[key] = ptr
+		}
 	}
 
+	// parse and collect
 	flag.Parse()
 	flag.Visit(func(f *flag.Flag) {
 		name := f.Name
@@ -99,6 +138,23 @@ func (c *Config) LoadFlags(keys []string) (err error) {
 		_ = c.Set(name, f.Value.String())
 	})
 	return
+}
+
+func parseVarNameAndType(key string) (string, string) {
+	typ := "string"
+	key = strings.Trim(key, "-")
+
+	// can set var type: int, uint, bool
+	if strings.IndexByte(key, ':') > 0 {
+		list := strings.SplitN(key, ":", 2)
+		key = list[0]
+		typ = list[1]
+
+		if _, ok := validTypes[typ]; !ok {
+			typ = "string"
+		}
+	}
+	return key, typ
 }
 
 // LoadData load one or multi data

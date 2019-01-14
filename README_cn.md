@@ -5,17 +5,18 @@
 [![Coverage Status](https://coveralls.io/repos/github/gookit/config/badge.svg?branch=master)](https://coveralls.io/github/gookit/config?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/gookit/config)](https://goreportcard.com/report/github.com/gookit/config)
 
-golang应用程序配置管理工具库。
+功能完善的Golang应用程序配置管理工具库。
 
 > **[EN README](README.md)**
 
 - 支持多种格式: `JSON`(默认), `INI`, `YAML`, `TOML`, `HCL`
-  - `JSON` 内容支持注释，将自动清除注释
+  - `JSON` 内容支持注释，解析时将自动清除注释
 - 支持多个文件、多数据加载
+- 支持从 OS ENV 变量数据加载配置
+- 支持从远程 URL 加载配置数据
+- 支持从命令行参数(flags)设置配置数据
 - 支持数据覆盖合并，加载多份数据时将按key自动合并
-- 支持从远程URL加载配置数据
-- 支持从命令行参数设置配置数据
-- 支持按路径获取子级值。 e.g `map.key` `arr.2`
+- 支持通过 `.` 分隔符来按路径获取子级值。 e.g `map.key` `arr.2`
 - 支持解析ENV变量名称。 like `shell: ${SHELL}` -> `shell: /bin/zsh`
 - 简洁的使用API `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
 - 完善的单元测试(code coverage > 95%)
@@ -148,7 +149,7 @@ fmt.Print(name) // new name
 
 - `Bool(key string, defVal ...bool) bool`
 - `Int(key string, defVal ...int) int`
-- `Int64(key string, defVal ...int64)`
+- `Int64(key string, defVal ...int64) int64`
 - `Ints(key string) (arr []int)`
 - `IntMap(key string) (mp map[string]int)`
 - `Float(key string, defVal ...float64) float64`

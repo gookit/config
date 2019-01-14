@@ -15,9 +15,7 @@ var (
 )
 
 // Exists key exists check
-func Exists(key string, findByPath ...bool) (ok bool) {
-	return dc.Exists(key, findByPath...)
-}
+func Exists(key string, findByPath ...bool) bool { return dc.Exists(key, findByPath...) }
 
 // Exists key exists check
 func (c *Config) Exists(key string, findByPath ...bool) (ok bool) {
@@ -49,6 +47,10 @@ func (c *Config) Exists(key string, findByPath ...bool) (ok bool) {
 	}
 	for _, k := range keys[1:] {
 		switch typeData := item.(type) {
+		case map[string]int: // is map(from Set)
+			if item, ok = typeData[k]; !ok {
+				return
+			}
 		case map[string]string: // is map(from Set)
 			if item, ok = typeData[k]; !ok {
 				return
@@ -101,7 +103,7 @@ func (c *Config) Get(key string, findByPath ...bool) interface{} {
 }
 
 // GetValue get value by given key string.
-func GetValue(key string, findByPath ...bool) (value interface{}, ok bool) {
+func GetValue(key string, findByPath ...bool) (interface{}, bool) {
 	return dc.GetValue(key, findByPath...)
 }
 
@@ -154,6 +156,10 @@ func (c *Config) GetValue(key string, findByPath ...bool) (value interface{}, ok
 	// case []string:
 	for _, k := range keys[1:] {
 		switch typeData := item.(type) {
+		case map[string]int: // is map(from Set)
+			if item, ok = typeData[k]; !ok {
+				return
+			}
 		case map[string]string: // is map(from Set)
 			if item, ok = typeData[k]; !ok {
 				return
@@ -279,6 +285,27 @@ func (c *Config) Int(key string, defVal ...int) (value int) {
 		c.addError(err)
 	}
 	return
+}
+
+// Uint get a uint value, if not found return default value
+func Uint(key string, defVal ...uint) uint { return dc.Uint(key, defVal...) }
+
+// Uint get a int value, if not found return default value
+func (c *Config) Uint(key string, defVal ...uint) (value uint) {
+	rawVal, exist := c.getString(key)
+	if !exist {
+		if len(defVal) > 0 {
+			return defVal[0]
+		}
+		return
+	}
+
+	val64, err := strconv.ParseUint(rawVal, 10, 0)
+	if err != nil {
+		c.addError(err)
+		return
+	}
+	return uint(val64)
 }
 
 // Int64 get a int value, if not found return default value
@@ -528,11 +555,6 @@ func MapStruct(key string, v interface{}) error { return dc.Structure(key, v) }
 
 // MapStruct alias method of the 'Structure'
 func (c *Config) MapStruct(key string, v interface{}) (err error) {
-	return c.Structure(key, v)
-}
-
-// MapStructure alias method of the 'Structure'
-func (c *Config) MapStructure(key string, v interface{}) (err error) {
 	return c.Structure(key, v)
 }
 
