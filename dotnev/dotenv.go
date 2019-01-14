@@ -9,13 +9,19 @@ import (
 	"strings"
 )
 
-// LoadExists Load data on file exists
-var LoadExists bool
+// DefaultName default file name
+var DefaultName = ".env"
+// OnlyLoadExists load on file exists
+var OnlyLoadExists bool
 
 // Load parse .env file data to os ENV.
 // Usage:
-//	dotenv.Load("./", ".env")
+// 	dotenv.Load("./", ".env")
 func Load(dir string, filenames ...string) (err error) {
+	if len(filenames) == 0 {
+		filenames = []string{DefaultName}
+	}
+
 	for _, filename := range filenames {
 		file := filepath.Join(dir, filename)
 		if err = loadFile(file); err != nil {
@@ -25,13 +31,20 @@ func Load(dir string, filenames ...string) (err error) {
 	return
 }
 
+// LoadExists load on file exists
+func LoadExists(dir string, filenames ...string) error {
+	OnlyLoadExists = true
+
+	return Load(dir, filenames...)
+}
+
 // load and parse .env file data to os ENV
 func loadFile(file string) (err error) {
 	// open file
 	fd, err := os.Open(file)
 	if err != nil {
 		// skip not exist file
-		if os.IsNotExist(err) && LoadExists {
+		if os.IsNotExist(err) && OnlyLoadExists {
 			return nil
 		}
 		return err
@@ -49,7 +62,8 @@ func loadFile(file string) (err error) {
 	// set data to os ENV
 	if mp, ok := p.SimpleData()[p.DefSection]; ok {
 		for key, val := range mp {
-			err = os.Setenv(strings.ToUpper(key), val)
+			key = strings.ToUpper(key)
+			err = os.Setenv(key, val)
 			if err != nil {
 				break
 			}
