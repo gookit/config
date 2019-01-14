@@ -187,7 +187,7 @@ config.String("app_name") // "config"
 
 - `LoadOSEnv(keys []string)` Load from os ENV
 - `LoadData(dataSource ...interface{}) (err error)` Load from struts or maps
-- `LoadFlags(keys []string) (err error)` Load from cli flags
+- `LoadFlags(keys []string) (err error)` Load from CLI flags
 - `LoadExists(sourceFiles ...string) (err error)` 
 - `LoadFiles(sourceFiles ...string) (err error)`
 - `LoadRemote(format, url string) (err error)`

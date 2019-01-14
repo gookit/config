@@ -137,9 +137,10 @@ fmt.Print(name) // new name
 
 ### 载入配置
 
-- `LoadData(dataSource ...interface{}) (err error)`
-- `LoadFlags(keys []string) (err error)`
-- `LoadExists(sourceFiles ...string) (err error)`
+- `LoadOSEnv(keys []string)` Load from os ENV
+- `LoadData(dataSource ...interface{}) (err error)` Load from struts or maps
+- `LoadFlags(keys []string) (err error)` Load from CLI flags
+- `LoadExists(sourceFiles ...string) (err error)` 
 - `LoadFiles(sourceFiles ...string) (err error)`
 - `LoadRemote(format, url string) (err error)`
 - `LoadSources(format string, src []byte, more ...[]byte) (err error)`
@@ -149,6 +150,7 @@ fmt.Print(name) // new name
 
 - `Bool(key string, defVal ...bool) bool`
 - `Int(key string, defVal ...int) int`
+- `Uint(key string, defVal ...uint) uint`
 - `Int64(key string, defVal ...int64) int64`
 - `Ints(key string) (arr []int)`
 - `IntMap(key string) (mp map[string]int)`
@@ -164,8 +166,10 @@ fmt.Print(name) // new name
 
 ### 有用的方法
 
+- `Getenv(driver Driver)`
 - `AddDriver(driver Driver)`
 - `Data() map[string]interface{}`
+- `Exists(key string, findByPath ...bool) bool`
 - `DumpTo(out io.Writer, format string) (n int64, err error)`
 
 ## 单元测试

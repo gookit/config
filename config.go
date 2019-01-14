@@ -11,7 +11,7 @@ import (
 )
 
 // Version is package version
-const Version = "1.1.0"
+const Version = "2.0.1"
 
 // There are supported config format
 const (
