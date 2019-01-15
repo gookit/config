@@ -78,8 +78,6 @@ func main() {
 		panic(err)
 	}
 
-	// fmt.Printf("config data: \n %#v\n", config.Data())
-
 	// load more files
 	err = config.LoadFiles("testdata/yml_other.yml")
 	// can also load multi at once
@@ -87,6 +85,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	
+	// fmt.Printf("config data: \n %#v\n", config.Data())
 }
 ```
 
@@ -117,21 +117,21 @@ fmt.Print(name) // inhere
 
 ```go
 arr1 := config.Strings("arr1")
-fmt.Printf("%v %#v", arr1) // []string{"val1", "val21"}
+fmt.Printf("%#v", arr1) // []string{"val1", "val21"}
 ```
 
 - Get string map
 
 ```go
 val := config.StringMap("map1")
-fmt.Printf("%v %#v",val) // map[string]string{"key":"val2", "key2":"val20"}
+fmt.Printf("%#v",val) // map[string]string{"key":"val2", "key2":"val20"}
 ```
 
 - Value contains ENV var
 
 ```go
 value := config.String("shell")
-fmt.Print(value) // /bin/zsh
+fmt.Print(value) // "/bin/zsh"
 ```
 
 - Get value by key path
@@ -152,7 +152,7 @@ fmt.Print(value) // "val2"
 // set value
 config.Set("name", "new name")
 name = config.String("name")
-fmt.Print(name) // new name
+fmt.Print(name) // "new name"
 ```
 
 ## Load from flags
