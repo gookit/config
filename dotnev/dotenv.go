@@ -66,7 +66,7 @@ func loadFile(file string) (err error) {
 
 	// parse file content
 	s := bufio.NewScanner(fd)
-	p := parser.SimpleParser(parser.NoDefSection)
+	p := parser.NewSimpled(parser.NoDefSection)
 
 	if _, err = p.ParseFrom(s); err != nil {
 		return
