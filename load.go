@@ -147,8 +147,7 @@ func parseVarNameAndType(key string) (string, string) {
 	// can set var type: int, uint, bool
 	if strings.IndexByte(key, ':') > 0 {
 		list := strings.SplitN(key, ":", 2)
-		key = list[0]
-		typ = list[1]
+		key, typ = list[0], list[1]
 
 		if _, ok := validTypes[typ]; !ok {
 			typ = "string"
