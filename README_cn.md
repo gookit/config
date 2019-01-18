@@ -18,10 +18,10 @@
 - 支持数据覆盖合并，加载多份数据时将按key自动合并
 - 支持通过 `.` 分隔符来按路径获取子级值。 e.g `map.key` `arr.2`
 - 支持解析ENV变量名称。 like `shell: ${SHELL}` -> `shell: /bin/zsh`
-- 简洁的使用API `Get` `Int` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
+- 简洁的使用API `Get` `Int` `Uint` `Int64` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
 - 完善的单元测试(code coverage > 95%)
 
-> 提供一个子包`dotenv`，支持从文件（eg `.env`）中导入数据到ENV
+> 提供一个子包 `dotenv`，支持从文件（eg `.env`）中导入数据到ENV
 
 ## 只使用INI
 
@@ -131,6 +131,7 @@ fmt.Print(value) // "val2"
 ```go
 // set value
 config.Set("name", "new name")
+// get
 name = config.String("name")
 fmt.Print(name) // new name
 ```

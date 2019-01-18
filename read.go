@@ -219,14 +219,13 @@ func (c *Config) GetValue(key string, findByPath ...bool) (value interface{}, ok
 func String(key string, defVal ...string) string { return dc.String(key, defVal...) }
 
 // String get a string by key, if not found return default value
-func (c *Config) String(key string, defVal ...string) (value string) {
-	var ok bool
+func (c *Config) String(key string, defVal ...string) string {
+	value, ok := c.getString(key)
 
-	value, ok = c.getString(key)
 	if !ok && len(defVal) > 0 { // give default value
 		value = defVal[0]
 	}
-	return
+	return value
 }
 
 func (c *Config) getString(key string) (value string, ok bool) {
@@ -272,17 +271,12 @@ func Int(key string, defVal ...int) int { return dc.Int(key, defVal...) }
 
 // Int get a int value, if not found return default value
 func (c *Config) Int(key string, defVal ...int) (value int) {
-	rawVal, exist := c.getString(key)
-	if !exist {
-		if len(defVal) > 0 {
-			return defVal[0]
-		}
-		return
-	}
+	i64, exist := c.tryInt64(key)
 
-	value, err := strconv.Atoi(rawVal)
-	if err != nil {
-		c.addError(err)
+	if exist {
+		value = int(i64)
+	} else if len(defVal) > 0 {
+		value = defVal[0]
 	}
 	return
 }
@@ -292,20 +286,14 @@ func Uint(key string, defVal ...uint) uint { return dc.Uint(key, defVal...) }
 
 // Uint get a int value, if not found return default value
 func (c *Config) Uint(key string, defVal ...uint) (value uint) {
-	rawVal, exist := c.getString(key)
-	if !exist {
-		if len(defVal) > 0 {
-			return defVal[0]
-		}
-		return
-	}
+	i64, exist := c.tryInt64(key)
 
-	val64, err := strconv.ParseUint(rawVal, 10, 0)
-	if err != nil {
-		c.addError(err)
-		return
+	if exist {
+		value = uint(i64)
+	} else if len(defVal) > 0 {
+		value = defVal[0]
 	}
-	return uint(val64)
+	return
 }
 
 // Int64 get a int value, if not found return default value
@@ -313,15 +301,22 @@ func Int64(key string, defVal ...int64) int64 { return dc.Int64(key, defVal...) 
 
 // Int64 get a int value, if not found return default value
 func (c *Config) Int64(key string, defVal ...int64) (value int64) {
-	rawVal, exist := c.getString(key)
-	if !exist {
-		if len(defVal) > 0 {
-			return defVal[0]
-		}
+	value, exist := c.tryInt64(key)
+
+	if !exist && len(defVal) > 0 {
+		value = defVal[0]
+	}
+	return
+}
+
+// try get a int64 value by given key
+func (c *Config) tryInt64(key string) (value int64, ok bool) {
+	strVal, ok := c.getString(key)
+	if !ok {
 		return
 	}
 
-	value, err := strconv.ParseInt(rawVal, 10, 0)
+	value, err := strconv.ParseInt(strVal, 10, 0)
 	if err != nil {
 		c.addError(err)
 	}
@@ -336,7 +331,7 @@ func (c *Config) Float(key string, defVal ...float64) (value float64) {
 	str, ok := c.getString(key)
 	if !ok {
 		if len(defVal) > 0 {
-			return defVal[0]
+			value =  defVal[0]
 		}
 		return
 	}

@@ -20,7 +20,7 @@ Golang application config manage tool library.
 - Support data overlay and merge, automatically load by key when loading multiple copies of data
 - Support get sub value by path, like `map.key` `arr.2`
 - Support parse ENV name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
-- Generic api `Get` `Int` `Float` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
+- Generic api `Get` `Int` `Uint` `Int64` `Float` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
 - Complete unit test(code coverage > 95%)
 
 > Provide a sub-package `dotenv` that supports importing data from files (eg `.env`) to ENV
