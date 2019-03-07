@@ -9,6 +9,8 @@
 
 > **[EN README](README.md)**
 
+## 功能简介
+
 - 支持多种格式: `JSON`(默认), `INI`, `YAML`, `TOML`, `HCL`, `ENV`, `Flags`
   - `JSON` 内容支持注释，解析时将自动清除注释
 - 支持多个文件、多数据加载
@@ -169,7 +171,7 @@ fmt.Print(name) // new name
 
 ### 有用的方法
 
-- `Getenv(driver Driver)`
+- `Getenv(name string, defVal ...string) (val string)`
 - `AddDriver(driver Driver)`
 - `Data() map[string]interface{}`
 - `Exists(key string, findByPath ...bool) bool`
@@ -182,6 +184,16 @@ go test -cover
 // contains all sub-folder
 go test -cover ./...
 ```
+
+## Gookit packages
+
+- [gookit/ini](https://github.com/gookit/ini) Go config management, use INI files
+- [gookit/rux](https://github.com/gookit/rux) Simple and fast request router for golang HTTP 
+- [gookit/gcli](https://github.com/gookit/gcli) build CLI application, tool library, running CLI commands
+- [gookit/event](https://github.com/gookit/event) Lightweight event manager and dispatcher implements by Go
+- [gookit/config](https://github.com/gookit/config) Go config management. support JSON, YAML, TOML, INI, HCL, ENV and Flags
+- [gookit/color](https://github.com/gookit/color) A command-line color library with true color support, universal API methods and Windows support.
+- [gookit/validate](https://github.com/gookit/validate) Use for data validation and filtering. support Map, Struct, Form data
 
 ## 相关包
 
