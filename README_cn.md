@@ -9,7 +9,7 @@
 
 > **[EN README](README.md)**
 
-- 支持多种格式: `JSON`(默认), `INI`, `YAML`, `TOML`, `HCL`
+- 支持多种格式: `JSON`(默认), `INI`, `YAML`, `TOML`, `HCL`, `ENV`, `Flags`
   - `JSON` 内容支持注释，解析时将自动清除注释
 - 支持多个文件、多数据加载
 - 支持从 OS ENV 变量数据加载配置
