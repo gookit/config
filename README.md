@@ -11,7 +11,7 @@ Golang application config manage tool library.
 
 ## Features
 
-- Support multi format: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`
+- Support multi format: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`, `ENV`, `Flags`
   - `JSON` content support comments. will auto clear comments
 - Support multi-file and multi-data loading
 - Support loading configuration from os ENV
