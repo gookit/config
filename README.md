@@ -238,21 +238,21 @@ go test -cover ./...
 - [gookit/rux](https://github.com/gookit/rux) Simple and fast request router for golang HTTP 
 - [gookit/gcli](https://github.com/gookit/gcli) build CLI application, tool library, running CLI commands
 - [gookit/event](https://github.com/gookit/event) Lightweight event manager and dispatcher implements by Go
+- [gookit/cache](https://github.com/gookit/cache) Generic cache use and cache manager for golang. support File, Memory, Redis, Memcached.
 - [gookit/config](https://github.com/gookit/config) Go config management. support JSON, YAML, TOML, INI, HCL, ENV and Flags
-- [gookit/color](https://github.com/gookit/color) A command-line color library with true color support, universal API methods and Windows support.
+- [gookit/color](https://github.com/gookit/color) A command-line color library with true color support, universal API methods and Windows support
+- [gookit/filter](https://github.com/gookit/filter) Provide filtering, sanitizing, and conversion of golang data
 - [gookit/validate](https://github.com/gookit/validate) Use for data validation and filtering. support Map, Struct, Form data
+- [gookit/goutil](https://github.com/gookit/goutil) Some utils for the Go: string, array/slice, map, format, cli, env, filesystem, test and more
+- More please see https://github.com/gookit
 
-## Related Packages
+## See also
 
 - Ini parse [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser)
 - Ini config [gookit/ini](https://github.com/gookit/ini)
 - Yaml parse [go-yaml](https://github.com/go-yaml/yaml)
 - Toml parse [go toml](https://github.com/BurntSushi/toml)
 - Data merge [mergo](https://github.com/imdario/mergo)
-
-### Ini Config Use
-
-- [gookit/ini](https://github.com/gookit/ini) ini config manage
 
 ## License
 
