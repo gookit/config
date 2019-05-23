@@ -1,7 +1,7 @@
 package hcl
 
 import (
-	"github.com/gookit/config"
+	"github.com/gookit/config/v2"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/gookit/config"
-	"github.com/gookit/config/json"
+	"github.com/gookit/config/v2"
+	"github.com/gookit/config/v2/json"
 )
 
 // go run ./examples/json.go

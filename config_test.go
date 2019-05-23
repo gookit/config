@@ -3,7 +3,7 @@ package config
 import (
 	"bytes"
 	"fmt"
-	"github.com/gookit/config/dotnev"
+	"github.com/gookit/config/v2/dotnev"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

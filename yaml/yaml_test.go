@@ -3,7 +3,7 @@ package yaml
 import (
 	"bytes"
 	"fmt"
-	"github.com/gookit/config"
+	"github.com/gookit/config/v2"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

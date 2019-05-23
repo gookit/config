@@ -7,7 +7,7 @@ package hcl
 
 import (
 	"errors"
-	"github.com/gookit/config"
+	"github.com/gookit/config/v2"
 	"github.com/hashicorp/hcl"
 )
 

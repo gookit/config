@@ -2,7 +2,7 @@
 package json
 
 import (
-	"github.com/gookit/config"
+	"github.com/gookit/config/v2"
 	"github.com/json-iterator/go"
 )
 

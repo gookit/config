@@ -6,7 +6,7 @@ about ini parse, please see https://github.com/gookit/ini/parser
 package ini
 
 import (
-	"github.com/gookit/config"
+	"github.com/gookit/config/v2"
 	"github.com/gookit/ini/parser"
 )
 

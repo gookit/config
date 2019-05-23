@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/gookit/config/dotnev"
+	"github.com/gookit/config/v2/dotnev"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"

@@ -3,8 +3,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/gookit/config"
-	"github.com/gookit/config/ini"
+	"github.com/gookit/config/v2"
+	"github.com/gookit/config/v2/ini"
 )
 
 // go run ./examples/ini.go

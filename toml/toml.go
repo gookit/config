@@ -10,7 +10,7 @@ package toml
 import (
 	"bytes"
 	"github.com/BurntSushi/toml"
-	"github.com/gookit/config"
+	"github.com/gookit/config/v2"
 )
 
 // Decoder the toml content decoder
