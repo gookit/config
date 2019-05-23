@@ -1,4 +1,4 @@
-module github.com/gookit/config
+module github.com/gookit/config/v2
 
 go 1.12
 
