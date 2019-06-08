@@ -1,9 +1,10 @@
 package hcl
 
 import (
+	"testing"
+
 	"github.com/gookit/config/v2"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestDriver(t *testing.T) {

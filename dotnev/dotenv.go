@@ -3,10 +3,11 @@ package dotnev
 
 import (
 	"bufio"
-	"github.com/gookit/ini/parser"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/gookit/ini/v2/parser"
 )
 
 // DefaultName default file name

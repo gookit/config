@@ -2,9 +2,10 @@ package toml
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/gookit/config/v2"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 var tomlStr = `

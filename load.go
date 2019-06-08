@@ -4,13 +4,14 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/imdario/mergo"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/imdario/mergo"
 )
 
 // LoadFiles load one or multi files
@@ -95,7 +96,7 @@ func LoadFlags(keys []string) error { return dc.LoadFlags(keys) }
 
 // LoadFlags parse command line arguments, based on provide keys.
 // Usage:
-//	// debug flag is bool type
+// 	// debug flag is bool type
 // 	c.LoadFlags([]string{"env", "debug:bool"})
 func (c *Config) LoadFlags(keys []string) (err error) {
 	hash := map[string]interface{}{}

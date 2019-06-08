@@ -9,6 +9,7 @@ package toml
 // see https://godoc.org/github.com/BurntSushi/toml
 import (
 	"bytes"
+
 	"github.com/BurntSushi/toml"
 	"github.com/gookit/config/v2"
 )

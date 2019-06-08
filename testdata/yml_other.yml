@@ -4,9 +4,9 @@ age: 12
 baseKey: value2
 
 map1:
-    key: val2
-    key2: val20
+  key: val2
+  key2: val20
 
 arr1:
-    - val1
-    - val21
+  - val1
+  - val21

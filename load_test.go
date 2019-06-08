@@ -1,10 +1,11 @@
 package config
 
 import (
-	"github.com/gookit/config/v2/dotnev"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
+
+	"github.com/gookit/config/v2/dotnev"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDefaultLoad(t *testing.T) {

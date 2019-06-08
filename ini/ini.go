@@ -7,7 +7,7 @@ package ini
 
 import (
 	"github.com/gookit/config/v2"
-	"github.com/gookit/ini/parser"
+	"github.com/gookit/ini/v2/parser"
 )
 
 // Decoder the ini content decoder

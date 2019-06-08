@@ -331,7 +331,7 @@ func (c *Config) Float(key string, defVal ...float64) (value float64) {
 	str, ok := c.getString(key)
 	if !ok {
 		if len(defVal) > 0 {
-			value =  defVal[0]
+			value = defVal[0]
 		}
 		return
 	}

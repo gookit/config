@@ -3,9 +3,10 @@ package config
 import (
 	"errors"
 	"fmt"
-	"github.com/imdario/mergo"
 	"strconv"
 	"strings"
+
+	"github.com/imdario/mergo"
 )
 
 // Set val by key

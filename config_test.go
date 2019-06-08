@@ -3,9 +3,10 @@ package config
 import (
 	"bytes"
 	"fmt"
+	"testing"
+
 	"github.com/gookit/config/v2/dotnev"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 var jsonStr = `{
