@@ -3,6 +3,7 @@ package config
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/gookit/config/v2/dotnev"
@@ -267,8 +268,20 @@ func TestOptions(t *testing.T) {
 	str := c.String("name")
 	st.Equal("app", str)
 
+	// test: parse env name
+	shell := os.Getenv("SHELL")
+	// ensure env var is exist
+	if shell == "" {
+		_= os.Setenv("SHELL", "/usr/bin/bash")
+	}
+
 	str = c.String("envKey")
 	st.NotContains(str, "${")
+
+	// revert
+	if shell != "" {
+		_= os.Setenv("SHELL", shell)
+	}
 
 	str = c.String("invalidEnvKey")
 	st.Contains(str, "${")
