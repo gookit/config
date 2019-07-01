@@ -1,6 +1,6 @@
 module github.com/gookit/config/v2
 
-go 1.12
+go 1.11
 
 require (
 	github.com/BurntSushi/toml v0.3.1
