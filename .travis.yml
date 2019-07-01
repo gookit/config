@@ -3,6 +3,9 @@ go:
   - '1.11'
   - '1.12'
 
+env:
+  - GO111MODULE=on
+
 before_install:
   - go get github.com/mattn/goveralls
   - go get golang.org/x/tools/cmd/cover
