@@ -1,5 +1,6 @@
 # config
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d6ac163ee63649ec92c1566e42f09c11)](https://app.codacy.com/app/inhere/config)
 [![GoDoc](https://godoc.org/github.com/gookit/config?status.svg)](https://godoc.org/github.com/gookit/config)
 [![Build Status](https://travis-ci.org/gookit/config.svg?branch=master)](https://travis-ci.org/gookit/config)
 [![Coverage Status](https://coveralls.io/repos/github/gookit/config/badge.svg?branch=master)](https://coveralls.io/github/gookit/config?branch=master)
@@ -13,6 +14,7 @@
 
 - 支持多种格式: `JSON`(默认), `INI`, `YAML`, `TOML`, `HCL`, `ENV`, `Flags`
   - `JSON` 内容支持注释，解析时将自动清除注释
+  - 其他驱动都是按需使用，不使用的不会加载编译到应用中
 - 支持多个文件、多数据加载
 - 支持从 OS ENV 变量数据加载配置
 - 支持从远程 URL 加载配置数据
