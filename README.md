@@ -1,5 +1,6 @@
 # Config
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d6ac163ee63649ec92c1566e42f09c11)](https://app.codacy.com/app/inhere/config)
 [![GoDoc](https://godoc.org/github.com/gookit/config?status.svg)](https://godoc.org/github.com/gookit/config)
 [![Build Status](https://travis-ci.org/gookit/config.svg?branch=master)](https://travis-ci.org/gookit/config)
 [![Coverage Status](https://coveralls.io/repos/github/gookit/config/badge.svg?branch=master)](https://coveralls.io/github/gookit/config?branch=master)
@@ -11,17 +12,18 @@ Golang application config manage tool library.
 
 ## Features
 
-- Support multi format: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`, `ENV`, `Flags`
-  - `JSON` content support comments. will auto clear comments
-- Support multi-file and multi-data loading
-- Support loading configuration from os ENV
-- Support for loading configuration data from remote URLs
-- Support for setting configuration data from command line arguments(`flags`)
-- Support data overlay and merge, automatically load by key when loading multiple copies of data
-- Support get sub value by path, like `map.key` `arr.2`
-- Support parse ENV name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
-- Generic api `Get` `Int` `Uint` `Int64` `Float` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
-- Complete unit test(code coverage > 95%)
+-  Support multi format: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`, `ENV`, `Flags`
+  -  `JSON` content support comments. will auto clear comments
+  -  Other drivers are used on demand, not used will not be loaded into the application.
+-  Support multi-file and multi-data loading
+-  Support loading configuration from os ENV
+-  Support for loading configuration data from remote URLs
+-  Support for setting configuration data from command line arguments(`flags`)
+-  Support data overlay and merge, automatically load by key when loading multiple copies of data
+-  Support get sub value by path, like `map.key` `arr.2`
+-  Support parse ENV name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
+-  Generic api `Get` `Int` `Uint` `Int64` `Float` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
+-  Complete unit test(code coverage > 95%)
 
 > Provide a sub-package `dotenv` that supports importing data from files (eg `.env`) to ENV
 
