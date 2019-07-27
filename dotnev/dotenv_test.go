@@ -24,6 +24,8 @@ func TestLoad(t *testing.T) {
 
 	err = Load("./testdata", "invalid_key.ini")
 	assert.Error(t, err)
+
+	assert.Equal(t, "def-val", Get("NOT-EXIST", "def-val"))
 }
 
 func TestLoadExists(t *testing.T) {

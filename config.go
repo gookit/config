@@ -1,10 +1,46 @@
+/*
+Package config is a go config management implement. support YAML,TOML,JSON,INI,HCL format.
+
+Source code and other details for the project are available at GitHub:
+
+	https://github.com/gookit/config
+
+JSON format content example:
+
+	{
+		"name": "app",
+		"debug": false,
+		"baseKey": "value",
+		"age": 123,
+		"envKey": "${SHELL}",
+		"envKey1": "${NotExist|defValue}",
+		"map1": {
+			"key": "val",
+			"key1": "val1",
+			"key2": "val2"
+		},
+		"arr1": [
+			"val",
+			"val1",
+			"val2"
+		],
+		"lang": {
+			"dir": "res/lang",
+			"defLang": "en",
+			"allowed": {
+				"en": "val",
+				"zh-CN": "val2"
+			}
+		}
+	}
+
+Usage please see example(more example please see examples folder in the lib):
+
+*/
 package config
 
 import (
-	"bytes"
-	"errors"
 	"fmt"
-	"io"
 	"os"
 	"strings"
 	"sync"
@@ -267,14 +303,6 @@ func (c *Config) Name() string {
 	return c.name
 }
 
-// Data return all config data
-func Data() map[string]interface{} { return dc.Data() }
-
-// Data get all config data
-func (c *Config) Data() map[string]interface{} {
-	return c.data
-}
-
 // Error get last error
 func (c *Config) Error() error {
 	return c.err
@@ -283,60 +311,6 @@ func (c *Config) Error() error {
 // IsEmpty of the config
 func (c *Config) IsEmpty() bool {
 	return len(c.data) == 0
-}
-
-// ToJSON string
-func (c *Config) ToJSON() string {
-	buf := &bytes.Buffer{}
-
-	_, err := c.DumpTo(buf, JSON)
-	if err != nil {
-		return ""
-	}
-
-	return buf.String()
-}
-
-// WriteTo a writer
-func WriteTo(out io.Writer) (int64, error) { return dc.WriteTo(out) }
-
-// WriteTo Write out config data representing the current state to a writer.
-func (c *Config) WriteTo(out io.Writer) (n int64, err error) {
-	return c.DumpTo(out, c.opts.DumpFormat)
-}
-
-// DumpTo a writer and use format
-func DumpTo(out io.Writer, format string) (int64, error) { return dc.DumpTo(out, format) }
-
-// DumpTo use the format(json,yaml,toml) dump config data to a writer
-func (c *Config) DumpTo(out io.Writer, format string) (n int64, err error) {
-	var ok bool
-	var encoder Encoder
-
-	format = fixFormat(format)
-	if encoder, ok = c.encoders[format]; !ok {
-		err = errors.New("no exists or no register encoder for the format: " + format)
-		return
-	}
-
-	// is empty
-	if len(c.data) == 0 {
-		return
-	}
-
-	// encode data to string
-	encoded, err := encoder(&c.data)
-	if err != nil {
-		return
-	}
-
-	// write content to out
-	num, err := fmt.Fprintln(out, string(encoded))
-	if err != nil {
-		return
-	}
-
-	return int64(num), nil
 }
 
 // LoadedFiles get loaded files name

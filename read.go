@@ -91,6 +91,14 @@ func (c *Config) Exists(key string, findByPath ...bool) (ok bool) {
  * read config data
  *************************************************************/
 
+// Data return all config data
+func Data() map[string]interface{} { return dc.Data() }
+
+// Data get all config data
+func (c *Config) Data() map[string]interface{} {
+	return c.data
+}
+
 // Get config value by key string, support get sub-value by key path(eg. 'map.key'),
 // ok is true, find value from config
 // ok is false, not found or error
