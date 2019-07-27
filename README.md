@@ -1,4 +1,4 @@
-# config
+# Config
 
 [![GoDoc](https://godoc.org/github.com/gookit/config?status.svg)](https://godoc.org/github.com/gookit/config)
 [![Build Status](https://travis-ci.org/gookit/config.svg?branch=master)](https://travis-ci.org/gookit/config)
@@ -7,7 +7,7 @@
 
 Golang application config manage tool library. 
 
-> **[中文说明](README_cn.md)**
+> **[中文说明](README.zh-CN.md)**
 
 ## Features
 
