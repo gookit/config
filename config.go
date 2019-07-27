@@ -10,9 +10,6 @@ import (
 	"sync"
 )
 
-// Version is package version
-const Version = "2.0.1"
-
 // There are supported config format
 const (
 	Ini  = "ini"
@@ -74,7 +71,8 @@ type Config struct {
 	data map[string]interface{}
 
 	// loaded config files records
-	loadedFiles []string
+	loadedFiles  []string
+	loadedDriver []string
 
 	// decoders["toml"] = func(blob []byte, v interface{}) (err error){}
 	// decoders["yaml"] = func(blob []byte, v interface{}) (err error){}

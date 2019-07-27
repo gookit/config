@@ -16,6 +16,7 @@ func TestLoad(t *testing.T) {
 	err = Load("./testdata")
 	assert.NoError(t, err)
 	assert.Equal(t, "blog", os.Getenv("APP_NAME"))
+	assert.Equal(t, "blog", Get("APP_NAME"))
 	_ = os.Unsetenv("APP_NAME")
 
 	err = Load("./testdata", "error.ini")
@@ -32,6 +33,7 @@ func TestLoadExists(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, "blog", os.Getenv("APP_NAME"))
+	assert.Equal(t, "blog", Get("APP_NAME"))
 	_ = os.Unsetenv("APP_NAME")
 }
 

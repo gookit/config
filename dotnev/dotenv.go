@@ -52,6 +52,19 @@ func LoadFromMap(kv map[string]string) (err error) {
 	return
 }
 
+// Get get os ENV value by name
+func Get(name string, defVal ...string) (val string) {
+	name = strings.ToUpper(name)
+	if val = os.Getenv(name); val != "" {
+		return
+	}
+
+	if len(defVal) > 0 {
+		val = defVal[0]
+	}
+	return
+}
+
 // load and parse .env file data to os ENV
 func loadFile(file string) (err error) {
 	// open file
