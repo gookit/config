@@ -9,10 +9,17 @@ import (
 	"text/scanner"
 )
 
+// JSONAllowComments support write comments on json file.
+var JSONAllowComments = true
+
 // JSONDecoder for json decode
 var JSONDecoder Decoder = func(data []byte, v interface{}) (err error) {
-	str := StripJSONComments(string(data))
-	return json.Unmarshal([]byte(str), v)
+	if JSONAllowComments {
+		str := StripJSONComments(string(data))
+		return json.Unmarshal([]byte(str), v)
+	}
+
+	return json.Unmarshal(data, v)
 }
 
 // JSONEncoder for json encode
