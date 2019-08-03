@@ -3,6 +3,7 @@ package json
 
 import (
 	"github.com/gookit/config/v2"
+	"github.com/gookit/goutil/jsonutil"
 	"github.com/json-iterator/go"
 )
 
@@ -10,8 +11,12 @@ var parser = jsoniter.ConfigCompatibleWithStandardLibrary
 
 // Decoder for json
 var Decoder config.Decoder = func(data []byte, v interface{}) (err error) {
-	s := config.StripJSONComments(string(data))
-	return parser.Unmarshal([]byte(s), v)
+	if config.JSONAllowComments {
+		str := jsonutil.StripComments(string(data))
+		return parser.Unmarshal([]byte(str), v)
+	}
+
+	return parser.Unmarshal(data, v)
 }
 
 // Encoder for json

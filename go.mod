@@ -4,10 +4,11 @@ go 1.11
 
 require (
 	github.com/BurntSushi/toml v0.3.1
+	github.com/gookit/goutil v0.1.6
 	github.com/gookit/ini/v2 v2.0.2
 	github.com/hashicorp/hcl v1.0.0
 	github.com/imdario/mergo v0.3.7
-	github.com/json-iterator/go v1.1.6
+	github.com/json-iterator/go v1.1.7
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
