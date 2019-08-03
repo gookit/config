@@ -36,4 +36,3 @@ func TestExport(t *testing.T) {
 	_, err = c.DumpTo(buf, JSON)
 	at.Nil(err)
 }
-

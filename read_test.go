@@ -379,7 +379,7 @@ func TestParseEnv(t *testing.T) {
 
 	ris.NoError(err)
 
-	tests := []struct{EKey, EVal, CKey, CVal string}{
+	tests := []struct{ EKey, EVal, CKey, CVal string }{
 		{"EnvKey", "EnvKey val", "ekey", "EnvKey val"},
 		{"EnvKey", "", "ekey", "${EnvKey}"},
 		{"EnvKey0", "EnvKey0 val", "ekey0", "EnvKey0 val"},
@@ -402,7 +402,7 @@ func TestParseEnv(t *testing.T) {
 	ris.Equal("", Getenv("FirstEnv"))
 
 	testutil.MockEnvValues(map[string]string{
-		"FirstEnv": "abc",
+		"FirstEnv":  "abc",
 		"SecondEnv": "def",
 	}, func() {
 		ris.Equal("abc", Getenv("FirstEnv"))

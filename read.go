@@ -595,6 +595,7 @@ func (c *Config) Structure(key string, v interface{}) (err error) {
 // Notice:
 // must add "?" - To ensure that there is no greedy match
 var envRegex = regexp.MustCompile(`\${.+?}`)
+
 // var envRegex = regexp.MustCompile(`\${[\w-| ]+}`)
 
 // parse ENV var value

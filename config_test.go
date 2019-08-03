@@ -272,7 +272,7 @@ func TestOptions(t *testing.T) {
 	shell := os.Getenv("SHELL")
 	// ensure env var is exist
 	if shell == "" {
-		_= os.Setenv("SHELL", "/usr/bin/bash")
+		_ = os.Setenv("SHELL", "/usr/bin/bash")
 	}
 
 	str = c.String("envKey")
@@ -280,7 +280,7 @@ func TestOptions(t *testing.T) {
 
 	// revert
 	if shell != "" {
-		_= os.Setenv("SHELL", shell)
+		_ = os.Setenv("SHELL", shell)
 	}
 
 	str = c.String("invalidEnvKey")
