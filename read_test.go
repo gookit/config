@@ -374,7 +374,10 @@ func TestParseEnv(t *testing.T) {
 "ekey2": "${ EnvKey2 | defValue1 }",
 "ekey3": "${ EnvKey3 | app:run }",
 "ekey4": "${FirstEnv}/${ SecondEnv }",
-"ekey5": "${TEST_SHELL|/bin/bash}"
+"ekey5": "${TEST_SHELL|/bin/bash}",
+"ekey6": "${ EnvKey6 | app=run }",
+"ekey7": "${ EnvKey7 | app.run }",
+"ekey8": "${ EnvKey8 | app/run }"
 }`)
 
 	ris.NoError(err)
@@ -385,6 +388,9 @@ func TestParseEnv(t *testing.T) {
 		{"EnvKey0", "EnvKey0 val", "ekey0", "EnvKey0 val"},
 		{"EnvKey3", "EnvKey3 val", "ekey3", "EnvKey3 val"},
 		{"EnvKey3", "", "ekey3", "app:run"},
+		{"EnvKey6", "", "ekey6", "app=run"},
+		{"EnvKey7", "", "ekey7", "app.run"},
+		{"EnvKey8", "", "ekey8", "app/run"},
 		{"TEST_SHELL", "/bin/zsh", "ekey5", "/bin/zsh"},
 		{"TEST_SHELL", "", "ekey5", "/bin/bash"},
 	}
