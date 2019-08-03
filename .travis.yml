@@ -1,7 +1,7 @@
 language: go
 dist: xenial
 go:
-  - '1.10'
+#  - '1.10' mod v2 is not support
   - '1.11'
   - '1.12'
 
