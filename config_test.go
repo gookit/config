@@ -176,8 +176,8 @@ func TestGetEnv(t *testing.T) {
 		"app_debug": "true",
 	})
 
-	assert.Equal(t, "config", GetEnv("app_name"))
-	assert.Equal(t, "true", GetEnv("app_debug"))
+	assert.Equal(t, "config", Getenv("APP_NAME"))
+	assert.Equal(t, "true", Getenv("APP_DEBUG"))
 	assert.Equal(t, "defVal", GetEnv("not-exsit", "defVal"))
 }
 

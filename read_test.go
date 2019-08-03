@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/gookit/goutil/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -360,6 +361,62 @@ func TestBool(t *testing.T) {
 	st.False(bv)
 
 	ClearAll()
+}
+
+func TestParseEnv(t *testing.T) {
+	ris := assert.New(t)
+
+	cfg := NewWithOptions("test", ParseEnv)
+	err := cfg.LoadStrings(JSON, `{
+"ekey": "${EnvKey}",
+"ekey0": "${ EnvKey0 }",
+"ekey1": "${EnvKey1|defValue}",
+"ekey2": "${ EnvKey2 | defValue1 }",
+"ekey3": "${ EnvKey3 | app:run }",
+"ekey4": "${FirstEnv}/${ SecondEnv }",
+"ekey5": "${TEST_SHELL|/bin/bash}"
+}`)
+
+	ris.NoError(err)
+
+	tests := []struct{EKey, EVal, CKey, CVal string}{
+		{"EnvKey", "EnvKey val", "ekey", "EnvKey val"},
+		{"EnvKey", "", "ekey", "${EnvKey}"},
+		{"EnvKey0", "EnvKey0 val", "ekey0", "EnvKey0 val"},
+		{"EnvKey3", "EnvKey3 val", "ekey3", "EnvKey3 val"},
+		{"EnvKey3", "", "ekey3", "app:run"},
+		{"TEST_SHELL", "/bin/zsh", "ekey5", "/bin/zsh"},
+		{"TEST_SHELL", "", "ekey5", "/bin/bash"},
+	}
+
+	for _, smp := range tests {
+		ris.Equal("", Getenv(smp.EKey))
+
+		testutil.MockEnvValue(smp.EKey, smp.EVal, func(eVal string) {
+			ris.Equal(smp.EVal, eVal)
+			ris.Equal(smp.CVal, cfg.String(smp.CKey))
+		})
+	}
+
+	// test multi ENV key
+	ris.Equal("", Getenv("FirstEnv"))
+
+	testutil.MockEnvValues(map[string]string{
+		"FirstEnv": "abc",
+		"SecondEnv": "def",
+	}, func() {
+		ris.Equal("abc", Getenv("FirstEnv"))
+		ris.Equal("def", Getenv("SecondEnv"))
+		ris.Equal("abc/def", cfg.String("ekey4"))
+	})
+
+	testutil.MockEnvValues(map[string]string{
+		"FirstEnv": "abc",
+	}, func() {
+		ris.Equal("abc", Getenv("FirstEnv"))
+		ris.Equal("", Getenv("SecondEnv"))
+		ris.Equal("abc/${ SecondEnv }", cfg.String("ekey4"))
+	})
 }
 
 func TestConfig_MapStructure(t *testing.T) {

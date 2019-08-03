@@ -42,7 +42,6 @@ package config
 import (
 	"fmt"
 	"os"
-	"strings"
 	"sync"
 )
 
@@ -361,8 +360,15 @@ func (c *Config) addErrorf(format string, a ...interface{}) {
 }
 
 // GetEnv get os ENV value by name
+// Deprecated
+//	please use Getenv() instead
 func GetEnv(name string, defVal ...string) (val string) {
-	name = strings.ToUpper(name)
+	return Getenv(name, defVal...)
+}
+
+// Getenv get os ENV value by name. like os.Getenv, but support default value
+func Getenv(name string, defVal ...string) (val string) {
+	// name = strings.ToUpper(name)
 	if val = os.Getenv(name); val != "" {
 		return
 	}

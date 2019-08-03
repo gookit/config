@@ -12,18 +12,18 @@ Golang application config manage tool library.
 
 ## Features
 
--  Support multi format: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`, `ENV`, `Flags`
-  -  `JSON` content support comments. will auto clear comments
-  -  Other drivers are used on demand, not used will not be loaded into the application.
--  Support multi-file and multi-data loading
--  Support loading configuration from os ENV
--  Support for loading configuration data from remote URLs
--  Support for setting configuration data from command line arguments(`flags`)
--  Support data overlay and merge, automatically load by key when loading multiple copies of data
--  Support get sub value by path, like `map.key` `arr.2`
--  Support parse ENV name. like `envKey: ${SHELL}` -> `envKey: /bin/zsh`
--  Generic api `Get` `Int` `Uint` `Int64` `Float` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
--  Complete unit test(code coverage > 95%)
+- Support multi format: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`, `ENV`, `Flags`
+  - `JSON` content support comments. will auto clear comments
+  - Other drivers are used on demand, not used will not be loaded into the application.
+- Support multi-file and multi-data loading
+- Support loading configuration from os ENV
+- Support for loading configuration data from remote URLs
+- Support for setting configuration data from command line arguments(`flags`)
+- Support data overlay and merge, automatically load by key when loading multiple copies of data
+- Support get sub value by path, like `map.key` `arr.2`
+- Support parse ENV name and allow with default value. like `envKey: ${SHELL|/bin/bash}` -> `envKey: /bin/zsh`
+- Generic api `Get` `Int` `Uint` `Int64` `Float` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
+- Complete unit test(code coverage > 95%)
 
 > Provide a sub-package `dotenv` that supports importing data from files (eg `.env`) to ENV
 

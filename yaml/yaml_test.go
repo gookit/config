@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/gookit/config/v2"
+	"github.com/gookit/goutil/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -80,7 +81,7 @@ func Example() {
 
 func Example_exportConfig() {
 	// Notice: before dump please set driver encoder
-	config.SetEncoder(config.Yaml, Encoder)
+	config.AddDriver(Driver)
 
 	buf := new(bytes.Buffer)
 	_, err := config.DumpTo(buf, config.Yaml)
@@ -110,4 +111,38 @@ func TestDriver(t *testing.T) {
 	c.AddDriver(Driver)
 	st.True(c.HasDecoder(config.Yaml))
 	st.True(c.HasEncoder(config.Yaml))
+}
+
+// Support "=", ":", "." characters for default values
+// see https://github.com/gookit/config/issues/9
+func TestIssue2(t *testing.T) {
+	ris := assert.New(t)
+
+	c := config.NewEmpty("test")
+	c.AddDriver(Driver)
+	c.WithOptions(config.ParseEnv)
+
+	err := c.LoadStrings(config.Yaml, `
+command: ${APP_COMMAND|app:run}
+`)
+	ris.NoError(err)
+	testutil.MockEnvValue("APP_COMMAND", "new val", func(nv string) {
+		ris.Equal("new val", nv)
+		ris.Equal("new val", c.String("command"))
+	})
+
+	ris.Equal("", config.Getenv("APP_COMMAND"))
+	ris.Equal("app:run", c.String("command"))
+
+	c.ClearAll()
+	err = c.LoadStrings(config.Yaml, `
+command: ${ APP_COMMAND | app:run }
+`)
+	ris.NoError(err)
+	testutil.MockEnvValue("APP_COMMAND", "new val", func(nv string) {
+		ris.Equal("new val", nv)
+		ris.Equal("new val", c.String("command"))
+	})
+	ris.Equal("", config.Getenv("APP_COMMAND"))
+	ris.Equal("app:run", c.String("command"))
 }
