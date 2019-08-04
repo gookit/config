@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"runtime"
 	"testing"
 
 	"github.com/gookit/config/v2/dotnev"
@@ -101,10 +102,19 @@ func TestLoad(t *testing.T) {
 func TestLoadRemote(t *testing.T) {
 	is := assert.New(t)
 
+	// invalid remote url
+	url3 := "invalid-url"
+	err := LoadRemote(JSON, url3)
+	is.Error(err)
+
+	if runtime.GOOS == "windows" {
+		return
+	}
+
 	// load remote config
 	c := New("remote")
 	url := "https://raw.githubusercontent.com/gookit/config/master/testdata/json_base.json"
-	err := c.LoadRemote(JSON, url)
+	err = c.LoadRemote(JSON, url)
 	is.Nil(err)
 	is.Equal("123", c.String("age", ""))
 
@@ -119,11 +129,6 @@ func TestLoadRemote(t *testing.T) {
 	// load not exist
 	url2 := "https://raw.githubusercontent.com/gookit/config/master/testdata/not-exist.txt"
 	err = c.LoadRemote(JSON, url2)
-	is.Error(err)
-
-	// invalid remote url
-	url3 := "invalid-url"
-	err = LoadRemote(JSON, url3)
 	is.Error(err)
 }
 
