@@ -42,6 +42,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 )
 
@@ -111,6 +112,7 @@ type Config struct {
 
 	// decoders["toml"] = func(blob []byte, v interface{}) (err error){}
 	// decoders["yaml"] = func(blob []byte, v interface{}) (err error){}
+	// drivers map[string]Driver TODO Deprecated decoder and encoder, use driver instead
 	decoders map[string]Decoder
 	encoders map[string]Encoder
 
@@ -377,6 +379,11 @@ func Getenv(name string, defVal ...string) (val string) {
 		val = defVal[0]
 	}
 	return
+}
+
+// format key
+func formatKey(key string) string {
+	return strings.Trim(strings.TrimSpace(key), ".")
 }
 
 // fix yaml format

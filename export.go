@@ -5,7 +5,60 @@ import (
 	"errors"
 	"fmt"
 	"io"
+
+	"github.com/mitchellh/mapstructure"
 )
+
+// MapStruct alias method of the 'Structure'
+func MapStruct(key string, dst interface{}) error { return dc.Structure(key, dst) }
+
+// MapStruct alias method of the 'Structure'
+func (c *Config) MapStruct(key string, dst interface{}) error {
+	return c.Structure(key, dst)
+}
+
+// BindStruct alias method of the 'Structure'
+func BindStruct(key string, dst interface{}) error { return dc.Structure(key, dst) }
+
+// BindStruct alias method of the 'Structure'
+func (c *Config) BindStruct(key string, dst interface{}) error {
+	return c.Structure(key, dst)
+}
+
+// Structure get config data and binding to the dst structure.
+// Usage:
+// 	dbInfo := Db{}
+// 	config.Structure("db", &dbInfo)
+func (c *Config) Structure(key string, dst interface{}) (err error) {
+	var data interface{}
+
+	// binding all data
+	if key == "" {
+		data = c.data
+	} else { // some data of the config
+		var ok bool
+
+		data, ok = c.GetValue(key)
+		if !ok {
+			return errNotFound
+		}
+	}
+
+	// format := JSON
+	// if len(driverName) > 0 {
+	// 	format = driverName[0]
+	// }
+
+	// decoder := c.getDecoderByFormat(format)
+	// if decoder != nil {
+	//
+	// } else { // try use mergo
+	// 	return mergo.Map(dst, data)
+	// }
+
+	err = mapstructure.Decode(data, dst)
+	return
+}
 
 // ToJSON string
 func (c *Config) ToJSON() string {
