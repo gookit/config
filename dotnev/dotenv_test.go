@@ -3,6 +3,7 @@ package dotnev
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -60,10 +61,19 @@ func TestLoadFromMap(t *testing.T) {
 	assert.Equal(t, "blog", Get("DONT_ENV_TEST"))
 	assert.Equal(t, "blog", os.Getenv("DONT_ENV_TEST"))
 	assert.Equal(t, "val1", Get("DONT_ENV_TEST1"))
-	assert.Equal(t, "val1", Get("dont_env_test1"))
-	assert.Equal(t, 23, Int("dont_env_test2"))
 	assert.Equal(t, 23, Int("DONT_ENV_TEST2"))
-	assert.Equal(t, 20, Int("DONT_ENV_TEST1", 20))
+
+	// on windows, os.Getenv() not case sensitive
+	if runtime.GOOS == "windows" {
+		assert.Equal(t, "val1", Get("dont_env_test1"))
+		assert.Equal(t, 23, Int("dont_env_test2"))
+	} else {
+		assert.Equal(t, "", Get("dont_env_test1"))
+		assert.Equal(t, 0, Int("dont_env_test2"))
+	}
+
+	assert.Equal(t, 20, Int("dont_env_test1", 20))
+	assert.Equal(t, 20, Int("dont_env_not_exist", 20))
 
 	// check cache
 	assert.Contains(t, LoadedData(), "DONT_ENV_TEST2")
@@ -91,7 +101,13 @@ func TestDontUpperEnvKey(t *testing.T) {
 	assert.Contains(t, fmt.Sprint(os.Environ()), "dont_env_test=val")
 	assert.NoError(t, err)
 	assert.Equal(t, "val", Get("dont_env_test"))
-	assert.Equal(t, "val", Get("DONT_ENV_TEST"))
+
+	// on windows, os.Getenv() not case sensitive
+	if runtime.GOOS == "windows" {
+		assert.Equal(t, "val", Get("DONT_ENV_TEST"))
+	} else {
+		assert.Equal(t, "", Get("DONT_ENV_TEST"))
+	}
 
 	UpperEnvKey = true // revert
 	ClearLoaded()
