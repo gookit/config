@@ -10,11 +10,21 @@ import (
 	"github.com/gookit/ini/v2/parser"
 )
 
-// DefaultName default file name
-var DefaultName = ".env"
+var (
+	// UpperEnvKey change key to upper on set ENV
+	UpperEnvKey = true
 
-// OnlyLoadExists load on file exists
-var OnlyLoadExists bool
+	// DefaultName default file name
+	DefaultName = ".env"
+
+	// OnlyLoadExists load on file exists
+	OnlyLoadExists bool
+)
+
+// DontUpperEnvKey dont change key to upper on set ENV
+func DontUpperEnvKey()  {
+	UpperEnvKey = false
+}
 
 // Load parse .env file data to os ENV.
 // Usage:
@@ -33,17 +43,24 @@ func Load(dir string, filenames ...string) (err error) {
 	return
 }
 
-// LoadExists load on file exists
+// LoadExists only load on file exists
 func LoadExists(dir string, filenames ...string) error {
-	OnlyLoadExists = true
+	oldVal := OnlyLoadExists
 
-	return Load(dir, filenames...)
+	OnlyLoadExists = true
+	err := Load(dir, filenames...)
+	OnlyLoadExists = oldVal
+
+	return err
 }
 
 // LoadFromMap load data from given string map
 func LoadFromMap(kv map[string]string) (err error) {
 	for key, val := range kv {
-		key = strings.ToUpper(key)
+		if UpperEnvKey {
+			key = strings.ToUpper(key)
+		}
+
 		err = os.Setenv(key, val)
 		if err != nil {
 			break
@@ -54,7 +71,6 @@ func LoadFromMap(kv map[string]string) (err error) {
 
 // Get get os ENV value by name
 func Get(name string, defVal ...string) (val string) {
-	name = strings.ToUpper(name)
 	if val = os.Getenv(name); val != "" {
 		return
 	}
@@ -76,6 +92,7 @@ func loadFile(file string) (err error) {
 		}
 		return err
 	}
+	//noinspection GoUnhandledErrorResult
 	defer fd.Close()
 
 	// parse file content
