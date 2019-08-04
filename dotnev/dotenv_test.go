@@ -46,7 +46,7 @@ func TestLoadFromMap(t *testing.T) {
 	assert.Equal(t, "", os.Getenv("DONT_ENV_TEST"))
 
 	err := LoadFromMap(map[string]string{
-		"DONT_ENV_TEST": "blog",
+		"DONT_ENV_TEST":  "blog",
 		"dont_env_test1": "val1",
 		"dont_env_test2": "23",
 	})

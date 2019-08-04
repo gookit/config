@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gookit/config/v2/dotnev"
+	"github.com/gookit/goutil/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -171,14 +171,14 @@ func TestBasic(t *testing.T) {
 }
 
 func TestGetEnv(t *testing.T) {
-	_ = dotnev.LoadFromMap(map[string]string{
-		"app_name":  "config",
-		"app_debug": "true",
+	testutil.MockEnvValues(map[string]string{
+		"APP_NAME":  "config",
+		"APP_DEBUG": "true",
+	}, func() {
+		assert.Equal(t, "config", Getenv("APP_NAME"))
+		assert.Equal(t, "true", Getenv("APP_DEBUG"))
+		assert.Equal(t, "defVal", GetEnv("not-exsit", "defVal"))
 	})
-
-	assert.Equal(t, "config", Getenv("APP_NAME"))
-	assert.Equal(t, "true", Getenv("APP_DEBUG"))
-	assert.Equal(t, "defVal", GetEnv("not-exsit", "defVal"))
 }
 
 func TestSetDecoderEncoder(t *testing.T) {

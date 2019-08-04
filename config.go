@@ -369,8 +369,9 @@ func GetEnv(name string, defVal ...string) (val string) {
 }
 
 // Getenv get os ENV value by name. like os.Getenv, but support default value
+// Notice:
+// - Key is not case sensitive when getting
 func Getenv(name string, defVal ...string) (val string) {
-	// name = strings.ToUpper(name)
 	if val = os.Getenv(name); val != "" {
 		return
 	}

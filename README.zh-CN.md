@@ -6,7 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/gookit/config/badge.svg?branch=master)](https://coveralls.io/github/gookit/config?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/gookit/config)](https://goreportcard.com/report/github.com/gookit/config)
 
-功能完善的Golang应用程序配置管理工具库。
+简洁、功能完善的Golang应用程序配置管理工具库
 
 > **[EN README](README.md)**
 
@@ -18,8 +18,9 @@
 - 支持多个文件、多数据加载
 - 支持从 OS ENV 变量数据加载配置
 - 支持从远程 URL 加载配置数据
-- 支持从命令行参数(flags)设置配置数据
+- 支持从命令行参数(`flags`)设置配置数据
 - 支持数据覆盖合并，加载多份数据时将按key自动合并
+- 支持将全部或部分配置数据绑定到结构体 `config.BindStruct("key", &s)`
 - 支持通过 `.` 分隔符来按路径获取子级值。 e.g `map.key` `arr.2`
 - 支持解析ENV变量名称。 like `shell: ${SHELL}` -> `shell: /bin/zsh`
 - 简洁的使用API `Get` `Int` `Uint` `Int64` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
@@ -140,6 +141,17 @@ name = config.String("name")
 fmt.Print(name) // new name
 ```
 
+### 绑定数据到结构体
+
+```go
+	user := struct {
+		Age  int
+		Kye  string
+		Tags []int
+	}{}
+	err = BindStruct("user", &user)
+```
+
 ## API方法参考
 
 ### 载入配置
@@ -178,6 +190,7 @@ fmt.Print(name) // new name
 - `Data() map[string]interface{}`
 - `Exists(key string, findByPath ...bool) bool`
 - `DumpTo(out io.Writer, format string) (n int64, err error)`
+- `BindStruct(key string, dst interface{}) error`
 
 ## 单元测试
 

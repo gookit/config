@@ -9,6 +9,11 @@ import (
 	"github.com/imdario/mergo"
 )
 
+var (
+	readonlyErr   = errors.New("the config instance in 'readonly' mode")
+	keyIsEmptyErr = errors.New("the config key is cannot be empty")
+)
+
 // Set val by key
 func Set(key string, val interface{}, setByPath ...bool) error {
 	return dc.Set(key, val, setByPath...)
@@ -18,8 +23,7 @@ func Set(key string, val interface{}, setByPath ...bool) error {
 func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error) {
 	// if is readonly
 	if c.opts.Readonly {
-		err = errors.New("the config instance in 'readonly' mode")
-		return
+		return readonlyErr
 	}
 
 	// open lock
@@ -28,8 +32,7 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 
 	key = formatKey(key)
 	if key == "" {
-		err = errors.New("the config key is cannot be empty")
-		return
+		return keyIsEmptyErr
 	}
 
 	// is top key

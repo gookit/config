@@ -36,7 +36,7 @@ func LoadedData() map[string]string {
 // ClearLoaded clear the previously set ENV value
 func ClearLoaded() {
 	for key := range loadedData {
-		_= os.Unsetenv(key)
+		_ = os.Unsetenv(key)
 	}
 
 	// reset
@@ -44,7 +44,7 @@ func ClearLoaded() {
 }
 
 // DontUpperEnvKey dont change key to upper on set ENV
-func DontUpperEnvKey()  {
+func DontUpperEnvKey() {
 	UpperEnvKey = false
 }
 

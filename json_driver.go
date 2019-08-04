@@ -32,17 +32,17 @@ type jsonDriver struct {
 	ClearComments bool
 }
 
-// Name
+// Name of the driver
 func (d *jsonDriver) Name() string {
 	return d.name
 }
 
-// GetDecoder for json
+// GetDecoder for the driver
 func (d *jsonDriver) GetDecoder() Decoder {
 	return JSONDecoder
 }
 
-// GetEncoder for json
+// GetEncoder for the driver
 func (d *jsonDriver) GetEncoder() Encoder {
 	return JSONEncoder
 }

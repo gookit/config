@@ -20,6 +20,7 @@ Golang application config manage tool library.
 - Support for loading configuration data from remote URLs
 - Support for setting configuration data from command line arguments(`flags`)
 - Support data overlay and merge, automatically load by key when loading multiple copies of data
+- Support for binding all or part of the configuration data to the structure
 - Support get sub value by path, like `map.key` `arr.2`
 - Support parse ENV name and allow with default value. like `envKey: ${SHELL|/bin/bash}` -> `envKey: /bin/zsh`
 - Generic api `Get` `Int` `Uint` `Int64` `Float` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
@@ -185,6 +186,17 @@ config.LoadOSEnv([]string{"app_name", "app_debug"})
 // read
 config.Bool("app_debug") // true
 config.String("app_name") // "config"
+```
+
+## Bind data to structure
+
+```go
+	user := struct {
+		Age  int
+		Kye  string
+		Tags []int
+	}{}
+	err = BindStruct("user", &user)
 ```
 
 ## API Methods Refer

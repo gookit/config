@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/gookit/config/v2/dotnev"
+	"github.com/gookit/goutil/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -180,14 +180,20 @@ func TestLoadFlags(t *testing.T) {
 func TestLoadOSEnv(t *testing.T) {
 	ClearAll()
 
-	_ = dotnev.LoadFromMap(map[string]string{
-		"app_name":  "config",
+	testutil.MockEnvValues(map[string]string{
+		"APP_NAME":  "config",
 		"app_debug": "true",
-	})
+		"test_env0": "val0",
+		"TEST_ENV1": "val1",
+	}, func() {
+		assert.Equal(t, "", String("test_env0"))
 
-	LoadOSEnv([]string{"app_name", "app_debug"})
-	assert.True(t, Bool("app_debug"))
-	assert.Equal(t, "config", String("app_name"))
+		LoadOSEnv([]string{"app_name", "app_debug", "test_env0"})
+		assert.True(t, Bool("app_debug"))
+		assert.Equal(t, "config", String("app_name"))
+		assert.Equal(t, "val0", String("test_env0"))
+		assert.Equal(t, "", String("test_env1"))
+	})
 
 	ClearAll()
 }
