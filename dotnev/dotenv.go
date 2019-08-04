@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/gookit/ini/v2/parser"
@@ -19,7 +20,28 @@ var (
 
 	// OnlyLoadExists load on file exists
 	OnlyLoadExists bool
+
+	// save original Env data
+	// originalEnv []string
+
+	// cache all loaded ENV data
+	loadedData = map[string]string{}
 )
+
+// LoadedData get all loaded data by dontenv
+func LoadedData() map[string]string {
+	return loadedData
+}
+
+// ClearLoaded clear the previously set ENV value
+func ClearLoaded() {
+	for key := range loadedData {
+		_= os.Unsetenv(key)
+	}
+
+	// reset
+	loadedData = map[string]string{}
+}
 
 // DontUpperEnvKey dont change key to upper on set ENV
 func DontUpperEnvKey()  {
@@ -65,14 +87,38 @@ func LoadFromMap(kv map[string]string) (err error) {
 		if err != nil {
 			break
 		}
+
+		// cache it
+		loadedData[key] = val
 	}
 	return
 }
 
 // Get get os ENV value by name
+// Notice:
+// - Key is not case sensitive when getting
 func Get(name string, defVal ...string) (val string) {
+	if val = loadedData[name]; val != "" {
+		return
+	}
+
 	if val = os.Getenv(name); val != "" {
 		return
+	}
+
+	if len(defVal) > 0 {
+		val = defVal[0]
+	}
+	return
+}
+
+// Int get a int value by key
+func Int(name string, defVal ...int) (val int) {
+	if str := os.Getenv(name); str != "" {
+		val, err := strconv.ParseInt(str, 10, 0)
+		if err == nil {
+			return int(val)
+		}
 	}
 
 	if len(defVal) > 0 {
@@ -92,6 +138,7 @@ func loadFile(file string) (err error) {
 		}
 		return err
 	}
+
 	//noinspection GoUnhandledErrorResult
 	defer fd.Close()
 
