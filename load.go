@@ -74,14 +74,19 @@ func (c *Config) LoadRemote(format, url string) (err error) {
 }
 
 // LoadOSEnv load data from OS ENV
-func LoadOSEnv(keys []string) { dc.LoadOSEnv(keys) }
+func LoadOSEnv(keys []string, keyToLower bool) { dc.LoadOSEnv(keys, keyToLower) }
 
 // LoadOSEnv load data from os ENV
-func (c *Config) LoadOSEnv(keys []string) {
+func (c *Config) LoadOSEnv(keys []string, keyToLower bool) {
 	for _, key := range keys {
 		// NOTICE:
 		// if is windows os, os.Getenv() Key is not case sensitive
 		val := os.Getenv(key)
+
+		if keyToLower {
+			key = strings.ToLower(key)
+		}
+
 		_ = c.Set(key, val)
 	}
 }

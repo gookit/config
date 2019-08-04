@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 	"runtime"
 	"testing"
@@ -189,8 +188,8 @@ func TestLoadOSEnv(t *testing.T) {
 	}, func() {
 		assert.Equal(t, "", String("test_env0"))
 
-		LoadOSEnv([]string{"APP_NAME", "app_debug", "test_env0"})
-		fmt.Println(Default().Data())
+		LoadOSEnv([]string{"APP_NAME", "app_debug", "test_env0"}, true)
+
 		assert.True(t, Bool("app_debug"))
 		assert.Equal(t, "config", String("app_name"))
 		assert.Equal(t, "val0", String("test_env0"))
