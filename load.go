@@ -79,7 +79,8 @@ func LoadOSEnv(keys []string) { dc.LoadOSEnv(keys) }
 // LoadOSEnv load data from os ENV
 func (c *Config) LoadOSEnv(keys []string) {
 	for _, key := range keys {
-		// os.Getenv() Key is not case sensitive
+		// NOTICE:
+		// if is windows os, os.Getenv() Key is not case sensitive
 		val := os.Getenv(key)
 		_ = c.Set(key, val)
 	}

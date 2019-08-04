@@ -95,8 +95,8 @@ func LoadFromMap(kv map[string]string) (err error) {
 }
 
 // Get get os ENV value by name
-// Notice:
-// - Key is not case sensitive when getting
+//
+// NOTICE: if is windows OS, os.Getenv() Key is not case sensitive
 func Get(name string, defVal ...string) (val string) {
 	if val = loadedData[name]; val != "" {
 		return
