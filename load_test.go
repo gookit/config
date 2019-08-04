@@ -96,7 +96,6 @@ func TestLoad(t *testing.T) {
 
 	err = c.LoadStrings(JSON, `{"name": "inhere"}`, "invalid")
 	is.Error(err)
-
 }
 
 func TestLoadRemote(t *testing.T) {

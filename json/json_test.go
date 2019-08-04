@@ -84,4 +84,15 @@ func TestDriver(t *testing.T) {
 `), &m)
 	st.Nil(err)
 	st.Equal("v", m.N)
+
+	// disable clear comments
+	old := config.JSONAllowComments
+	config.JSONAllowComments = false
+	err = Decoder([]byte(`{
+// comments
+"n":"v"}
+`), &m)
+	st.Error(err)
+
+	config.JSONAllowComments = old
 }

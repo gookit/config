@@ -334,3 +334,22 @@ func TestEnableCache(t *testing.T) {
 
 	c.ClearAll()
 }
+
+func TestJSONAllowComments(t *testing.T) {
+	is := assert.New(t)
+
+	m := struct {
+		N string
+	}{}
+
+	// disable clear comments
+	old := JSONAllowComments
+	JSONAllowComments = false
+	err := JSONDecoder([]byte(`{
+// comments
+"n":"v"}
+`), &m)
+	is.Error(err)
+
+	JSONAllowComments = old
+}

@@ -10,7 +10,7 @@ import (
 )
 
 // MapStruct alias method of the 'Structure'
-func MapStruct(key string, dst interface{}) error { return dc.Structure(key, dst) }
+func MapStruct(key string, dst interface{}) error { return dc.MapStruct(key, dst) }
 
 // MapStruct alias method of the 'Structure'
 func (c *Config) MapStruct(key string, dst interface{}) error {
@@ -18,7 +18,7 @@ func (c *Config) MapStruct(key string, dst interface{}) error {
 }
 
 // BindStruct alias method of the 'Structure'
-func BindStruct(key string, dst interface{}) error { return dc.Structure(key, dst) }
+func BindStruct(key string, dst interface{}) error { return dc.BindStruct(key, dst) }
 
 // BindStruct alias method of the 'Structure'
 func (c *Config) BindStruct(key string, dst interface{}) error {
