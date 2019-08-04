@@ -188,8 +188,9 @@ func TestLoadOSEnv(t *testing.T) {
 		"TEST_ENV1": "val1",
 	}, func() {
 		assert.Equal(t, "", String("test_env0"))
-fmt.Println(os.Environ())
+
 		LoadOSEnv([]string{"app_name", "app_debug", "test_env0"})
+		fmt.Println(Default().Data())
 		assert.True(t, Bool("app_debug"))
 		assert.Equal(t, "config", String("app_name"))
 		assert.Equal(t, "val0", String("test_env0"))
