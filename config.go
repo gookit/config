@@ -88,6 +88,10 @@ type Options struct {
 	Readonly bool
 	// enable config data cache
 	EnableCache bool
+	// allow find value by key path. eg: 'key.sub' will find `map[key]sub`
+	FindByPath bool
+	// the delimiter char for split key path, if `FindByPath=true`. default is '.'
+	Delimiter byte
 	// default write format
 	DumpFormat string
 	// default input format
@@ -130,10 +134,8 @@ type Config struct {
 func New(name string) *Config {
 	return &Config{
 		name: name,
+		opts: newDefaultOption(),
 		data: make(map[string]interface{}),
-
-		// init options
-		opts: &Options{DumpFormat: JSON, ReadFormat: JSON},
 
 		// default add JSON driver
 		encoders: map[string]Encoder{JSON: JSONEncoder},
@@ -145,10 +147,8 @@ func New(name string) *Config {
 func NewEmpty(name string) *Config {
 	return &Config{
 		name: name,
+		opts: newDefaultOption(),
 		data: make(map[string]interface{}),
-
-		// empty options
-		opts: &Options{},
 
 		// don't add any drivers
 		encoders: map[string]Encoder{},
@@ -166,6 +166,15 @@ func NewWithOptions(name string, opts ...func(*Options)) *Config {
 // Default get the default instance
 func Default() *Config {
 	return dc
+}
+
+func newDefaultOption() *Options {
+	return &Options{
+		DumpFormat: JSON,
+		ReadFormat: JSON,
+		FindByPath: true,
+		Delimiter: '.',
+	}
 }
 
 /*************************************************************
