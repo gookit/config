@@ -253,6 +253,9 @@ func TestInt(t *testing.T) {
 	iv = c.Int("notExist")
 	st.Equal(0, iv)
 
+	uiv := Uint("age")
+	st.Equal(uint(123), uiv)
+
 	ClearAll()
 }
 

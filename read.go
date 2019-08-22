@@ -19,8 +19,8 @@ func Exists(key string, findByPath ...bool) bool { return dc.Exists(key, findByP
 
 // Exists key exists check
 func (c *Config) Exists(key string, findByPath ...bool) (ok bool) {
-	sep := string(c.opts.Delimiter)
-	if key = formatKey(key, sep); key == "" {
+	sep := c.opts.Delimiter
+	if key = formatKey(key, string(sep)); key == "" {
 		return
 	}
 
@@ -34,11 +34,11 @@ func (c *Config) Exists(key string, findByPath ...bool) (ok bool) {
 	}
 
 	// has sub key? eg. "lang.dir"
-	if !strings.Contains(key, sep) {
+	if strings.IndexByte(key, sep) == -1 {
 		return
 	}
 
-	keys := strings.Split(key, sep)
+	keys := strings.Split(key, string(sep))
 	topK := keys[0]
 
 	// find top item data based on top key
@@ -118,8 +118,8 @@ func GetValue(key string, findByPath ...bool) (interface{}, bool) {
 
 // GetValue get value by given key string.
 func (c *Config) GetValue(key string, findByPath ...bool) (value interface{}, ok bool) {
-	sep := string(c.opts.Delimiter)
-	if key = formatKey(key, sep); key == "" {
+	sep := c.opts.Delimiter
+	if key = formatKey(key, string(sep)); key == "" {
 		c.addError(errInvalidKey)
 		return
 	}
@@ -142,12 +142,12 @@ func (c *Config) GetValue(key string, findByPath ...bool) (value interface{}, ok
 	}
 
 	// has sub key? eg. "lang.dir"
-	if !strings.Contains(key, sep) {
+	if strings.IndexByte(key, sep) == -1 {
 		// c.addError(errNotFound)
 		return
 	}
 
-	keys := strings.Split(key, sep)
+	keys := strings.Split(key, string(sep))
 	topK := keys[0]
 
 	// find top item data based on top key

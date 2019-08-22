@@ -30,13 +30,13 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
-	sep := string(c.opts.Delimiter)
-	if key = formatKey(key, sep); key == "" {
+	sep := c.opts.Delimiter
+	if key = formatKey(key, string(sep)); key == "" {
 		return keyIsEmptyErr
 	}
 
 	// is top key
-	if !strings.Contains(key, sep) {
+	if strings.IndexByte(key, sep) == -1 {
 		c.data[key] = val
 		return
 	}
@@ -47,7 +47,7 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 		return
 	}
 
-	keys := strings.Split(key, sep)
+	keys := strings.Split(key, string(sep))
 	topK := keys[0]
 	paths := keys[1:]
 

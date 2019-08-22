@@ -176,7 +176,7 @@ func newDefaultOption() *Options {
 		DumpFormat: JSON,
 		ReadFormat: JSON,
 		FindByPath: true,
-		Delimiter: defaultDelimiter,
+		Delimiter:  defaultDelimiter,
 	}
 }
 
@@ -192,6 +192,13 @@ func ParseEnv(opts *Options) {
 // Readonly set readonly
 func Readonly(opts *Options) {
 	opts.Readonly = true
+}
+
+// Delimiter set delimiter char
+func Delimiter(sep byte) func(*Options) {
+	return func(opts *Options) {
+		opts.Delimiter = sep
+	}
 }
 
 // EnableCache set readonly

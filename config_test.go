@@ -240,47 +240,48 @@ func TestJSONDriver(t *testing.T) {
 	is.NoError(err)
 	is.Equal(1, c.Int("key"))
 
+	c = NewEmpty("test")
 	err = c.LoadData(map[string]interface{}{"key1": 2})
 	is.NoError(err)
 	is.Equal(2, c.Int("key1"))
 }
 
 func TestDriver(t *testing.T) {
-	st := assert.New(t)
+	is := assert.New(t)
 
 	c := Default()
-	st.True(c.HasDecoder(JSON))
-	st.True(c.HasEncoder(JSON))
+	is.True(c.HasDecoder(JSON))
+	is.True(c.HasEncoder(JSON))
 
 	c.DelDriver(JSON)
-	st.False(c.HasDecoder(JSON))
-	st.False(c.HasEncoder(JSON))
+	is.False(c.HasDecoder(JSON))
+	is.False(c.HasEncoder(JSON))
 
 	AddDriver(JSONDriver)
-	st.True(c.HasDecoder(JSON))
-	st.True(c.HasEncoder(JSON))
+	is.True(c.HasDecoder(JSON))
+	is.True(c.HasEncoder(JSON))
 
 	c.DelDriver(JSON)
 	c.SetDecoders(map[string]Decoder{JSON: JSONDecoder})
 	c.SetEncoders(map[string]Encoder{JSON: JSONEncoder})
-	st.True(c.HasDecoder(JSON))
-	st.True(c.HasEncoder(JSON))
+	is.True(c.HasDecoder(JSON))
+	is.True(c.HasEncoder(JSON))
 }
 
 func TestOptions(t *testing.T) {
-	st := assert.New(t)
+	is := assert.New(t)
 
 	// options: ParseEnv
 	c := New("test")
 	c.WithOptions(ParseEnv)
 
-	st.True(c.Options().ParseEnv)
+	is.True(c.Options().ParseEnv)
 
 	err := c.LoadStrings(JSON, jsonStr)
-	st.Nil(err)
+	is.Nil(err)
 
 	str := c.String("name")
-	st.Equal("app", str)
+	is.Equal("app", str)
 
 	// test: parse env name
 	shell := os.Getenv("SHELL")
@@ -290,7 +291,7 @@ func TestOptions(t *testing.T) {
 	}
 
 	str = c.String("envKey")
-	st.NotContains(str, "${")
+	is.NotContains(str, "${")
 
 	// revert
 	if shell != "" {
@@ -298,26 +299,42 @@ func TestOptions(t *testing.T) {
 	}
 
 	str = c.String("invalidEnvKey")
-	st.Contains(str, "${")
+	is.Contains(str, "${")
 
 	str = c.String("envKey1")
-	st.NotContains(str, "${")
-	st.Equal("defValue", str)
+	is.NotContains(str, "${")
+	is.Equal("defValue", str)
 
 	// options: Readonly
 	c = New("test")
 	c.WithOptions(Readonly)
 
-	st.True(c.Options().Readonly)
+	is.True(c.Options().Readonly)
 
 	err = c.LoadStrings(JSON, jsonStr)
-	st.Nil(err)
+	is.Nil(err)
 
 	str = c.String("name")
-	st.Equal("app", str)
+	is.Equal("app", str)
 
 	err = c.Set("name", "new app")
-	st.Error(err)
+	is.Error(err)
+}
+
+func TestDelimiter(t *testing.T) {
+	// options: Delimiter
+	is := assert.New(t)
+	c := New("test")
+	c.WithOptions(Delimiter(':'))
+	is.Equal(byte(':'), c.Options().Delimiter)
+
+	err := c.LoadData(map[string]interface{}{
+		"top0": 1,
+		"top1": map[string]int{"sub0": 2},
+	})
+	is.NoError(err)
+	// is.Equal(1, c.Int("top0"))
+	is.Equal(2, c.Int("top1:sub0"))
 }
 
 func TestEnableCache(t *testing.T) {

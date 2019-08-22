@@ -156,6 +156,7 @@ func TestLoadFlags(t *testing.T) {
 	is.Equal("dev", c.String("env", ""))
 	is.Equal(99, c.Int("age"))
 	is.Equal(uint(12), c.Uint("var0"))
+	is.Equal(uint(20), c.Uint("not-exist", uint(20)))
 	is.Equal("val", c.Get("unknownTyp"))
 	is.True(c.Bool("debug", false))
 
