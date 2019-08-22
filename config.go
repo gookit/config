@@ -54,6 +54,9 @@ const (
 	JSON = "json"
 	Yaml = "yaml"
 	Toml = "toml"
+
+	// default delimiter
+	defaultDelimiter byte = '.'
 )
 
 // internal vars
@@ -173,7 +176,7 @@ func newDefaultOption() *Options {
 		DumpFormat: JSON,
 		ReadFormat: JSON,
 		FindByPath: true,
-		Delimiter: '.',
+		Delimiter: defaultDelimiter,
 	}
 }
 
@@ -392,8 +395,8 @@ func Getenv(name string, defVal ...string) (val string) {
 }
 
 // format key
-func formatKey(key string) string {
-	return strings.Trim(strings.TrimSpace(key), ".")
+func formatKey(key, sep string) string {
+	return strings.Trim(strings.TrimSpace(key), sep)
 }
 
 // fix yaml format

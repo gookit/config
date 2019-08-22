@@ -218,17 +218,31 @@ func TestDefault(t *testing.T) {
 }
 
 func TestJSONDriver(t *testing.T) {
-	st := assert.New(t)
-
-	st.Equal("json", JSONDriver.Name())
+	is := assert.New(t)
+	is.Equal("json", JSONDriver.Name())
 
 	// empty
 	c := NewEmpty("test")
-	st.False(c.HasDecoder(JSON))
+	is.False(c.HasDecoder(JSON))
 
 	c.AddDriver(JSONDriver)
-	st.True(c.HasDecoder(JSON))
-	st.True(c.HasEncoder(JSON))
+	is.True(c.HasDecoder(JSON))
+	is.True(c.HasEncoder(JSON))
+
+	is.Equal(byte('.'), c.Options().Delimiter)
+	is.Equal(".", string(c.Options().Delimiter))
+	c.WithOptions(func(opt *Options) {
+		opt.Delimiter = 0
+	})
+	is.Equal(byte(0), c.Options().Delimiter)
+
+	err := c.LoadStrings(JSON, `{"key": 1}`)
+	is.NoError(err)
+	is.Equal(1, c.Int("key"))
+
+	err = c.LoadData(map[string]interface{}{"key1": 2})
+	is.NoError(err)
+	is.Equal(2, c.Int("key1"))
 }
 
 func TestDriver(t *testing.T) {

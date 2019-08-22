@@ -173,6 +173,10 @@ func LoadData(dataSource ...interface{}) error { return dc.LoadData(dataSource..
 // The dataSources can be:
 //  - map[string]interface{}
 func (c *Config) LoadData(dataSources ...interface{}) (err error) {
+	if c.opts.Delimiter == 0 {
+		c.opts.Delimiter = defaultDelimiter
+	}
+
 	for _, ds := range dataSources {
 		err = mergo.Merge(&c.data, ds, mergo.WithOverride)
 		if err != nil {
@@ -265,6 +269,10 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	decoder := c.getDecoderByFormat(format)
 	if decoder == nil {
 		return errors.New("not exists or not register decoder for the format: " + format)
+	}
+
+	if c.opts.Delimiter == 0 {
+		c.opts.Delimiter = defaultDelimiter
 	}
 
 	data := make(map[string]interface{})
