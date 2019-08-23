@@ -91,8 +91,8 @@ type Options struct {
 	Readonly bool
 	// enable config data cache
 	EnableCache bool
-	// allow find value by key path. eg: 'key.sub' will find `map[key]sub`
-	FindByPath bool
+	// parse key, allow find value by key path. eg: 'key.sub' will find `map[key]sub`
+	ParseKey bool
 	// the delimiter char for split key path, if `FindByPath=true`. default is '.'
 	Delimiter byte
 	// default write format
@@ -173,10 +173,11 @@ func Default() *Config {
 
 func newDefaultOption() *Options {
 	return &Options{
+		ParseKey:  true,
+		Delimiter: defaultDelimiter,
+
 		DumpFormat: JSON,
 		ReadFormat: JSON,
-		FindByPath: true,
-		Delimiter:  defaultDelimiter,
 	}
 }
 
