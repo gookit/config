@@ -141,6 +141,18 @@ name = config.String("name")
 fmt.Print(name) // new name
 ```
 
+## 从 ENV 载入数据
+
+```go
+// os env: APP_NAME=config APP_DEBUG=true
+// load ENV info
+config.LoadOSEnv([]string{"APP_NAME", "APP_NAME"}, true)
+
+// read
+config.Bool("app_debug") // true
+config.String("app_name") // "config"
+```
+
 ### 绑定数据到结构体
 
 ```go
@@ -150,6 +162,28 @@ fmt.Print(name) // new name
 		Tags []int
 	}{}
 	err = BindStruct("user", &user)
+```
+
+## 可用选项
+
+```go
+// Options config options
+type Options struct {
+	// parse env value. like: "${EnvName}" "${EnvName|default}"
+	ParseEnv bool
+	// config is readonly. default is False
+	Readonly bool
+	// enable config data cache. default is False
+	EnableCache bool
+	// parse key, allow find value by key path. default is True eg: 'key.sub' will find `map[key]sub`
+	ParseKey bool
+	// the delimiter char for split key, when `FindByPath=true`. default is '.'
+	Delimiter byte
+	// default write format. default is JSON
+	DumpFormat string
+	// default input format. default is JSON
+	ReadFormat string
+}
 ```
 
 ## API方法参考
