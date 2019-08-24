@@ -191,12 +191,12 @@ config.String("app_name") // "config"
 ## Bind data to structure
 
 ```go
-	user := struct {
-		Age  int
-		Kye  string
-		Tags []int
-	}{}
-	err = BindStruct("user", &user)
+user := struct {
+    Age  int
+    Kye  string
+    Tags []int
+}{}
+err = config.BindStruct("user", &user)
 ```
 
 ## Available Options

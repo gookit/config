@@ -141,7 +141,18 @@ name = config.String("name")
 fmt.Print(name) // new name
 ```
 
-## 从 ENV 载入数据
+### 绑定数据到结构体
+
+```go
+user := struct {
+    Age  int
+    Kye  string
+    Tags []int
+}{}
+err = config.BindStruct("user", &user)
+```
+
+## 从ENV载入数据
 
 ```go
 // os env: APP_NAME=config APP_DEBUG=true
@@ -153,15 +164,22 @@ config.Bool("app_debug") // true
 config.String("app_name") // "config"
 ```
 
-### 绑定数据到结构体
+## 从命令行参数载入数据
+
+> 支持简单的命令行 `flag` 参数解析，加载数据
 
 ```go
-	user := struct {
-		Age  int
-		Kye  string
-		Tags []int
-	}{}
-	err = BindStruct("user", &user)
+// flags like: --name inhere --env dev --age 99 --debug
+
+// load flag info
+keys := []string{"name", "env", "age:int" "debug:bool"}
+err := config.LoadFlags(keys)
+
+// read
+config.String("name") // "inhere"
+config.String("env") // "dev"
+config.Int("age") // 99
+config.Bool("debug") // true
 ```
 
 ## 可用选项
