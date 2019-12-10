@@ -21,7 +21,7 @@
 - 支持从命令行参数(`flags`)设置配置数据
 - 支持数据覆盖合并，加载多份数据时将按key自动合并
 - 支持将全部或部分配置数据绑定到结构体 `config.BindStruct("key", &s)`
-- 支持通过 `.` 分隔符来按路径获取子级值。 e.g `map.key` `arr.2`
+- 支持通过 `.` 分隔符来按路径获取子级值，也支持自定义分隔符。 e.g `map.key` `arr.2`
 - 支持解析ENV变量名称。 like `shell: ${SHELL}` -> `shell: /bin/zsh`
 - 简洁的使用API `Get` `Int` `Uint` `Int64` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
 - 完善的单元测试(code coverage > 95%)
@@ -208,14 +208,14 @@ type Options struct {
 
 ### 载入配置
 
-- `LoadOSEnv(keys []string)` Load from os ENV
-- `LoadData(dataSource ...interface{}) (err error)` Load from struts or maps
-- `LoadFlags(keys []string) (err error)` Load from CLI flags
-- `LoadExists(sourceFiles ...string) (err error)` 
-- `LoadFiles(sourceFiles ...string) (err error)`
-- `LoadRemote(format, url string) (err error)`
-- `LoadSources(format string, src []byte, more ...[]byte) (err error)`
-- `LoadStrings(format string, str string, more ...string) (err error)`
+- `LoadOSEnv(keys []string)` 从ENV载入数据
+- `LoadData(dataSource ...interface{}) (err error)` 从struct或map加载数据
+- `LoadFlags(keys []string) (err error)` 从命令行参数载入数据
+- `LoadExists(sourceFiles ...string) (err error)` 从存在的配置文件里加载数据，会忽略不存在的文件
+- `LoadFiles(sourceFiles ...string) (err error)` 从给定的配置文件里加载数据，有文件不存在则会panic
+- `LoadRemote(format, url string) (err error)` 从远程 URL 加载配置数据
+- `LoadSources(format string, src []byte, more ...[]byte) (err error)` 从给定格式的字节数据加载配置
+- `LoadStrings(format string, str string, more ...string) (err error)` 从给定格式的字符串配置里加载配置数据
 
 ### 获取值
 
