@@ -182,6 +182,21 @@ config.Int("age") // 99
 config.Bool("debug") // true
 ```
 
+## 创建自定义实例
+
+您可以创建自定义配置实例：
+
+```go
+// create new instance, will auto register JSON driver
+myConf := config.New("my-conf")
+
+// create empty instance
+myConf := config.NewEmpty("my-conf")
+
+// create and with some options
+myConf := config.NewWithOptions("my-conf", config.ParseEnv, config.ReadOnly)
+```
+
 ## 可用选项
 
 ```go

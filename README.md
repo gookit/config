@@ -199,6 +199,21 @@ user := struct {
 err = config.BindStruct("user", &user)
 ```
 
+## New Config Instance
+
+You can create custom config instance
+
+```go
+// create new instance, will auto register JSON driver
+myConf := config.New("my-conf")
+
+// create empty instance
+myConf := config.NewEmpty("my-conf")
+
+// create and with some options
+myConf := config.NewWithOptions("my-conf", config.ParseEnv, config.ReadOnly)
+```
+
 ## Available Options
 
 ```go
