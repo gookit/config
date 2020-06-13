@@ -194,6 +194,7 @@ config.String("app_name") // "config"
 user := struct {
     Age  int
     Kye  string
+    UserName  string `mapstructure:"user_name"`
     Tags []int
 }{}
 err = config.BindStruct("user", &user)
@@ -300,10 +301,10 @@ go test -cover ./...
 ## See also
 
 - Ini parse [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser)
-- Ini config [gookit/ini](https://github.com/gookit/ini)
 - Yaml parse [go-yaml](https://github.com/go-yaml/yaml)
 - Toml parse [go toml](https://github.com/BurntSushi/toml)
 - Data merge [mergo](https://github.com/imdario/mergo)
+- Map structure [mapstructure](https://github.com/mitchellh/mapstructure)
 
 ## License
 

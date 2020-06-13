@@ -147,6 +147,7 @@ fmt.Print(name) // new name
 user := struct {
     Age  int
     Kye  string
+    UserName string `mapstructure:"user_name"`
     Tags []int
 }{}
 err = config.BindStruct("user", &user)
@@ -283,11 +284,11 @@ go test -cover ./...
 
 ## 相关包
 
-- Ini 配置 [gookit/ini](https://github.com/gookit/ini)
 - Ini 解析 [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser)
 - Yaml 解析 [go-yaml](https://github.com/go-yaml/yaml)
 - Toml 解析 [go toml](https://github.com/BurntSushi/toml)
 - 数据合并 [mergo](https://github.com/imdario/mergo)
+- 映射数据到结构体 [mapstructure](https://github.com/mitchellh/mapstructure)
 
 ## License
 
