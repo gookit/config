@@ -1,8 +1,10 @@
 # Config
 
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/gookit/color?style=flat-square)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d6ac163ee63649ec92c1566e42f09c11)](https://app.codacy.com/app/inhere/config)
 [![GoDoc](https://godoc.org/github.com/gookit/config?status.svg)](https://godoc.org/github.com/gookit/config)
 [![Build Status](https://travis-ci.org/gookit/config.svg?branch=master)](https://travis-ci.org/gookit/config)
+[![Actions Status](https://github.com/gookit/config/workflows/Unit-Tests/badge.svg)](https://github.com/gookit/config/actions)
 [![Coverage Status](https://coveralls.io/repos/github/gookit/config/badge.svg?branch=master)](https://coveralls.io/github/gookit/config?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/gookit/config)](https://goreportcard.com/report/github.com/gookit/config)
 
@@ -94,7 +96,21 @@ func main() {
 }
 ```
 
-### 获取数据
+### 绑定数据到结构体
+
+```go
+user := struct {
+    Age  int
+    Kye  string
+    UserName string `mapstructure:"user_name"`
+    Tags []int
+}{}
+err = config.BindStruct("user", &user)
+
+fmt.Println(user.UserName) // inhere
+```
+
+### 快速获取数据
 
 ```go
 // 获取整型
@@ -139,18 +155,6 @@ config.Set("name", "new name")
 // get
 name = config.String("name")
 fmt.Print(name) // new name
-```
-
-### 绑定数据到结构体
-
-```go
-user := struct {
-    Age  int
-    Kye  string
-    UserName string `mapstructure:"user_name"`
-    Tags []int
-}{}
-err = config.BindStruct("user", &user)
 ```
 
 ## 从ENV载入数据

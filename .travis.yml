@@ -4,6 +4,8 @@ go:
 #  - '1.10' go mod v2 is not support
   - '1.11'
   - '1.12'
+  - '1.13'
+  - '1.14'
 
 #env:
 #  - GO111MODULE=on
