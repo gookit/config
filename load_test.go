@@ -42,10 +42,10 @@ func TestLoad(t *testing.T) {
 
 	c.ClearAll()
 
-	// load map
+	// load map data
 	err = c.LoadData(map[string]interface{}{
 		"name":    "inhere",
-		"age":     28,
+		"age":     float64(28),
 		"working": true,
 		"tags":    []string{"a", "b"},
 		"info":    map[string]string{"k1": "a", "k2": "b"},
