@@ -57,6 +57,8 @@ const (
 
 	// default delimiter
 	defaultDelimiter byte = '.'
+	// default struct tag name for binding data to struct
+	defaultStructTag = "mapstructure"
 )
 
 // internal vars
@@ -93,6 +95,8 @@ type Options struct {
 	EnableCache bool
 	// parse key, allow find value by key path. eg: 'key.sub' will find `map[key]sub`
 	ParseKey bool
+	// tag name for binding data to struct
+	TagName string
 	// the delimiter char for split key path, if `FindByPath=true`. default is '.'
 	Delimiter byte
 	// default write format
@@ -174,6 +178,7 @@ func Default() *Config {
 func newDefaultOption() *Options {
 	return &Options{
 		ParseKey:  true,
+		TagName:   defaultStructTag,
 		Delimiter: defaultDelimiter,
 
 		DumpFormat: JSON,

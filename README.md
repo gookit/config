@@ -97,6 +97,8 @@ func main() {
 
 ## Map Data To Structure
 
+> Note: The default binding mapping tag of a structure is `mapstructure`, which can be changed by setting `Options.TagName`
+
 ```go
 user := struct {
     Age  int
@@ -109,7 +111,7 @@ err = config.BindStruct("user", &user)
 fmt.Println(user.UserName) // inhere
 ```
 
-### Quick Read data
+### Direct Read data
 
 - Get integer
 
@@ -232,6 +234,8 @@ type Options struct {
 	EnableCache bool
 	// parse key, allow find value by key path. default is True eg: 'key.sub' will find `map[key]sub`
 	ParseKey bool
+	// tag name for binding data to struct
+	TagName string
 	// the delimiter char for split key, when `FindByPath=true`. default is '.'
 	Delimiter byte
 	// default write format. default is JSON

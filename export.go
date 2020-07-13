@@ -45,14 +45,15 @@ func (c *Config) Structure(key string, dst interface{}) error {
 	}
 
 	// err = mapstructure.Decode(data, dst)
-	config := &mapstructure.DecoderConfig{
+	mapConf := &mapstructure.DecoderConfig{
 		Metadata: nil,
 		Result:   dst,
+		TagName:  c.opts.TagName,
 		// will auto convert string to int/uint
 		WeaklyTypedInput: true,
 	}
 
-	decoder, err := mapstructure.NewDecoder(config)
+	decoder, err := mapstructure.NewDecoder(mapConf)
 	if err != nil {
 		return err
 	}

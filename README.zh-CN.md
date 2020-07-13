@@ -98,6 +98,8 @@ func main() {
 
 ### 绑定数据到结构体
 
+> 注意：结构体默认的绑定映射tag是 `mapstructure`，可以通过设置 `Options.TagName` 来更改它
+
 ```go
 user := struct {
     Age  int
@@ -215,6 +217,8 @@ type Options struct {
 	EnableCache bool
 	// parse key, allow find value by key path. default is True eg: 'key.sub' will find `map[key]sub`
 	ParseKey bool
+	// tag name for binding data to struct
+    TagName string
 	// the delimiter char for split key, when `FindByPath=true`. default is '.'
 	Delimiter byte
 	// default write format. default is JSON
