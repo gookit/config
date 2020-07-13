@@ -29,7 +29,7 @@ func (c *Config) BindStruct(key string, dst interface{}) error {
 // Usage:
 // 	dbInfo := Db{}
 // 	config.Structure("db", &dbInfo)
-func (c *Config) Structure(key string, dst interface{}) (err error) {
+func (c *Config) Structure(key string, dst interface{}) error {
 	var data interface{}
 
 	// binding all data
@@ -44,20 +44,20 @@ func (c *Config) Structure(key string, dst interface{}) (err error) {
 		}
 	}
 
-	// format := JSON
-	// if len(driverName) > 0 {
-	// 	format = driverName[0]
-	// }
+	// err = mapstructure.Decode(data, dst)
+	config := &mapstructure.DecoderConfig{
+		Metadata: nil,
+		Result:   dst,
+		// will auto convert string to int/uint
+		WeaklyTypedInput: true,
+	}
 
-	// decoder := c.getDecoderByFormat(format)
-	// if decoder != nil {
-	//
-	// } else { // try use mergo
-	// 	return mergo.Map(dst, data)
-	// }
+	decoder, err := mapstructure.NewDecoder(config)
+	if err != nil {
+		return err
+	}
 
-	err = mapstructure.Decode(data, dst)
-	return
+	return decoder.Decode(data)
 }
 
 // ToJSON string

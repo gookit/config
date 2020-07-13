@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/gookit/goutil/dump"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -38,7 +39,7 @@ func TestExport(t *testing.T) {
 }
 
 func TestConfig_Structure(t *testing.T) {
-	st := assert.New(t)
+	is := assert.New(t)
 
 	cfg := Default()
 	cfg.ClearAll()
@@ -49,7 +50,7 @@ func TestConfig_Structure(t *testing.T) {
 "sports": ["pingPong", "跑步"]
 }`)
 
-	st.Nil(err)
+	is.Nil(err)
 
 	user := &struct {
 		Age    int // always float64 from JSON
@@ -58,11 +59,32 @@ func TestConfig_Structure(t *testing.T) {
 	}{}
 	// map all data
 	err = MapStruct("", user)
-	st.Nil(err)
+	is.Nil(err)
 
-	st.Equal(28, user.Age)
-	st.Equal("inhere", user.Name)
-	st.Equal("pingPong", user.Sports[0])
+	is.Equal(28, user.Age)
+	is.Equal("inhere", user.Name)
+	is.Equal("pingPong", user.Sports[0])
+
+	// - auto convert string to int
+	// age use string in JSON
+	cfg1 := New("test")
+	err = cfg1.LoadStrings(JSON, `{
+"age": "26",
+"name": "inhere",
+"sports": ["pingPong", "跑步"]
+}`)
+
+	is.Nil(err)
+
+	user1 := &struct {
+		Age    int // always float64 from JSON
+		Name   string
+		Sports []string
+	}{}
+	err = cfg1.MapStruct("", user1)
+	is.Nil(err)
+
+	dump.P(*user1)
 
 	// map some data
 	err = cfg.LoadStrings(JSON, `{
@@ -72,7 +94,7 @@ func TestConfig_Structure(t *testing.T) {
 	"tags": [12, 34]
 }
 }`)
-	st.Nil(err)
+	is.Nil(err)
 
 	some := struct {
 		Age  int
@@ -80,9 +102,9 @@ func TestConfig_Structure(t *testing.T) {
 		Tags []int
 	}{}
 	err = BindStruct("sec", &some)
-	st.Nil(err)
-	st.Equal(120, some.Age)
-	st.Equal(12, some.Tags[0])
+	is.Nil(err)
+	is.Equal(120, some.Age)
+	is.Equal(12, some.Tags[0])
 	cfg.ClearAll()
 
 	// custom data
@@ -92,7 +114,7 @@ func TestConfig_Structure(t *testing.T) {
 		"age":  120,
 		"tags": []int{12, 34},
 	})
-	st.NoError(err)
+	is.NoError(err)
 
 	s1 := struct {
 		Age  int
@@ -100,14 +122,14 @@ func TestConfig_Structure(t *testing.T) {
 		Tags []int
 	}{}
 	err = cfg.BindStruct("", &s1)
-	st.Nil(err)
-	st.Equal(120, s1.Age)
-	st.Equal(12, s1.Tags[0])
+	is.Nil(err)
+	is.Equal(120, s1.Age)
+	is.Equal(12, s1.Tags[0])
 
 	// key not exist
 	err = cfg.BindStruct("not-exist", &s1)
-	st.Error(err)
-	st.Equal("this key does not exist in the config", err.Error())
+	is.Error(err)
+	is.Equal("this key does not exist in the config", err.Error())
 
 	cfg.ClearAll()
 }
