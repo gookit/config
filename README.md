@@ -8,7 +8,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/gookit/config/badge.svg?branch=master)](https://coveralls.io/github/gookit/config?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/gookit/config)](https://goreportcard.com/report/github.com/gookit/config)
 
-Golang application config manage tool library. 
+Golang's application config manage tool library. 
 
 > **[中文说明](README.zh-CN.md)**
 
@@ -281,8 +281,10 @@ type Options struct {
 - `Getenv(name string, defVal ...string) (val string)`
 - `AddDriver(driver Driver)`
 - `Data() map[string]interface{}`
+- `SetData(data map[string]interface{})` set data to override the Config.Data
 - `Exists(key string, findByPath ...bool) bool`
 - `DumpTo(out io.Writer, format string) (n int64, err error)`
+- `BindStruct(key string, dst interface{}) error`
 
 ## Run Tests
 

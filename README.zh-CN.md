@@ -266,6 +266,7 @@ type Options struct {
 - `Data() map[string]interface{}`
 - `Exists(key string, findByPath ...bool) bool`
 - `DumpTo(out io.Writer, format string) (n int64, err error)`
+- `SetData(data map[string]interface{})` 设置数据以覆盖 `Config.Data`
 - `BindStruct(key string, dst interface{}) error`
 
 ## 单元测试
