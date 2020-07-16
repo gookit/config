@@ -14,6 +14,16 @@ var (
 	keyIsEmptyErr = errors.New("the config key is cannot be empty")
 )
 
+// SetData for override the Config.Data
+func SetData(data map[string]interface{}) {
+	dc.SetData(data)
+}
+
+// SetData for override the Config.Data
+func (c *Config) SetData(data map[string]interface{}) {
+	c.data = data
+}
+
 // Set val by key
 func Set(key string, val interface{}, setByPath ...bool) error {
 	return dc.Set(key, val, setByPath...)

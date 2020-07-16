@@ -7,6 +7,29 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestSetData(t *testing.T) {
+	c := Default()
+
+	err := c.LoadStrings(JSON, jsonStr)
+	assert.NoError(t, err)
+	assert.Equal(t, "app", c.String("name"))
+	assert.True(t, c.Exists("age"))
+
+	SetData(map[string]interface{}{
+		"name": "new app",
+	})
+	assert.Equal(t, "new app", c.String("name"))
+	assert.False(t, c.Exists("age"))
+
+	c.SetData(map[string]interface{}{
+		"age": 222,
+	})
+	assert.Equal(t, "", c.String("name"))
+	assert.False(t, c.Exists("name"))
+	assert.True(t, c.Exists("age"))
+	assert.Equal(t, 222, c.Int("age"))
+}
+
 func TestSet(t *testing.T) {
 	st := assert.New(t)
 
