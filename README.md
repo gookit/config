@@ -7,7 +7,7 @@
 
 Golang application config manage tool library. 
 
-**The v2 version is recommended, the v1 version is no longer updated**
+**NOTICE: The v2 version is recommended, the v1 version is no longer updated**
 
 > **[中文说明](README_cn.md)**
 
