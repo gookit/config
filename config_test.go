@@ -97,7 +97,7 @@ func Example() {
 	// }
 	// fmt.Printf("export config:\n%s", buf.String())
 
-	// Out:
+	// Output:
 	// get config example:
 	// - get string
 	//  val: app

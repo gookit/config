@@ -71,7 +71,7 @@ func Example() {
 	fmt.Printf("get env 'envKey' val: %s\n", config.String("envKey", ""))
 	fmt.Printf("get env 'envKey1' val: %s\n", config.String("envKey1", ""))
 
-	// Out:
+	// Output:
 	// get config example:
 	// get string
 	// - val: app2
