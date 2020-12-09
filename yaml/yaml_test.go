@@ -34,7 +34,7 @@ func Example() {
 	// Or
 	config.AddDriver(Driver)
 
-	err := config.LoadFiles("testdata/yml_other.yml")
+	err := config.LoadFiles("../testdata/yml_other.yml")
 	if err != nil {
 		panic(err)
 	}
@@ -63,8 +63,9 @@ func Example() {
 	fmt.Printf("get env 'envKey' val: %s\n", config.String("envKey", ""))
 	fmt.Printf("get env 'envKey1' val: %s\n", config.String("envKey1", ""))
 
-	// Output:
+	// Out:
 	// get config example:
+	// age: 23
 	// get string
 	// - val: app2
 	// get array
@@ -79,38 +80,34 @@ func Example() {
 	// get env 'envKey1' val: defValue
 }
 
-func Example_exportConfig() {
+func TestDumpConfig(t *testing.T) {
+	is := assert.New(t)
+	c := config.NewEmpty("test")
 	// Notice: before dump please set driver encoder
-	config.AddDriver(Driver)
+	c.AddDriver(Driver)
+	err := c.LoadStrings(config.Yaml, yamlStr)
+	is.NoError(err)
 
 	buf := new(bytes.Buffer)
-	_, err := config.DumpTo(buf, config.Yaml)
+	_, err = c.DumpTo(buf, config.Yaml)
 	if err != nil {
 		panic(err)
 	}
 
 	fmt.Printf("export config:\n%s", buf.String())
-
-	// Output:
-	// arr1:
-	// 	- val1
-	// 	- val21
-	// baseKey: value2
-	// debug: false
-	// ... ...
 }
 
 func TestDriver(t *testing.T) {
-	st := assert.New(t)
+	is := assert.New(t)
 
-	st.Equal("yaml", Driver.Name())
-	// st.IsType(new(Encoder), JSONDriver.GetEncoder())
+	is.Equal("yaml", Driver.Name())
+	// is.IsType(new(Encoder), JSONDriver.GetEncoder())
 
 	c := config.NewEmpty("test")
-	st.False(c.HasDecoder(config.Yaml))
+	is.False(c.HasDecoder(config.Yaml))
 	c.AddDriver(Driver)
-	st.True(c.HasDecoder(config.Yaml))
-	st.True(c.HasEncoder(config.Yaml))
+	is.True(c.HasDecoder(config.Yaml))
+	is.True(c.HasEncoder(config.Yaml))
 }
 
 // Support "=", ":", "." characters for default values

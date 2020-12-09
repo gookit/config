@@ -31,7 +31,7 @@ var jsonStr = `{
 }`
 
 func Example() {
-	WithOptions(ParseEnv)
+	// WithOptions(ParseEnv)
 
 	// add Decoder and Encoder
 	// use yaml github.com/gookit/config/yaml
@@ -97,7 +97,7 @@ func Example() {
 	// }
 	// fmt.Printf("export config:\n%s", buf.String())
 
-	// Output:
+	// Out:
 	// get config example:
 	// - get string
 	//  val: app

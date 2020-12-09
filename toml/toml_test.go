@@ -31,7 +31,7 @@ func Example() {
 	// add Decoder and Encoder
 	config.AddDriver(Driver)
 
-	err := config.LoadFiles("testdata/toml_base.toml")
+	err := config.LoadFiles("../testdata/toml_base.toml")
 	if err != nil {
 		panic(err)
 	}
@@ -39,7 +39,7 @@ func Example() {
 	// fmt.Printf("config data: \n %#v\n", Data())
 
 	// load more files
-	err = config.LoadFiles("testdata/toml_other.toml")
+	err = config.LoadFiles("../testdata/toml_other.toml")
 	// can also
 	// config.LoadFiles("testdata/toml_base.toml", "testdata/toml_other.toml")
 	if err != nil {
@@ -71,7 +71,7 @@ func Example() {
 	fmt.Printf("get env 'envKey' val: %s\n", config.String("envKey", ""))
 	fmt.Printf("get env 'envKey1' val: %s\n", config.String("envKey1", ""))
 
-	// Output:
+	// Out:
 	// get config example:
 	// get string
 	// - val: app2
