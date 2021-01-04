@@ -17,6 +17,7 @@ Golang's application config manage tool library.
 - Support multi format: `JSON`(default), `INI`, `YAML`, `TOML`, `HCL`, `ENV`, `Flags`
   - `JSON` content support comments. will auto clear comments
   - Other drivers are used on demand, not used will not be loaded into the application.
+	- Possibility to add custom driver for your specific format
 - Support multi-file and multi-data loading
 - Support loading configuration from os ENV
 - Support for loading configuration data from remote URLs
