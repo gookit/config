@@ -9,7 +9,7 @@ require (
 	github.com/hashicorp/hcl v1.0.0
 	github.com/imdario/mergo v0.3.11
 	github.com/json-iterator/go v1.1.10
-	github.com/mitchellh/mapstructure v1.4.0
+	github.com/mitchellh/mapstructure v1.4.1
 	github.com/stretchr/testify v1.6.1
 	gopkg.in/yaml.v2 v2.4.0
 )
