@@ -200,7 +200,7 @@ config.Bool("debug") // true
 ```go
 // os env: APP_NAME=config APP_DEBUG=true
 // load ENV info
-config.LoadOSEnv([]string{"APP_NAME", "APP_NAME"}, true)
+config.LoadOSEnv([]string{"APP_NAME", "APP_DEBUG"}, true)
 
 // read
 config.Bool("app_debug") // true
