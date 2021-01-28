@@ -4,7 +4,7 @@ go 1.12
 
 require (
 	github.com/BurntSushi/toml v0.3.1
-	github.com/gookit/goutil v0.3.6
+	github.com/gookit/goutil v0.3.8
 	github.com/gookit/ini/v2 v2.0.8
 	github.com/hashicorp/hcl v1.0.0
 	github.com/imdario/mergo v0.3.11
