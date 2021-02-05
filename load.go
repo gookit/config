@@ -295,18 +295,6 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	return
 }
 
-func (c *Config) getDecoderByFormat(format string) (decoder Decoder) {
-	switch format {
-	case Hcl:
-		decoder = c.decoders[Hcl]
-	case Ini:
-		decoder = c.decoders[Ini]
-	case JSON:
-		decoder = c.decoders[JSON]
-	case Yaml, Yml:
-		decoder = c.decoders[Yaml]
-	case Toml:
-		decoder = c.decoders[Toml]
-	}
-	return
+func (c *Config) getDecoderByFormat(format string) Decoder {
+	return c.decoders[format]
 }
