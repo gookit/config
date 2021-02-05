@@ -97,6 +97,29 @@ func TestDumpConfig(t *testing.T) {
 	fmt.Printf("export config:\n%s", buf.String())
 }
 
+func TestLoadFile(t *testing.T)  {
+	c := config.NewEmpty("test")
+	c.AddDriver(Driver)
+	c.WithOptions(config.ParseEnv)
+
+	err := c.LoadFiles("../testdata/yml_base.yml")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("config data: \n %#v\n", c.Data())
+	assert.Equal(t, "app", c.String("name"))
+
+	err = c.LoadFiles("../testdata/yml_other.yml")
+	// config.LoadFiles("testdata/yml_base.yml", "testdata/yml_other.yml")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("config data: \n %#v\n", c.Data())
+	assert.Equal(t, "app2", c.String("name"))
+}
+
 func TestDriver(t *testing.T) {
 	is := assert.New(t)
 
