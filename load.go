@@ -296,5 +296,6 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 }
 
 func (c *Config) getDecoderByFormat(format string) Decoder {
+	format = fixFormat(format)
 	return c.decoders[format]
 }
