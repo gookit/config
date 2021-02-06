@@ -112,6 +112,20 @@ err = config.BindStruct("user", &user)
 fmt.Println(user.UserName) // inhere
 ```
 
+**更改结构标签名称**
+
+```go
+config.WithOptions(func(opt *Options) {
+    opt.TagName = "config"
+})
+```
+
+可以使用空字符串将所有配置数据绑定到结构:
+
+```go
+config.BindStruct("", &myConf)
+```
+
 ### 快速获取数据
 
 ```go
@@ -218,7 +232,7 @@ type Options struct {
 	// parse key, allow find value by key path. default is True eg: 'key.sub' will find `map[key]sub`
 	ParseKey bool
 	// tag name for binding data to struct
-    TagName string
+	TagName string
 	// the delimiter char for split key, when `FindByPath=true`. default is '.'
 	Delimiter byte
 	// default write format. default is JSON

@@ -74,10 +74,9 @@ import (
 // go run ./examples/yaml.go
 func main() {
 	config.WithOptions(config.ParseEnv)
-	
+
 	// add driver for support yaml content
 	config.AddDriver(yaml.Driver)
-	// config.SetDecoder(config.Yaml, yaml.Decoder)
 
 	err := config.LoadFiles("testdata/yml_base.yml")
 	if err != nil {
@@ -91,25 +90,40 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	// fmt.Printf("config data: \n %#v\n", config.Data())
 }
 ```
 
-## Map Data To Structure
+## Bind Structure
 
 > Note: The default binding mapping tag of a structure is `mapstructure`, which can be changed by setting `Options.TagName`
 
 ```go
 user := struct {
-    Age  int
-    Kye  string
+    Age  int  `mapstructure:"age"`
+    Key  string `mapstructure:"key"`
     UserName  string `mapstructure:"user_name"`
-    Tags []int
+    Tags []int  `mapstructure:"tags"`
 }{}
+
 err = config.BindStruct("user", &user)
 
 fmt.Println(user.UserName) // inhere
+```
+
+**Change struct tag name**
+
+```go
+config.WithOptions(func(opt *Options) {
+    opt.TagName = "config"
+})
+```
+
+Can use empty string for bind all config data to a struct:
+
+```go
+config.BindStruct("", &myConf)
 ```
 
 ### Direct Read data
