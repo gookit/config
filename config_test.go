@@ -179,6 +179,10 @@ func TestGetEnv(t *testing.T) {
 		assert.Equal(t, "true", Getenv("APP_DEBUG"))
 		assert.Equal(t, "defVal", GetEnv("not-exsit", "defVal"))
 	})
+
+	assert.Equal(t, Yaml, fixFormat("yml"))
+	assert.Equal(t, Hcl, fixFormat("conf"))
+	assert.Equal(t, Ini, fixFormat("inc"))
 }
 
 func TestSetDecoderEncoder(t *testing.T) {

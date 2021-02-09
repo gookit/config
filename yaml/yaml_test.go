@@ -97,7 +97,7 @@ func TestDumpConfig(t *testing.T) {
 	fmt.Printf("export config:\n%s", buf.String())
 }
 
-func TestLoadFile(t *testing.T)  {
+func TestLoadFile(t *testing.T) {
 	c := config.NewEmpty("test")
 	c.AddDriver(Driver)
 	c.WithOptions(config.ParseEnv)

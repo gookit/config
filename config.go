@@ -412,10 +412,19 @@ func formatKey(key, sep string) string {
 	return strings.Trim(strings.TrimSpace(key), sep)
 }
 
-// fix yaml format
+// fix inc/conf/yaml format
 func fixFormat(f string) string {
 	if f == Yml {
 		f = Yaml
+	}
+
+	if f == "inc" {
+		f = Ini
+	}
+
+	// eg nginx config file.
+	if f == "conf" {
+		f = Hcl
 	}
 
 	return f

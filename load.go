@@ -266,7 +266,8 @@ func (c *Config) loadFile(file string, loadExist bool) (err error) {
 
 // parse config source code to Config.
 func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
-	decoder := c.getDecoderByFormat(format)
+	format = fixFormat(format)
+	decoder := c.decoders[format]
 	if decoder == nil {
 		return errors.New("not exists or not register decoder for the format: " + format)
 	}
@@ -293,9 +294,4 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 
 	data = nil
 	return
-}
-
-func (c *Config) getDecoderByFormat(format string) Decoder {
-	format = fixFormat(format)
-	return c.decoders[format]
 }
