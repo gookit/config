@@ -17,4 +17,4 @@
 *.out
 .DS_Store
 vendor
-go.sum
+#go.sum
