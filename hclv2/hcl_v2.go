@@ -4,7 +4,7 @@ Package hcl2 is driver use HCL format content as config source
 about HCL, please see https://github.com/hashicorp/hcl
 docs for HCL v2 https://pkg.go.dev/github.com/hashicorp/hcl/v2
 */
-package hcl2
+package hclv2
 
 import (
 	"errors"
