@@ -4,12 +4,12 @@ Package yaml is a driver use YAML format content as config source
 Usage please see example:
 
 */
-package yaml
+package yamlv3
 
-// see https://pkg.go.dev/gopkg.in/yaml.v2
+// see https://pkg.go.dev/gopkg.in/yaml.v3
 import (
 	"github.com/gookit/config/v2"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // Decoder the yaml content decoder

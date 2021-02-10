@@ -267,8 +267,8 @@ func (c *Config) loadFile(file string, loadExist bool) (err error) {
 // parse config source code to Config.
 func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	format = fixFormat(format)
-	decoder := c.decoders[format]
-	if decoder == nil {
+	decode := c.decoders[format]
+	if decode == nil {
 		return errors.New("not exists or not register decoder for the format: " + format)
 	}
 
@@ -279,7 +279,7 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	data := make(map[string]interface{})
 
 	// decode content to data
-	if err = decoder(blob, &data); err != nil {
+	if err = decode(blob, &data); err != nil {
 		return
 	}
 
@@ -289,7 +289,7 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	} else {
 		// again ... will merge data
 		// err = mergo.Map(&c.data, data, mergo.WithOverride)
-		err = mergo.Merge(&c.data, data, mergo.WithOverride)
+		err = mergo.Merge(&c.data, data, mergo.WithOverride, mergo.WithTypeCheck)
 	}
 
 	data = nil

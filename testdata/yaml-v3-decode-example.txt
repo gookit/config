@@ -1,0 +1,7 @@
+map[string]interface {} {
+  "lang": map[string]interface {} {
+    "allowed": map[string]interface {} {
+      "en": string("ddd"),
+    },
+  },
+},
