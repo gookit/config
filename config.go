@@ -163,11 +163,14 @@ func NewEmpty(name string) *Config {
 	}
 }
 
+// NewWith create config instance, and you can call some init func
+func NewWith(name string, fn func(c *Config)) *Config {
+	return New(name).With(fn)
+}
+
 // NewWithOptions config instance
 func NewWithOptions(name string, opts ...func(*Options)) *Config {
-	c := New(name)
-	c.WithOptions(opts...)
-	return c
+	return New(name).WithOptions(opts...)
 }
 
 // Default get the default instance
@@ -191,14 +194,10 @@ func newDefaultOption() *Options {
  *************************************************************/
 
 // ParseEnv set parse env
-func ParseEnv(opts *Options) {
-	opts.ParseEnv = true
-}
+func ParseEnv(opts *Options) { opts.ParseEnv = true}
 
 // Readonly set readonly
-func Readonly(opts *Options) {
-	opts.Readonly = true
-}
+func Readonly(opts *Options) { opts.Readonly = true }
 
 // Delimiter set delimiter char
 func Delimiter(sep byte) func(*Options) {
@@ -208,15 +207,13 @@ func Delimiter(sep byte) func(*Options) {
 }
 
 // EnableCache set readonly
-func EnableCache(opts *Options) {
-	opts.EnableCache = true
-}
+func EnableCache(opts *Options) { opts.EnableCache = true}
 
 // WithOptions with options
 func WithOptions(opts ...func(*Options)) { dc.WithOptions(opts...) }
 
 // WithOptions apply some options
-func (c *Config) WithOptions(opts ...func(*Options)) {
+func (c *Config) WithOptions(opts ...func(*Options)) *Config {
 	if !c.IsEmpty() {
 		panic("config: Cannot set options after data has been loaded")
 	}
@@ -225,6 +222,7 @@ func (c *Config) WithOptions(opts ...func(*Options)) {
 	for _, opt := range opts {
 		opt(c.opts)
 	}
+	return c
 }
 
 // GetOptions get options
@@ -233,6 +231,12 @@ func GetOptions() *Options { return dc.Options() }
 // Options get
 func (c *Config) Options() *Options {
 	return c.opts
+}
+
+// With apply some options
+func (c *Config) With(fn func(c *Config)) *Config {
+	fn(c)
+	return c
 }
 
 // Readonly disable set data to config.
@@ -265,17 +269,23 @@ func (c *Config) HasDecoder(format string) bool {
 }
 
 // SetDecoder add/set a format decoder
+// Deprecated
+// please use driver instead
 func SetDecoder(format string, decoder Decoder) {
 	dc.SetDecoder(format, decoder)
 }
 
 // SetDecoder set decoder
+// Deprecated
+// please use driver instead
 func (c *Config) SetDecoder(format string, decoder Decoder) {
 	format = fixFormat(format)
 	c.decoders[format] = decoder
 }
 
 // SetDecoders set decoders
+// Deprecated
+// please use driver instead
 func (c *Config) SetDecoders(decoders map[string]Decoder) {
 	for format, decoder := range decoders {
 		c.SetDecoder(format, decoder)
@@ -283,17 +293,23 @@ func (c *Config) SetDecoders(decoders map[string]Decoder) {
 }
 
 // SetEncoder set a encoder for the format
+// Deprecated
+// please use driver instead
 func SetEncoder(format string, encoder Encoder) {
 	dc.SetEncoder(format, encoder)
 }
 
 // SetEncoder set a encoder for the format
+// Deprecated
+// please use driver instead
 func (c *Config) SetEncoder(format string, encoder Encoder) {
 	format = fixFormat(format)
 	c.encoders[format] = encoder
 }
 
 // SetEncoders set encoders
+// Deprecated
+// please use driver instead
 func (c *Config) SetEncoders(encoders map[string]Encoder) {
 	for format, encoder := range encoders {
 		c.SetEncoder(format, encoder)

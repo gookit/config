@@ -244,9 +244,10 @@ func TestJSONDriver(t *testing.T) {
 	is.NoError(err)
 	is.Equal(1, c.Int("key"))
 
-	c = NewEmpty("test")
-	err = c.LoadData(map[string]interface{}{"key1": 2})
-	is.NoError(err)
+	c = NewWith("test", func(c *Config) {
+		err = c.LoadData(map[string]interface{}{"key1": 2})
+		is.NoError(err)
+	})
 	is.Equal(2, c.Int("key1"))
 }
 
