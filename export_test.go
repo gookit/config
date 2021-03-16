@@ -131,5 +131,9 @@ func TestConfig_Structure(t *testing.T) {
 	is.Error(err)
 	is.Equal("this key does not exist in the config", err.Error())
 
+	// invalid dst
+	err = cfg.BindStruct("sec", "invalid")
+	is.Error(err)
+
 	cfg.ClearAll()
 }

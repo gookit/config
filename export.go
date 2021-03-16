@@ -10,6 +10,9 @@ import (
 )
 
 // MapStruct alias method of the 'Structure'
+// Usage:
+// 	dbInfo := &Db{}
+// 	config.MapStruct("db", dbInfo)
 func MapStruct(key string, dst interface{}) error { return dc.MapStruct(key, dst) }
 
 // MapStruct alias method of the 'Structure'
@@ -31,13 +34,10 @@ func (c *Config) BindStruct(key string, dst interface{}) error {
 // 	config.Structure("db", &dbInfo)
 func (c *Config) Structure(key string, dst interface{}) error {
 	var data interface{}
-
-	// binding all data
-	if key == "" {
+	if key == "" { // binding all data
 		data = c.data
 	} else { // some data of the config
 		var ok bool
-
 		data, ok = c.GetValue(key)
 		if !ok {
 			return errNotFound
@@ -91,7 +91,7 @@ func (c *Config) DumpTo(out io.Writer, format string) (n int64, err error) {
 
 	format = fixFormat(format)
 	if encoder, ok = c.encoders[format]; !ok {
-		err = errors.New("no exists or no register encoder for the format: " + format)
+		err = errors.New("not exists/register encoder for the format: " + format)
 		return
 	}
 
@@ -107,10 +107,7 @@ func (c *Config) DumpTo(out io.Writer, format string) (n int64, err error) {
 	}
 
 	// write content to out
-	num, err := fmt.Fprintln(out, string(encoded))
-	if err != nil {
-		return
-	}
+	num, _ := fmt.Fprintln(out, string(encoded))
 
 	return int64(num), nil
 }
