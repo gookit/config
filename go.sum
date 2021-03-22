@@ -30,6 +30,7 @@ github.com/gookit/goutil v0.3.8 h1:ESVPrny0+orL3D43Zg4IU0NG91JU8t/qKa3M9oKya8Q=
 github.com/gookit/goutil v0.3.8/go.mod h1:8pmV0itRPVrL6qWJ84RG+E7ZZBP4wvTl6cjjps9hgaE=
 github.com/gookit/goutil v0.3.10 h1:silPdWxf02FpAeQQSOS9zVMLn48j20oMK+4WSsKLRa4=
 github.com/gookit/goutil v0.3.10/go.mod h1:ITj7Lw0muhJNOX+QRa+j+HH0+RNoQVuTmZx5d5LE1vE=
+github.com/gookit/goutil v0.3.12/go.mod h1:ITj7Lw0muhJNOX+QRa+j+HH0+RNoQVuTmZx5d5LE1vE=
 github.com/gookit/ini/v2 v2.0.8 h1:FHv69D7wrwYA0P/SOGv2oqMJlN8mePAq9ub5DnWUDq0=
 github.com/gookit/ini/v2 v2.0.8/go.mod h1:YOwVo7xzNBsu+LPvJ9S+uM1yLj6jw3aKs9gqx8RWwIw=
 github.com/gookit/ini/v2 v2.0.9 h1:YxTJhhqG6iGDvEfjt2jal8BloChi3kgIk8Hky9C3Okw=
