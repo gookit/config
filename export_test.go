@@ -137,3 +137,94 @@ func TestConfig_Structure(t *testing.T) {
 
 	cfg.ClearAll()
 }
+
+func TestMapStruct_embedded_struct_squash_false(t *testing.T) {
+	loader := NewWithOptions("test", func(options *Options) {
+		options.DecoderConfig.TagName = "json"
+		options.DecoderConfig.Squash = false
+	})
+	assert.False(t, loader.Options().DecoderConfig.Squash)
+
+	err := loader.LoadStrings(JSON, `
+{
+  "c": "12",
+  "test1": {
+	"b": "34"
+  }
+}
+`)
+	assert.NoError(t, err)
+	dump.Println(loader.Data())
+	assert.Equal(t, 12, loader.Int("c"))
+	assert.Equal(t, 34, loader.Int("test1.b"))
+
+	type Test1 struct {
+		B int `json:"b"`
+	}
+	type Test2 struct {
+		Test1
+		C int `json:"c"`
+	}
+	cfg := &Test2{}
+
+	err = loader.MapStruct("", cfg)
+	assert.NoError(t, err)
+	dump.Println(cfg)
+	assert.Equal(t, 34, cfg.Test1.B)
+
+	type Test3 struct {
+		*Test1
+		C int `json:"c"`
+	}
+	cfg1 := &Test3{}
+	err = loader.MapStruct("", cfg1)
+	assert.NoError(t, err)
+	dump.Println(cfg1)
+	assert.Equal(t, 34, cfg1.Test1.B)
+}
+
+func TestMapStruct_embedded_struct_squash_true(t *testing.T) {
+	loader := NewWithOptions("test", func(options *Options) {
+		options.DecoderConfig.TagName = "json"
+		options.DecoderConfig.Squash = true
+	})
+	assert.True(t, loader.Options().DecoderConfig.Squash)
+
+	err := loader.LoadStrings(JSON, `
+{
+  "c": "12",
+  "test1": {
+	"b": "34"
+  }
+}
+`)
+	assert.NoError(t, err)
+	dump.Println(loader.Data())
+	assert.Equal(t, 12, loader.Int("c"))
+	assert.Equal(t, 34, loader.Int("test1.b"))
+
+	type Test1 struct {
+		B int `json:"b"`
+	}
+	type Test2 struct {
+		Test1
+		// Test1 `json:",squash"`
+		C int `json:"c"`
+	}
+	cfg := &Test2{}
+
+	err = loader.MapStruct("", cfg)
+	assert.NoError(t, err)
+	dump.Println(cfg)
+	assert.Equal(t, 0, cfg.Test1.B)
+
+	type Test3 struct {
+		*Test1
+		C int `json:"c"`
+	}
+	cfg1 := &Test3{}
+	err = loader.MapStruct("", cfg1)
+	assert.NoError(t, err)
+	dump.Println(cfg1)
+	assert.Equal(t, 34, cfg1.Test1.B)
+}

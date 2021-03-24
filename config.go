@@ -44,6 +44,8 @@ import (
 	"os"
 	"strings"
 	"sync"
+
+	"github.com/mitchellh/mapstructure"
 )
 
 // There are supported config format
@@ -96,6 +98,8 @@ type Options struct {
 	// parse key, allow find value by key path. eg: 'key.sub' will find `map[key]sub`
 	ParseKey bool
 	// tag name for binding data to struct
+	// Deprecated
+	// please set tag name by DecoderConfig
 	TagName string
 	// the delimiter char for split key path, if `FindByPath=true`. default is '.'
 	Delimiter byte
@@ -103,6 +107,8 @@ type Options struct {
 	DumpFormat string
 	// default input format
 	ReadFormat string
+	// DecoderConfig setting for binding data to struct
+	DecoderConfig *mapstructure.DecoderConfig
 }
 
 // Config structure definition
@@ -183,9 +189,20 @@ func newDefaultOption() *Options {
 		ParseKey:  true,
 		TagName:   defaultStructTag,
 		Delimiter: defaultDelimiter,
-
+		// for export
 		DumpFormat: JSON,
 		ReadFormat: JSON,
+		// struct decoder config
+		DecoderConfig: newDefaultDecoderConfig(),
+	}
+}
+
+func newDefaultDecoderConfig() *mapstructure.DecoderConfig {
+	return &mapstructure.DecoderConfig{
+		// tag name for binding struct
+		TagName: defaultStructTag,
+		// will auto convert string to int/uint
+		WeaklyTypedInput: true,
 	}
 }
 
@@ -194,7 +211,7 @@ func newDefaultOption() *Options {
  *************************************************************/
 
 // ParseEnv set parse env
-func ParseEnv(opts *Options) { opts.ParseEnv = true}
+func ParseEnv(opts *Options) { opts.ParseEnv = true }
 
 // Readonly set readonly
 func Readonly(opts *Options) { opts.Readonly = true }
@@ -207,7 +224,7 @@ func Delimiter(sep byte) func(*Options) {
 }
 
 // EnableCache set readonly
-func EnableCache(opts *Options) { opts.EnableCache = true}
+func EnableCache(opts *Options) { opts.EnableCache = true }
 
 // WithOptions with options
 func WithOptions(opts ...func(*Options)) { dc.WithOptions(opts...) }
