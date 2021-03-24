@@ -20,7 +20,7 @@ jobs:
       uses: actions/checkout@v2
     # https://github.com/actions/setup-go
     - name: Use Go ${{ matrix.go_version }}
-      timeout-minutes: 3
+      timeout-minutes: 5
       uses: actions/setup-go@v2
       with:
         go-version: ${{ matrix.go_version }}
