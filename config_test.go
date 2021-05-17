@@ -21,7 +21,8 @@ var jsonStr = `{
     "map1": {
         "key": "val",
         "key1": "val1",
-        "key2": "val2"
+        "key2": "val2",
+        "key3": "${SHELL}"
     },
     "arr1": [
         "val",
@@ -388,4 +389,27 @@ func TestJSONAllowComments(t *testing.T) {
 	is.Error(err)
 
 	JSONAllowComments = old
+}
+
+func TestMapStringStringParseEnv(t *testing.T) {
+	is := assert.New(t)
+	at := assert.New(t)
+	c := New("test")
+	c.WithOptions(ParseEnv)
+	err := c.LoadStrings(JSON, jsonStr)
+	is.Nil(err)
+
+	shell := os.Getenv("SHELL")
+	// ensure env var is exist
+	if shell == "" {
+		_ = os.Setenv("SHELL", "/usr/bin/bash")
+	}
+
+	sMap := c.StringMap("map1")
+	at.Equal(shell, sMap["key3"])
+
+	// revert
+	if shell != "" {
+		_ = os.Setenv("SHELL", shell)
+	}
 }

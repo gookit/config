@@ -529,14 +529,35 @@ func (c *Config) StringMap(key string) (mp map[string]string) {
 		mp = typeData
 	case map[string]interface{}: // decode from json,toml
 		mp = make(map[string]string)
+
 		for k, v := range typeData {
-			mp[k] = fmt.Sprintf("%v", v)
+			switch v.(type) {
+			case string:
+				if c.opts.ParseEnv {
+					mp[k] = fmt.Sprintf("%v", envutil.ParseEnvValue(fmt.Sprintf("%v", v)))
+				} else {
+					mp[k] = fmt.Sprintf("%v", v)
+				}
+			default:
+				mp[k] = fmt.Sprintf("%v", v)
+			}
 		}
 	case map[interface{}]interface{}: // decode from yaml
 		mp = make(map[string]string)
+
 		for k, v := range typeData {
 			sk := fmt.Sprintf("%v", k)
-			mp[sk] = fmt.Sprintf("%v", v)
+
+			switch v.(type) {
+			case string:
+				if c.opts.ParseEnv {
+					mp[sk] = fmt.Sprintf("%v", envutil.ParseEnvValue(fmt.Sprintf("%v", v)))
+				} else {
+					mp[sk] = fmt.Sprintf("%v", v)
+				}
+			default:
+				mp[sk] = fmt.Sprintf("%v", v)
+			}
 		}
 	default:
 		c.addErrorf("value cannot be convert to map[string]string, key is '%s'", key)
