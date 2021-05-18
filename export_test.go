@@ -9,33 +9,33 @@ import (
 )
 
 func TestExport(t *testing.T) {
-	at := assert.New(t)
+	is := assert.New(t)
 
 	c := New("test")
 
 	str := c.ToJSON()
-	at.Equal("", str)
+	is.Equal("", str)
 
 	err := c.LoadStrings(JSON, jsonStr)
-	at.Nil(err)
+	is.Nil(err)
 
 	str = c.ToJSON()
-	at.Contains(str, `"name":"app"`)
+	is.Contains(str, `"name":"app"`)
 
 	buf := &bytes.Buffer{}
 	_, err = c.WriteTo(buf)
-	at.Nil(err)
+	is.Nil(err)
 
 	buf = &bytes.Buffer{}
 
 	_, err = c.DumpTo(buf, "invalid")
-	at.Error(err)
+	is.Error(err)
 
 	_, err = c.DumpTo(buf, Yml)
-	at.Error(err)
+	is.Error(err)
 
 	_, err = c.DumpTo(buf, JSON)
-	at.Nil(err)
+	is.Nil(err)
 }
 
 func TestConfig_Structure(t *testing.T) {

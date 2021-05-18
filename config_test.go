@@ -187,39 +187,39 @@ func TestGetEnv(t *testing.T) {
 }
 
 func TestSetDecoderEncoder(t *testing.T) {
-	at := assert.New(t)
+	is := assert.New(t)
 
 	c := Default()
 	c.ClearAll()
 
-	at.True(c.HasDecoder(JSON))
-	at.True(c.HasEncoder(JSON))
+	is.True(c.HasDecoder(JSON))
+	is.True(c.HasEncoder(JSON))
 
 	c.DelDriver(JSON)
 
-	at.False(c.HasDecoder(JSON))
-	at.False(c.HasEncoder(JSON))
+	is.False(c.HasDecoder(JSON))
+	is.False(c.HasEncoder(JSON))
 
 	SetDecoder(JSON, JSONDecoder)
 	SetEncoder(JSON, JSONEncoder)
 
-	at.True(c.HasDecoder(JSON))
-	at.True(c.HasEncoder(JSON))
+	is.True(c.HasDecoder(JSON))
+	is.True(c.HasEncoder(JSON))
 }
 
 func TestDefault(t *testing.T) {
-	at := assert.New(t)
+	is := assert.New(t)
 
 	ClearAll()
 	WithOptions(ParseEnv)
 
-	at.True(GetOptions().ParseEnv)
+	is.True(GetOptions().ParseEnv)
 
 	_ = LoadStrings(JSON, `{"name": "inhere"}`)
 
 	buf := &bytes.Buffer{}
 	_, err := WriteTo(buf)
-	at.Nil(err)
+	is.Nil(err)
 }
 
 func TestJSONDriver(t *testing.T) {
@@ -344,30 +344,30 @@ func TestDelimiter(t *testing.T) {
 }
 
 func TestEnableCache(t *testing.T) {
-	at := assert.New(t)
+	is := assert.New(t)
 
 	c := NewWithOptions("test", EnableCache)
 	err := c.LoadStrings(JSON, jsonStr)
-	at.Nil(err)
+	is.Nil(err)
 
 	str := c.String("name")
-	at.Equal("app", str)
+	is.Equal("app", str)
 
 	// re-get, from caches
 	str = c.String("name")
-	at.Equal("app", str)
+	is.Equal("app", str)
 
 	sArr := c.Strings("arr1")
-	at.Equal("app", str)
+	is.Equal("app", str)
 
 	// re-get, from caches
 	sArr = c.Strings("arr1")
-	at.Equal("val1", sArr[1])
+	is.Equal("val1", sArr[1])
 
 	sMap := c.StringMap("map1")
-	at.Equal("val1", sMap["key1"])
+	is.Equal("val1", sMap["key1"])
 	sMap = c.StringMap("map1")
-	at.Equal("val1", sMap["key1"])
+	is.Equal("val1", sMap["key1"])
 
 	c.ClearAll()
 }
@@ -393,7 +393,6 @@ func TestJSONAllowComments(t *testing.T) {
 
 func TestMapStringStringParseEnv(t *testing.T) {
 	is := assert.New(t)
-	at := assert.New(t)
 	c := New("test")
 	c.WithOptions(ParseEnv)
 	err := c.LoadStrings(JSON, jsonStr)
@@ -402,11 +401,12 @@ func TestMapStringStringParseEnv(t *testing.T) {
 	shell := os.Getenv("SHELL")
 	// ensure env var is exist
 	if shell == "" {
-		_ = os.Setenv("SHELL", "/usr/bin/bash")
+		shell = "/usr/bin/bash"
+		_ = os.Setenv("SHELL", shell)
 	}
 
 	sMap := c.StringMap("map1")
-	at.Equal(shell, sMap["key3"])
+	is.Equal(shell, sMap["key3"])
 
 	// revert
 	if shell != "" {
