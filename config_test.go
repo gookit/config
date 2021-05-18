@@ -398,18 +398,9 @@ func TestMapStringStringParseEnv(t *testing.T) {
 	err := c.LoadStrings(JSON, jsonStr)
 	is.Nil(err)
 
-	shell := os.Getenv("SHELL")
-	// ensure env var is exist
-	if shell == "" {
-		shell = "/usr/bin/bash"
-		_ = os.Setenv("SHELL", shell)
-	}
-
-	sMap := c.StringMap("map1")
-	is.Equal(shell, sMap["key3"])
-
-	// revert
-	if shell != "" {
-		_ = os.Setenv("SHELL", shell)
-	}
+	shellVal := "/usr/bin/bash"
+	testutil.MockEnvValue("SHELL", shellVal, func(_ string) {
+		sMap := c.StringMap("map1")
+		is.Equal(shellVal, sMap["key3"])
+	})
 }

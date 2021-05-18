@@ -2,11 +2,12 @@ package config
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/gookit/goutil/envutil"
+	"github.com/gookit/goutil/mathutil"
+	"github.com/gookit/goutil/strutil"
 )
 
 var (
@@ -251,17 +252,16 @@ func (c *Config) getString(key string) (value string, ok bool) {
 		return
 	}
 
-	switch val.(type) {
-	// from json int always is float64
-	case bool, int, uint, int8, uint8, int16, uint16, int32, uint64, int64, float32, float64:
-		value = fmt.Sprintf("%v", val)
+	switch typVal := val.(type) {
+	// from json `int` always is float64
 	case string:
-		value = fmt.Sprintf("%v", val)
+		value = typVal
 		if c.opts.ParseEnv {
 			value = envutil.ParseEnvValue(value)
 		}
 	default:
-		value = fmt.Sprintf("%v", val)
+		// value = fmt.Sprintf("%v", val)
+		value,_ = strutil.AnyToString(val, false)
 	}
 
 	// add cache
@@ -404,8 +404,8 @@ func (c *Config) Ints(key string) (arr []int) {
 		arr = typeData
 	case []interface{}:
 		for _, v := range typeData {
-			// iv, err := strconv.Atoi(v.(string))
-			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
+			iv, err := mathutil.ToInt(v)
+			// iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
 			if err != nil {
 				c.addError(err)
 				arr = arr[0:0] // reset
@@ -436,7 +436,8 @@ func (c *Config) IntMap(key string) (mp map[string]int) {
 	case map[string]interface{}: // decode from json,toml
 		mp = make(map[string]int)
 		for k, v := range typeData {
-			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
+			// iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
+			iv, err := mathutil.ToInt(v)
 			if err != nil {
 				c.addError(err)
 				mp = map[string]int{} // reset
@@ -447,14 +448,16 @@ func (c *Config) IntMap(key string) (mp map[string]int) {
 	case map[interface{}]interface{}: // if decode from yaml
 		mp = make(map[string]int)
 		for k, v := range typeData {
-			iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
+			// iv, err := strconv.Atoi(fmt.Sprintf( "%v", v))
+			iv, err := mathutil.ToInt(v)
 			if err != nil {
 				c.addError(err)
 				mp = map[string]int{} // reset
 				return
 			}
 
-			sk := fmt.Sprintf("%v", k)
+			// sk := fmt.Sprintf("%v", k)
+			sk, _ := strutil.AnyToString(k, false)
 			mp[sk] = iv
 		}
 	default:
@@ -487,7 +490,8 @@ func (c *Config) Strings(key string) (arr []string) {
 		arr = typeData
 	case []interface{}:
 		for _, v := range typeData {
-			arr = append(arr, fmt.Sprintf("%v", v))
+			// arr = append(arr, fmt.Sprintf("%v", v))
+			arr = append(arr, strutil.MustString(v))
 		}
 	default:
 		c.addErrorf("value cannot be convert to []string, key is '%s'", key)
@@ -534,29 +538,31 @@ func (c *Config) StringMap(key string) (mp map[string]string) {
 			switch v.(type) {
 			case string:
 				if c.opts.ParseEnv {
-					mp[k] = fmt.Sprintf("%v", envutil.ParseEnvValue(fmt.Sprintf("%v", v)))
+					mp[k] = envutil.ParseEnvValue(v.(string))
 				} else {
-					mp[k] = fmt.Sprintf("%v", v)
+					mp[k] = v.(string)
 				}
 			default:
-				mp[k] = fmt.Sprintf("%v", v)
+				// mp[k] = fmt.Sprintf("%v", v)
+				mp[k], _ = strutil.AnyToString(v, false)
 			}
 		}
 	case map[interface{}]interface{}: // decode from yaml
 		mp = make(map[string]string)
 
 		for k, v := range typeData {
-			sk := fmt.Sprintf("%v", k)
+			sk, _ := strutil.AnyToString(k, false)
 
-			switch v.(type) {
+			switch typVal := v.(type) {
 			case string:
 				if c.opts.ParseEnv {
-					mp[sk] = fmt.Sprintf("%v", envutil.ParseEnvValue(fmt.Sprintf("%v", v)))
+					mp[sk] = envutil.ParseEnvValue(typVal)
 				} else {
-					mp[sk] = fmt.Sprintf("%v", v)
+					mp[sk] = typVal
 				}
 			default:
-				mp[sk] = fmt.Sprintf("%v", v)
+				// mp[sk] = fmt.Sprintf("%v", v)
+				mp[sk], _ = strutil.AnyToString(v, false)
 			}
 		}
 	default:
