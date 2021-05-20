@@ -1,0 +1,26 @@
+{
+  name: "app",
+  "debug": false,
+  "baseKey": "value",
+  "age": 123, // comments
+  "envKey": "${SHELL}",
+  "envKey1": "${NotExist|defValue}",
+  "map1": {
+    "key": "val",
+    "key1": "val1",
+    "key2": "val2"
+  },
+  arr1: [
+    "val",
+    "val1",
+    "val2"
+  ],
+  "lang": {
+    "dir": "res/lang",
+    "defLang": "en",
+    "allowed": {
+      "en": "val",
+      "zh-CN": "val2"
+    }
+  }
+}
