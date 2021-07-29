@@ -55,6 +55,11 @@ func (c *Config) Structure(key string, dst interface{}) error {
 		}
 	}
 
+	// parse env var
+	if c.opts.ParseEnv && bindConf.DecodeHook == nil {
+		bindConf.DecodeHook = ParseEnvVarStringHookFunc()
+	}
+
 	bindConf.Result = dst // set result struct ptr
 	decoder, err := mapstructure.NewDecoder(bindConf)
 	if err != nil {

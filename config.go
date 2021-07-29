@@ -42,9 +42,11 @@ package config
 import (
 	"fmt"
 	"os"
+	"reflect"
 	"strings"
 	"sync"
 
+	"github.com/gookit/goutil/envutil"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -203,6 +205,19 @@ func newDefaultDecoderConfig() *mapstructure.DecoderConfig {
 		TagName: defaultStructTag,
 		// will auto convert string to int/uint
 		WeaklyTypedInput: true,
+		// DecodeHook: ParseEnvVarStringHookFunc,
+	}
+}
+
+// ParseEnvVarStringHookFunc returns a DecodeHookFunc that parse ENV var
+func ParseEnvVarStringHookFunc() mapstructure.DecodeHookFunc {
+	return func(f reflect.Type, t reflect.Type, data interface{}) (interface{}, error) {
+		if f.Kind() != reflect.String {
+			return data, nil
+		}
+
+		str := envutil.ParseEnvValue(data.(string))
+		return str, nil
 	}
 }
 
