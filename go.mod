@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/BurntSushi/toml v0.3.1
-	github.com/gookit/goutil v0.3.14
+	github.com/gookit/goutil v0.3.15
 	github.com/gookit/ini/v2 v2.0.11
 	github.com/hashicorp/hcl v1.0.0
 	github.com/hashicorp/hcl/v2 v2.10.1
