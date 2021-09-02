@@ -309,6 +309,13 @@ go test -cover
 go test -cover ./...
 ```
 
+## Projects using config
+
+Check out these projects, which use https://github.com/gookit/config :
+
+- https://github.com/JanDeDobbeleer/oh-my-posh A prompt theme engine for any shell.
+- [+ See More](https://pkg.go.dev/github.com/gookit/config?tab=importedby)
+
 ## Gookit packages
 
 - [gookit/ini](https://github.com/gookit/ini) Go config management, use INI files

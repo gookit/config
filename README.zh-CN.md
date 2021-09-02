@@ -291,6 +291,13 @@ go test -cover
 go test -cover ./...
 ```
 
+## 使用Config的项目
+
+看看这些使用了 https://github.com/gookit/config 的项目:
+
+- https://github.com/JanDeDobbeleer/oh-my-posh A prompt theme engine for any shell.
+- [+ See More](https://pkg.go.dev/github.com/gookit/config?tab=importedby)
+
 ## Gookit 工具包
 
 - [gookit/ini](https://github.com/gookit/ini) INI配置读取管理，支持多文件加载，数据覆盖合并, 解析ENV变量, 解析变量引用
