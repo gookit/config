@@ -17,7 +17,15 @@ func TestDefaultLoad(t *testing.T) {
 	st.Nil(err)
 
 	ClearAll()
+	err = LoadFilesByFormat(JSON, "testdata/json_base.json", "testdata/json_other.json")
+	st.Nil(err)
+
+	ClearAll()
 	err = LoadExists("testdata/json_base.json", "not-exist.json")
+	st.Nil(err)
+
+	ClearAll()
+	err = LoadExistsByFormat(JSON, "testdata/json_base.json", "not-exist.json")
 	st.Nil(err)
 
 	ClearAll()
