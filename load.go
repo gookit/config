@@ -251,7 +251,7 @@ func (c *Config) LoadFilesByFormat(format string, sourceFiles ...string) (err er
 
 // LoadExistsByFormat load one or multi files by give format
 func LoadExistsByFormat(format string, sourceFiles ...string) error {
-	return dc.LoadFilesByFormat(format, sourceFiles...)
+	return dc.LoadExistsByFormat(format, sourceFiles...)
 }
 
 // LoadExistsByFormat load one or multi files by give format
