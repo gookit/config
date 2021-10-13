@@ -4,9 +4,11 @@ import (
 	"testing"
 
 	"github.com/gookit/config/v2"
+	"github.com/gookit/config/v2/ini"
 	"github.com/gookit/config/v2/yaml"
 	"github.com/gookit/config/v2/yamlv3"
 	"github.com/gookit/goutil/dump"
+	"github.com/gookit/goutil/fsutil"
 	"github.com/gookit/goutil/testutil"
 	"github.com/stretchr/testify/assert"
 )
@@ -112,5 +114,25 @@ func TestIssues_46(t *testing.T) {
 		dump.Println(h)
 		is.Equal(19090, h.Port)
 	})
+}
 
+// https://github.com/gookit/config/issues/46
+func TestIssues_59(t *testing.T) {
+	is := assert.New(t)
+
+	c := config.NewWithOptions("test", config.ParseEnv)
+	c.AddDriver(ini.Driver)
+
+	err := c.LoadFiles("testdata/ini_base.ini")
+	is.NoError(err)
+	dump.Println(c.Data())
+
+	dumpfile := "testdata/issues59.ini"
+	out := fsutil.MustCreateFile(dumpfile, 0666, 0666)
+	_, err = c.DumpTo(out, config.Ini)
+	is.NoError(err)
+
+	str := string(fsutil.MustReadFile(dumpfile))
+	is.Contains(str, "name = app")
+	is.Contains(str, "key1 = val1")
 }

@@ -109,7 +109,7 @@ func (c *Config) DumpTo(out io.Writer, format string) (n int64, err error) {
 	}
 
 	// encode data to string
-	encoded, err := encoder(&c.data)
+	encoded, err := encoder(c.data)
 	if err != nil {
 		return
 	}
