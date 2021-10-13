@@ -272,6 +272,8 @@ type Options struct {
 - `LoadRemote(format, url string) (err error)`
 - `LoadSources(format string, src []byte, more ...[]byte) (err error)`
 - `LoadStrings(format string, str string, more ...string) (err error)`
+- `LoadFilesByFormat(format string, sourceFiles ...string) (err error)`
+- `LoadExistsByFormat(format string, sourceFiles ...string) error`
 
 ### Getting Values
 
@@ -286,6 +288,7 @@ type Options struct {
 - `Strings(key string) (arr []string)`
 - `StringMap(key string) (mp map[string]string)`
 - `Get(key string, findByPath ...bool) (value interface{})`
+- `BindStruct(key string, dst interface{}) error`
 
 ### Setting Values
 
@@ -299,7 +302,6 @@ type Options struct {
 - `SetData(data map[string]interface{})` set data to override the Config.Data
 - `Exists(key string, findByPath ...bool) bool`
 - `DumpTo(out io.Writer, format string) (n int64, err error)`
-- `BindStruct(key string, dst interface{}) error`
 
 ## Run Tests
 

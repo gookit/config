@@ -254,6 +254,8 @@ type Options struct {
 - `LoadRemote(format, url string) (err error)` 从远程 URL 加载配置数据
 - `LoadSources(format string, src []byte, more ...[]byte) (err error)` 从给定格式的字节数据加载配置
 - `LoadStrings(format string, str string, more ...string) (err error)` 从给定格式的字符串配置里加载配置数据
+- `LoadFilesByFormat(format string, sourceFiles ...string) (err error)` 从给定格式的文件加载配置
+- `LoadExistsByFormat(format string, sourceFiles ...string) error` 从给定格式的文件加载配置，会忽略不存在的文件
 
 ### 获取值
 
@@ -268,6 +270,7 @@ type Options struct {
 - `Strings(key string) (arr []string)`
 - `StringMap(key string) (mp map[string]string)`
 - `Get(key string, findByPath ...bool) (value interface{})`
+- `BindStruct(key string, dst interface{}) error`
 
 ### 设置值
 
@@ -281,7 +284,6 @@ type Options struct {
 - `Exists(key string, findByPath ...bool) bool`
 - `DumpTo(out io.Writer, format string) (n int64, err error)`
 - `SetData(data map[string]interface{})` 设置数据以覆盖 `Config.Data`
-- `BindStruct(key string, dst interface{}) error`
 
 ## 单元测试
 
