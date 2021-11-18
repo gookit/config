@@ -97,7 +97,7 @@ func main() {
 
 ## Bind Structure
 
-> Note: The default binding mapping tag of a structure is `mapstructure`, which can be changed by setting `Options.TagName`
+> Note: The default binding mapping tag of a structure is `mapstructure`, which can be changed by setting the decoder's option `options.DecoderConfig.TagName`
 
 ```go
 user := struct {
@@ -116,7 +116,7 @@ fmt.Println(user.UserName) // inhere
 
 ```go
 config.WithOptions(func(opt *Options) {
-    opt.TagName = "config"
+    options.DecoderConfig.TagName = "config"
 })
 ```
 
