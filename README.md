@@ -250,13 +250,17 @@ type Options struct {
 	// parse key, allow find value by key path. default is True eg: 'key.sub' will find `map[key]sub`
 	ParseKey bool
 	// tag name for binding data to struct
+	// Deprecated
+	// please set tag name by DecoderConfig
 	TagName string
-	// the delimiter char for split key, when `FindByPath=true`. default is '.'
+	// the delimiter char for split key path, if `FindByPath=true`. default is '.'
 	Delimiter byte
-	// default write format. default is JSON
+	// default write format
 	DumpFormat string
-	// default input format. default is JSON
+	// default input format
 	ReadFormat string
+	// DecoderConfig setting for binding data to struct
+	DecoderConfig *mapstructure.DecoderConfig
 }
 ```
 
