@@ -41,6 +41,12 @@ Golang's application config manage tool library.
 
 ## Usage
 
+**Install**:
+
+```bash
+go get github.com/gookit/config/v2
+```
+
 Here using the yaml format as an example(`testdata/yml_other.yml`):
 
 ```yaml
@@ -125,6 +131,8 @@ Can use empty string for bind all config data to a struct:
 ```go
 config.BindStruct("", &myConf)
 ```
+
+> `config.MapOnExists` like `BindStruct`，but map binding only if key exists
 
 ### Direct Read data
 
@@ -292,7 +300,11 @@ type Options struct {
 - `Strings(key string) (arr []string)`
 - `StringMap(key string) (mp map[string]string)`
 - `Get(key string, findByPath ...bool) (value interface{})`
+
+**Mapping data to struct:**
+
 - `BindStruct(key string, dst interface{}) error`
+- `MapOnExists(key string, dst interface{}) error`
 
 ### Setting Values
 

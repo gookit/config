@@ -98,7 +98,7 @@ func TestConfig_Structure(t *testing.T) {
 
 	some := struct {
 		Age  int
-		Kye  string
+		Key  string
 		Tags []int
 	}{}
 	err = BindStruct("sec", &some)
@@ -227,4 +227,27 @@ func TestMapStruct_embedded_struct_squash_true(t *testing.T) {
 	assert.NoError(t, err)
 	dump.Println(cfg1)
 	assert.Equal(t, 34, cfg1.Test1.B)
+}
+
+func TestMapOnExists(t *testing.T) {
+	cfg := Default()
+	cfg.ClearAll()
+
+	err := cfg.LoadStrings(JSON, `{
+"age": 28,
+"name": "inhere",
+"sports": ["pingPong", "跑步"]
+}`)
+	assert.NoError(t, err)
+	assert.NoError(t, MapOnExists("not-exists", nil))
+
+	user := &struct {
+		Age    int
+		Name   string
+		Sports []string
+	}{}
+	assert.NoError(t, MapOnExists("", user))
+
+	assert.Equal(t, 28, user.Age)
+	assert.Equal(t, "inhere", user.Name)
 }

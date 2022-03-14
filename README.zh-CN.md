@@ -40,6 +40,12 @@
 
 ## 快速使用
 
+**获取包**:
+
+```bash
+go get github.com/gookit/config/v2
+```
+
 这里使用yaml格式作为示例(`testdata/yml_other.yml`):
 
 ```yaml
@@ -125,6 +131,8 @@ config.WithOptions(func(opt *Options) {
 ```go
 config.BindStruct("", &myConf)
 ```
+
+> `config.MapOnExists` 与 `BindStruct` 一样，但仅当 key 存在时才进行映射绑定
 
 ### 快速获取数据
 
@@ -270,7 +278,11 @@ type Options struct {
 - `Strings(key string) (arr []string)`
 - `StringMap(key string) (mp map[string]string)`
 - `Get(key string, findByPath ...bool) (value interface{})`
+
+**将数据映射到结构体:**
+
 - `BindStruct(key string, dst interface{}) error`
+- `MapOnExists(key string, dst interface{}) error`
 
 ### 设置值
 

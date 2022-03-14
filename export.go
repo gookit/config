@@ -10,6 +10,7 @@ import (
 )
 
 // MapStruct alias method of the 'Structure'
+//
 // Usage:
 // 	dbInfo := &Db{}
 // 	config.MapStruct("db", dbInfo)
@@ -28,7 +29,23 @@ func (c *Config) BindStruct(key string, dst interface{}) error {
 	return c.Structure(key, dst)
 }
 
+// MapOnExists mapping data to the dst structure only on key exists.
+func MapOnExists(key string, dst interface{}) error {
+	return dc.MapOnExists(key, dst)
+}
+
+// MapOnExists mapping data to the dst structure only on key exists.
+func (c *Config) MapOnExists(key string, dst interface{}) error {
+	err := c.Structure(key, dst)
+	if err != nil && err == errNotFound {
+		return nil
+	}
+
+	return err
+}
+
 // Structure get config data and binding to the dst structure.
+//
 // Usage:
 // 	dbInfo := Db{}
 // 	config.Structure("db", &dbInfo)
