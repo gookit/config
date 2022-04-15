@@ -1,10 +1,10 @@
 package hclv2
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/gookit/config/v2"
+	"github.com/gookit/goutil/dump"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,11 +30,10 @@ func TestLoadFile(t *testing.T) {
 	is.True(c.HasDecoder(config.Hcl))
 
 	return
-	err := c.LoadFiles("../testdata/hcl_base.hcl")
+	err := c.LoadFiles("../testdata/hcl2_base.hcl")
 	is.NoError(err)
+	dump.Println(c.Data())
 
-	fmt.Println(c.Data())
-
-	err = c.LoadFiles("../testdata/hcl_example.conf")
+	err = c.LoadFiles("../testdata/hcl2_example.hcl")
 	is.NoError(err)
 }

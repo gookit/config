@@ -4,15 +4,11 @@ service "http" {
   listen_addr = "127.0.0.1:8080"
 
   process "main" {
-    command = [
-      "/usr/local/bin/awesome-app",
-      "server"]
+    command = ["/usr/local/bin/awesome-app", "server"]
   }
 
   process "mgmt" {
-    command = [
-      "/usr/local/bin/awesome-app",
-      "mgmt"]
+    command = ["/usr/local/bin/awesome-app", "mgmt"]
   }
 }
 

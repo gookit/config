@@ -1,3 +1,4 @@
+
 job "binstore-storagelocker" {
   group "binsl" {
     task "binstore" {

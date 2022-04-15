@@ -31,7 +31,6 @@ func TestLoadFile(t *testing.T) {
 
 	err := c.LoadFiles("../testdata/hcl_base.hcl")
 	is.NoError(err)
-
 	dump.Println(c.Data())
 
 	err = c.LoadFiles("../testdata/hcl_example.conf")
