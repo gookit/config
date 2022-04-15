@@ -69,7 +69,7 @@ func TestLoadFromMap(t *testing.T) {
 		assert.Equal(t, 23, Int("dont_env_test2"))
 	} else {
 		assert.Equal(t, "val1", Get("dont_env_test1"))
-		assert.Equal(t, 0, Int("dont_env_test2"))
+		assert.Equal(t, 23, Int("dont_env_test2"))
 	}
 
 	assert.Equal(t, 20, Int("dont_env_test1", 20))
