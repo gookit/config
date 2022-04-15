@@ -44,6 +44,7 @@ func (c *Config) LoadExists(sourceFiles ...string) (err error) {
 func LoadRemote(format, url string) error { return dc.LoadRemote(format, url) }
 
 // LoadRemote load config data from remote URL.
+//
 // Usage:
 // 	c.LoadRemote(config.JSON, "http://abc.com/api-config.json")
 func (c *Config) LoadRemote(format, url string) (err error) {
@@ -82,13 +83,14 @@ func (c *Config) LoadOSEnv(keys []string, keyToLower bool) {
 		// NOTICE:
 		// if is windows os, os.Getenv() Key is not case sensitive
 		val := os.Getenv(key)
-
 		if keyToLower {
 			key = strings.ToLower(key)
 		}
 
 		_ = c.Set(key, val)
 	}
+
+	c.fireHook(OnLoadData)
 }
 
 // support bound types for CLI flags vars
@@ -147,29 +149,16 @@ func (c *Config) LoadFlags(keys []string) (err error) {
 		// ignore error
 		_ = c.Set(name, f.Value.String())
 	})
+
+	c.fireHook(OnLoadData)
 	return
-}
-
-func parseVarNameAndType(key string) (string, string) {
-	typ := "string"
-	key = strings.Trim(key, "-")
-
-	// can set var type: int, uint, bool
-	if strings.IndexByte(key, ':') > 0 {
-		list := strings.SplitN(key, ":", 2)
-		key, typ = list[0], list[1]
-
-		if _, ok := validTypes[typ]; !ok {
-			typ = "string"
-		}
-	}
-	return key, typ
 }
 
 // LoadData load one or multi data
 func LoadData(dataSource ...interface{}) error { return dc.LoadData(dataSource...) }
 
 // LoadData load data from map OR struct
+//
 // The dataSources can be:
 //  - map[string]interface{}
 func (c *Config) LoadData(dataSources ...interface{}) (err error) {
@@ -183,6 +172,8 @@ func (c *Config) LoadData(dataSources ...interface{}) (err error) {
 			return
 		}
 	}
+
+	c.fireHook(OnLoadData)
 	return
 }
 
@@ -192,6 +183,7 @@ func LoadSources(format string, src []byte, more ...[]byte) error {
 }
 
 // LoadSources load data from byte content.
+//
 // Usage:
 // 	config.LoadSources(config.Yml, []byte(`
 // 	name: blog
@@ -240,7 +232,7 @@ func LoadFilesByFormat(format string, sourceFiles ...string) error {
 }
 
 // LoadFilesByFormat load one or multi files by give format
-func (c *Config) LoadFilesByFormat(format string, sourceFiles ...string) (err error)  {
+func (c *Config) LoadFilesByFormat(format string, sourceFiles ...string) (err error) {
 	for _, file := range sourceFiles {
 		if err = c.loadFile(file, false, format); err != nil {
 			return
@@ -255,7 +247,7 @@ func LoadExistsByFormat(format string, sourceFiles ...string) error {
 }
 
 // LoadExistsByFormat load one or multi files by give format
-func (c *Config) LoadExistsByFormat(format string, sourceFiles ...string) (err error)  {
+func (c *Config) LoadExistsByFormat(format string, sourceFiles ...string) (err error) {
 	for _, file := range sourceFiles {
 		if err = c.loadFile(file, true, format); err != nil {
 			return
@@ -324,6 +316,9 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 		err = mergo.Merge(&c.data, data, mergo.WithOverride, mergo.WithTypeCheck)
 	}
 
+	if err != nil {
+		c.fireHook(OnLoadData)
+	}
 	data = nil
 	return
 }

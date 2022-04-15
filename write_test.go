@@ -1,6 +1,7 @@
 package config
 
 import (
+	"bytes"
 	"fmt"
 	"testing"
 
@@ -171,4 +172,25 @@ func TestSet(t *testing.T) {
 	Default().Readonly()
 	st.True(c.Options().Readonly)
 	st.Error(Set("name", "new name"))
+}
+
+func TestSet_fireEvent(t *testing.T) {
+	var buf bytes.Buffer
+	hookFn := func(event string, c *Config) {
+		buf.WriteString("fire the: ")
+		buf.WriteString(event)
+	}
+
+	c := NewWithOptions("test", WithHookFunc(hookFn))
+	err := c.LoadData(map[string]interface{}{
+		"key": "value",
+	})
+	assert.NoError(t, err)
+	assert.Equal(t, "fire the: load.data", buf.String())
+	buf.Reset()
+
+	err = c.Set("key", "value2")
+	assert.NoError(t, err)
+	assert.Equal(t, "fire the: set.value", buf.String())
+	buf.Reset()
 }

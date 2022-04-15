@@ -21,6 +21,8 @@
 - 支持从 OS ENV 变量数据加载配置
 - 支持从远程 URL 加载配置数据
 - 支持从命令行参数(`flags`)设置配置数据
+- 支持在配置数据更改时触发事件
+  - 可用事件: `set.value`, `set.data`, `load.data`, `clean.data`
 - 支持数据覆盖合并，加载多份数据时将按key自动合并
 - 支持将全部或部分配置数据绑定到结构体 `config.BindStruct("key", &s)`
 - 支持通过 `.` 分隔符来按路径获取子级值，也支持自定义分隔符。 e.g `map.key` `arr.2`
@@ -247,6 +249,10 @@ type Options struct {
 	DumpFormat string
 	// default input format. default is JSON
 	ReadFormat string
+    // DecoderConfig setting for binding data to struct
+    DecoderConfig *mapstructure.DecoderConfig
+    // HookFunc on data changed.
+    HookFunc HookFunc
 }
 ```
 

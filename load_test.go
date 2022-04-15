@@ -44,9 +44,13 @@ func TestDefaultLoad(t *testing.T) {
 func TestLoad(t *testing.T) {
 	is := assert.New(t)
 
-	c := New("test")
+	var name string
+	c := New("test").WithOptions(WithHookFunc(func(event string, c *Config) {
+		name = event
+	}))
 	err := c.LoadExists("testdata/json_base.json", "not-exist.json")
 	is.Nil(err)
+	is.Equal(OnLoadData, name)
 
 	c.ClearAll()
 

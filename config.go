@@ -41,13 +41,7 @@ package config
 
 import (
 	"fmt"
-	"os"
-	"reflect"
-	"strings"
 	"sync"
-
-	"github.com/gookit/goutil/envutil"
-	"github.com/mitchellh/mapstructure"
 )
 
 // There are supported config format
@@ -71,8 +65,6 @@ type strArr []string
 type intMap map[string]int
 type strMap map[string]string
 
-// type fmtName string
-
 // This is a default config manager instance
 var dc = New("default")
 
@@ -88,30 +80,6 @@ type Decoder func(blob []byte, v interface{}) (err error)
 
 // Encoder for decode yml,json,toml format content
 type Encoder func(v interface{}) (out []byte, err error)
-
-// Options config options
-type Options struct {
-	// parse env value. like: "${EnvName}" "${EnvName|default}"
-	ParseEnv bool
-	// config is readonly
-	Readonly bool
-	// enable config data cache
-	EnableCache bool
-	// parse key, allow find value by key path. eg: 'key.sub' will find `map[key]sub`
-	ParseKey bool
-	// tag name for binding data to struct
-	// Deprecated
-	// please set tag name by DecoderConfig
-	TagName string
-	// the delimiter char for split key path, if `FindByPath=true`. default is '.'
-	Delimiter byte
-	// default write format
-	DumpFormat string
-	// default input format
-	ReadFormat string
-	// DecoderConfig setting for binding data to struct
-	DecoderConfig *mapstructure.DecoderConfig
-}
 
 // Config structure definition
 type Config struct {
@@ -186,99 +154,6 @@ func Default() *Config {
 	return dc
 }
 
-func newDefaultOption() *Options {
-	return &Options{
-		ParseKey:  true,
-		TagName:   defaultStructTag,
-		Delimiter: defaultDelimiter,
-		// for export
-		DumpFormat: JSON,
-		ReadFormat: JSON,
-		// struct decoder config
-		DecoderConfig: newDefaultDecoderConfig(),
-	}
-}
-
-func newDefaultDecoderConfig() *mapstructure.DecoderConfig {
-	return &mapstructure.DecoderConfig{
-		// tag name for binding struct
-		TagName: defaultStructTag,
-		// will auto convert string to int/uint
-		WeaklyTypedInput: true,
-		// DecodeHook: ParseEnvVarStringHookFunc,
-	}
-}
-
-// ParseEnvVarStringHookFunc returns a DecodeHookFunc that parse ENV var
-func ParseEnvVarStringHookFunc() mapstructure.DecodeHookFunc {
-	return func(f reflect.Type, t reflect.Type, data interface{}) (interface{}, error) {
-		if f.Kind() != reflect.String {
-			return data, nil
-		}
-
-		str := envutil.ParseEnvValue(data.(string))
-		return str, nil
-	}
-}
-
-/*************************************************************
- * config setting
- *************************************************************/
-
-// ParseEnv set parse env
-func ParseEnv(opts *Options) { opts.ParseEnv = true }
-
-// Readonly set readonly
-func Readonly(opts *Options) { opts.Readonly = true }
-
-// Delimiter set delimiter char
-func Delimiter(sep byte) func(*Options) {
-	return func(opts *Options) {
-		opts.Delimiter = sep
-	}
-}
-
-// EnableCache set readonly
-func EnableCache(opts *Options) { opts.EnableCache = true }
-
-// WithOptions with options
-func WithOptions(opts ...func(*Options)) { dc.WithOptions(opts...) }
-
-// WithOptions apply some options
-func (c *Config) WithOptions(opts ...func(*Options)) *Config {
-	if !c.IsEmpty() {
-		panic("config: Cannot set options after data has been loaded")
-	}
-
-	// apply options
-	for _, opt := range opts {
-		opt(c.opts)
-	}
-	return c
-}
-
-// GetOptions get options
-func GetOptions() *Options { return dc.Options() }
-
-// Options get
-func (c *Config) Options() *Options {
-	return c.opts
-}
-
-// With apply some options
-func (c *Config) With(fn func(c *Config)) *Config {
-	fn(c)
-	return c
-}
-
-// Readonly disable set data to config.
-// Usage:
-// 	config.LoadFiles(a, b, c)
-// 	config.Readonly()
-func (c *Config) Readonly() {
-	c.opts.Readonly = true
-}
-
 /*************************************************************
  * config drivers
  *************************************************************/
@@ -298,54 +173,6 @@ func (c *Config) HasDecoder(format string) bool {
 	format = fixFormat(format)
 	_, ok := c.decoders[format]
 	return ok
-}
-
-// SetDecoder add/set a format decoder
-// Deprecated
-// please use driver instead
-func SetDecoder(format string, decoder Decoder) {
-	dc.SetDecoder(format, decoder)
-}
-
-// SetDecoder set decoder
-// Deprecated
-// please use driver instead
-func (c *Config) SetDecoder(format string, decoder Decoder) {
-	format = fixFormat(format)
-	c.decoders[format] = decoder
-}
-
-// SetDecoders set decoders
-// Deprecated
-// please use driver instead
-func (c *Config) SetDecoders(decoders map[string]Decoder) {
-	for format, decoder := range decoders {
-		c.SetDecoder(format, decoder)
-	}
-}
-
-// SetEncoder set a encoder for the format
-// Deprecated
-// please use driver instead
-func SetEncoder(format string, encoder Encoder) {
-	dc.SetEncoder(format, encoder)
-}
-
-// SetEncoder set a encoder for the format
-// Deprecated
-// please use driver instead
-func (c *Config) SetEncoder(format string, encoder Encoder) {
-	format = fixFormat(format)
-	c.encoders[format] = encoder
-}
-
-// SetEncoders set encoders
-// Deprecated
-// please use driver instead
-func (c *Config) SetEncoders(encoders map[string]Encoder) {
-	for format, encoder := range encoders {
-		c.SetEncoder(format, encoder)
-	}
 }
 
 // HasEncoder has encoder
@@ -406,6 +233,8 @@ func (c *Config) ClearAll() {
 
 // ClearData clear data
 func (c *Config) ClearData() {
+	c.fireHook(OnCleanData)
+
 	c.data = make(map[string]interface{})
 	c.loadedFiles = []string{}
 }
@@ -421,8 +250,15 @@ func (c *Config) ClearCaches() {
 }
 
 /*************************************************************
- * helper methods/functions
+ * helper methods
  *************************************************************/
+
+// fire hook
+func (c *Config) fireHook(name string) {
+	if c.opts.HookFunc != nil {
+		c.opts.HookFunc(name, c)
+	}
+}
 
 // record error
 func (c *Config) addError(err error) {
@@ -432,48 +268,4 @@ func (c *Config) addError(err error) {
 // format and record error
 func (c *Config) addErrorf(format string, a ...interface{}) {
 	c.err = fmt.Errorf(format, a...)
-}
-
-// GetEnv get os ENV value by name
-// Deprecated
-//	please use Getenv() instead
-func GetEnv(name string, defVal ...string) (val string) {
-	return Getenv(name, defVal...)
-}
-
-// Getenv get os ENV value by name. like os.Getenv, but support default value
-// Notice:
-// - Key is not case sensitive when getting
-func Getenv(name string, defVal ...string) (val string) {
-	if val = os.Getenv(name); val != "" {
-		return
-	}
-
-	if len(defVal) > 0 {
-		val = defVal[0]
-	}
-	return
-}
-
-// format key
-func formatKey(key, sep string) string {
-	return strings.Trim(strings.TrimSpace(key), sep)
-}
-
-// fix inc/conf/yaml format
-func fixFormat(f string) string {
-	if f == Yml {
-		f = Yaml
-	}
-
-	if f == "inc" {
-		f = Ini
-	}
-
-	// eg nginx config file.
-	if f == "conf" {
-		f = Hcl
-	}
-
-	return f
 }

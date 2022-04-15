@@ -22,6 +22,7 @@ func SetData(data map[string]interface{}) {
 // SetData for override the Config.Data
 func (c *Config) SetData(data map[string]interface{}) {
 	c.data = data
+	c.fireHook(OnSetData)
 }
 
 // Set val by key
@@ -31,12 +32,10 @@ func Set(key string, val interface{}, setByPath ...bool) error {
 
 // Set a value by key string.
 func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error) {
-	// if is readonly
 	if c.opts.Readonly {
 		return readonlyErr
 	}
 
-	// open lock
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
@@ -45,7 +44,7 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 		return keyIsEmptyErr
 	}
 
-	// is top key
+	defer c.fireHook(OnSetValue)
 	if strings.IndexByte(key, sep) == -1 {
 		c.data[key] = val
 		return
@@ -145,7 +144,6 @@ func buildValueByPath(paths []string, val interface{}) (newItem map[string]inter
 // reverse a slice. (slice 是引用，所以可以直接改变)
 func sliceReverse(ss []string) {
 	ln := len(ss)
-
 	for i := 0; i < ln/2; i++ {
 		li := ln - i - 1
 		// fmt.Println(i, "<=>", li)

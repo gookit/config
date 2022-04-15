@@ -17,11 +17,13 @@ Golang's application config manage tool library.
 - Support multi format: `JSON`(default), `JSON5`, `INI`, `YAML`, `TOML`, `HCL`, `ENV`, `Flags`
   - `JSON` content support comments. will auto clear comments
   - Other drivers are used on demand, not used will not be loaded into the application.
-	- Possibility to add custom driver for your specific format
+    - Possibility to add custom driver for your specific format
 - Support multi-file and multi-data loading
 - Support loading configuration from os ENV
 - Support for loading configuration data from remote URLs
 - Support for setting configuration data from command line arguments(`flags`)
+- Support listen and fire events on config data changed. 
+  - allow events: `set.value`, `set.data`, `load.data`, `clean.data`
 - Support data overlay and merge, automatically load by key when loading multiple copies of data
 - Support for binding all or part of the configuration data to the structure
 - Support get sub value by path, like `map.key` `arr.2`
@@ -269,6 +271,8 @@ type Options struct {
 	ReadFormat string
 	// DecoderConfig setting for binding data to struct
 	DecoderConfig *mapstructure.DecoderConfig
+	// HookFunc on data changed.
+	HookFunc HookFunc
 }
 ```
 
