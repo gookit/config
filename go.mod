@@ -3,7 +3,7 @@ module github.com/gookit/config/v2
 go 1.15
 
 require (
-	github.com/BurntSushi/toml v0.3.1
+	github.com/BurntSushi/toml v1.1.0
 	github.com/gookit/goutil v0.5.0
 	github.com/gookit/ini/v2 v2.1.0
 	github.com/hashicorp/hcl v1.0.0
