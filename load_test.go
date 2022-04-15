@@ -45,14 +45,15 @@ func TestLoad(t *testing.T) {
 	is := assert.New(t)
 
 	var name string
-	c := New("test").WithOptions(WithHookFunc(func(event string, c *Config) {
-		name = event
-	}))
+	c := New("test").
+		WithOptions(WithHookFunc(func(event string, c *Config) {
+			name = event
+		}))
 	err := c.LoadExists("testdata/json_base.json", "not-exist.json")
 	is.Nil(err)
-	is.Equal(OnLoadData, name)
 
 	c.ClearAll()
+	is.Equal(OnCleanData, name)
 
 	// load map data
 	err = c.LoadData(map[string]interface{}{
@@ -63,6 +64,7 @@ func TestLoad(t *testing.T) {
 		"info":    map[string]string{"k1": "a", "k2": "b"},
 	})
 
+	is.Equal(OnLoadData, name)
 	is.NotEmpty(c.Data())
 	is.Nil(err)
 
