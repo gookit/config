@@ -45,7 +45,7 @@ type hclDriver struct {
 	name string
 }
 
-// Name
+// Name get
 func (d *hclDriver) Name() string {
 	return d.name
 }

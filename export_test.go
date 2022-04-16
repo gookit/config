@@ -251,3 +251,32 @@ func TestMapOnExists(t *testing.T) {
 	assert.Equal(t, 28, user.Age)
 	assert.Equal(t, "inhere", user.Name)
 }
+
+func TestConfig_BindStruct_set_DecoderConfig(t *testing.T) {
+	cfg := NewWith("test", func(c *Config) {
+		c.opts.DecoderConfig = nil
+	})
+	err := cfg.LoadStrings(JSON, `{
+"age": 28,
+"name": "inhere",
+"sports": ["pingPong", "跑步"]
+}`)
+	assert.NoError(t, err)
+
+	user := &struct {
+		Age    int
+		Name   string
+		Sports []string
+	}{}
+	assert.NoError(t, cfg.BindStruct("", user))
+
+	assert.Equal(t, 28, user.Age)
+	assert.Equal(t, "inhere", user.Name)
+
+	// not use ptr
+	assert.Error(t, cfg.BindStruct("", *user))
+}
+
+func TestConfig_BindStruct_error(t *testing.T) {
+	// cfg := NewEmpty()
+}

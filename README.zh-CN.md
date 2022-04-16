@@ -228,6 +228,31 @@ myConf := config.NewEmpty("my-conf")
 myConf := config.NewWithOptions("my-conf", config.ParseEnv, config.ReadOnly)
 ```
 
+## 监听配置更改
+
+现在，您可以添加一个挂钩函数来监听配置数据更改。然后，您可以执行一些自定义操作, 例如：将数据写入文件
+
+在创建配置时添加钩子函数:
+
+```go
+	hookFn := func(event string, c *Config) {
+		fmt.Println("fire the:", event)
+	}
+
+	c := NewWithOptions("test", WithHookFunc(hookFn))
+	// for global config
+	config.WithOptions(WithHookFunc(hookFn))
+```
+
+之后, 当调用 `LoadXXX, Set, SetData, ClearData` 等方法时, 就会输出:
+
+```text
+fire the: load.data
+fire the: set.value
+fire the: set.data
+fire the: clean.data
+```
+
 ## 可用选项
 
 ```go

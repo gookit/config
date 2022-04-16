@@ -341,6 +341,17 @@ func TestDelimiter(t *testing.T) {
 	is.NoError(err)
 	// is.Equal(1, c.Int("top0"))
 	is.Equal(2, c.Int("top1:sub0"))
+
+	// load will use defaultDelimiter
+	c = NewWithOptions("test", Delimiter(0))
+	is.Equal(byte(0), c.Options().Delimiter)
+
+	err = c.LoadData(map[string]interface{}{
+		"top0": 1,
+		"top1": map[string]int{"sub0": 2},
+	})
+	is.NoError(err)
+	is.Equal(2, c.Int("top1.sub0"))
 }
 
 func TestEnableCache(t *testing.T) {

@@ -136,7 +136,7 @@ config.BindStruct("", &myConf)
 
 > `config.MapOnExists` like `BindStruct`，but map binding only if key exists
 
-### Direct Read data
+### Direct read data
 
 - Get integer
 
@@ -231,7 +231,7 @@ config.Bool("app_debug") // true
 config.String("app_name") // "config"
 ```
 
-## New Config Instance
+## New config instance
 
 You can create custom config instance
 
@@ -246,7 +246,32 @@ myConf := config.NewEmpty("my-conf")
 myConf := config.NewWithOptions("my-conf", config.ParseEnv, config.ReadOnly)
 ```
 
-## Available Options
+## Listen config change
+
+Now, you can add a hook func for listen config data change. then, you can do something like: write data to file
+
+Add hook func on create config:
+
+```go
+	hookFn := func(event string, c *Config) {
+		fmt.Println("fire the:", event)
+	}
+
+	c := NewWithOptions("test", WithHookFunc(hookFn))
+	// for global config
+	config.WithOptions(WithHookFunc(hookFn))
+```
+
+After that, when calling `LoadXXX, Set, SetData, ClearData` etc methods, it will output:
+
+```text
+fire the: load.data
+fire the: set.value
+fire the: set.data
+fire the: clean.data
+```
+
+## Available options
 
 ```go
 // Options config options
