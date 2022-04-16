@@ -21,7 +21,10 @@ func SetData(data map[string]interface{}) {
 
 // SetData for override the Config.Data
 func (c *Config) SetData(data map[string]interface{}) {
+	c.lock.Lock()
 	c.data = data
+	c.lock.Unlock()
+
 	c.fireHook(OnSetData)
 }
 
