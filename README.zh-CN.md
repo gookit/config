@@ -265,10 +265,10 @@ ioutil.WriteFile("my-config.json", buf.Bytes(), 0755)
 
 **示例:美化导出的JSON**
 
+可以设置默认变量 `JSONMarshalIndent` 的值 或 自定义新的 JSON 驱动程序。
+
 ```go
-config.SetEncoder(config.JSON, func(v interface{}) ([]byte, error) {
-    return json.MarshalIndent(v, "", "    ")
-})
+config.JSONMarshalIndent = "    "
 ```
 
 ## 可用选项

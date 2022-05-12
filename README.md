@@ -283,10 +283,10 @@ ioutil.WriteFile("my-config.json", buf.Bytes(), 0755)
 
 **Pretty dump JSON**
 
+You can set the default var `JSONMarshalIndent` or custom a new JSON driver. 
+
 ```go
-config.SetEncoder(config.JSON, func(v interface{}) ([]byte, error) {
-    return json.MarshalIndent(v, "", "    ")
-})
+config.JSONMarshalIndent = "    "
 ```
 
 ## Available options

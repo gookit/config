@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	readonlyErr   = errors.New("the config instance in 'readonly' mode")
-	keyIsEmptyErr = errors.New("the config key is cannot be empty")
+	errReadonly   = errors.New("the config instance in 'readonly' mode")
+	errKeyIsEmpty = errors.New("the config key is cannot be empty")
 )
 
 // SetData for override the Config.Data
@@ -36,7 +36,7 @@ func Set(key string, val interface{}, setByPath ...bool) error {
 // Set a value by key string.
 func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error) {
 	if c.opts.Readonly {
-		return readonlyErr
+		return errReadonly
 	}
 
 	c.lock.Lock()
@@ -44,7 +44,7 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 
 	sep := c.opts.Delimiter
 	if key = formatKey(key, string(sep)); key == "" {
-		return keyIsEmptyErr
+		return errKeyIsEmpty
 	}
 
 	defer c.fireHook(OnSetValue)

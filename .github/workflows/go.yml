@@ -26,7 +26,6 @@ jobs:
 
     - name: Revive check
       uses: morphy2k/revive-action@v2.3.1
-      if: ${{ matrix.os == 'ubuntu-latest' }}
       with:
         # Exclude patterns, separated by semicolons (optional)
         exclude: "./internal/..."
