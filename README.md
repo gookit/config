@@ -271,6 +271,24 @@ fire the: set.data
 fire the: clean.data
 ```
 
+## Dump config data
+
+```go
+buf := new(bytes.Buffer)
+
+_, err := config.DumpTo(buf, config.JSON)
+
+ioutil.WriteFile("my-config.json", buf.Bytes(), 0755)
+```
+
+**Pretty dump JSON**
+
+```go
+config.SetEncoder(config.JSON, func(v interface{}) ([]byte, error) {
+    return json.MarshalIndent(v, "", "    ")
+})
+```
+
 ## Available options
 
 ```go

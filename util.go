@@ -117,7 +117,7 @@ func formatKey(key, sep string) string {
 	return strings.Trim(strings.TrimSpace(key), sep)
 }
 
-// fix inc/conf/yaml format
+// resolve fix inc/conf/yaml format
 func fixFormat(f string) string {
 	if f == Yml {
 		f = Yaml

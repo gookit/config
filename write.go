@@ -113,7 +113,7 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 			return err
 		}
 	default:
-		// as an top key
+		// as a top key
 		c.data[key] = val
 		// err = errors.New("not supported value type, cannot setting value for the key: " + key)
 	}

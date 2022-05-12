@@ -253,6 +253,24 @@ fire the: set.data
 fire the: clean.data
 ```
 
+## 导出配置到文件
+
+```go
+buf := new(bytes.Buffer)
+
+_, err := config.DumpTo(buf, config.JSON)
+
+ioutil.WriteFile("my-config.json", buf.Bytes(), 0755)
+```
+
+**示例:美化导出的JSON**
+
+```go
+config.SetEncoder(config.JSON, func(v interface{}) ([]byte, error) {
+    return json.MarshalIndent(v, "", "    ")
+})
+```
+
 ## 可用选项
 
 ```go
