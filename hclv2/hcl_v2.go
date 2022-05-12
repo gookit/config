@@ -38,24 +38,4 @@ var Encoder config.Encoder = func(ptr interface{}) (out []byte, err error) {
 }
 
 // Driver instance for hcl
-var Driver = &hclDriver{config.Hcl}
-
-// hclDriver for hcl format content
-type hclDriver struct {
-	name string
-}
-
-// Name get
-func (d *hclDriver) Name() string {
-	return d.name
-}
-
-// GetDecoder for hcl
-func (d *hclDriver) GetDecoder() config.Decoder {
-	return Decoder
-}
-
-// GetEncoder for hcl
-func (d *hclDriver) GetEncoder() config.Encoder {
-	return Encoder
-}
+var Driver = config.NewDriver(config.Hcl, Decoder, Encoder)

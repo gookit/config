@@ -68,19 +68,6 @@ type strMap map[string]string
 // This is a default config manager instance
 var dc = New("default")
 
-// Driver interface
-type Driver interface {
-	Name() string
-	GetDecoder() Decoder
-	GetEncoder() Encoder
-}
-
-// Decoder for decode yml,json,toml format content
-type Decoder func(blob []byte, v interface{}) (err error)
-
-// Encoder for decode yml,json,toml format content
-type Encoder func(v interface{}) (out []byte, err error)
-
 // Config structure definition
 type Config struct {
 	err error
@@ -103,10 +90,9 @@ type Config struct {
 	decoders map[string]Decoder
 	encoders map[string]Encoder
 
-	// cache got config data
-	intCache map[string]int
-	strCache map[string]string
-
+	// cache on got config data
+	intCache  map[string]int
+	strCache  map[string]string
 	iArrCache map[string]intArr
 	iMapCache map[string]intMap
 	sArrCache map[string]strArr

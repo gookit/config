@@ -6,35 +6,25 @@ import (
 	"github.com/yosuke-furukawa/json5/encoding/json5"
 )
 
+// NAME for driver
 const NAME = "json5"
+
+// JSONMarshalIndent if not empty, will use json.MarshalIndent for encode data.
+var JSONMarshalIndent string
 
 var (
 	// Decoder for json
 	Decoder config.Decoder = json5.Unmarshal
 
 	// Encoder for json5
-	Encoder config.Encoder = json5.Marshal
+	Encoder config.Encoder = func(v interface{}) (out []byte, err error) {
+		if len(JSONMarshalIndent) == 0 {
+			return json5.Marshal(v)
+		}
+
+		return json5.MarshalIndent(v, "", JSONMarshalIndent)
+	}
 
 	// Driver for json5
-	Driver = &json5Driver{name: NAME}
+	Driver = config.NewDriver(NAME, Decoder, Encoder)
 )
-
-// json5Driver for json5 format content
-type json5Driver struct {
-	name string
-}
-
-// Name get name
-func (d *json5Driver) Name() string {
-	return d.name
-}
-
-// GetDecoder for json5
-func (d *json5Driver) GetDecoder() config.Decoder {
-	return Decoder
-}
-
-// GetEncoder for json5
-func (d *json5Driver) GetEncoder() config.Encoder {
-	return Encoder
-}
