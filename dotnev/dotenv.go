@@ -21,7 +21,7 @@ var (
 	// originalEnv []string
 
 	// cache all loaded ENV data
-	loadedData = map[string]string{}
+	// loadedData = map[string]string{}
 )
 
 // LoadedData get all loaded data by dontenv

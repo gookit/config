@@ -233,6 +233,7 @@ func TestJSONDriver(t *testing.T) {
 	c.AddDriver(JSONDriver)
 	is.True(c.HasDecoder(JSON))
 	is.True(c.HasEncoder(JSON))
+	is.Len(c.DriverNames(), 1)
 
 	is.Equal(byte('.'), c.Options().Delimiter)
 	is.Equal(".", string(c.Options().Delimiter))
@@ -369,7 +370,7 @@ func TestEnableCache(t *testing.T) {
 	is.Equal("app", str)
 
 	sArr := c.Strings("arr1")
-	is.Equal("app", str)
+	is.Equal("val1", sArr[1])
 
 	// re-get, from caches
 	sArr = c.Strings("arr1")
