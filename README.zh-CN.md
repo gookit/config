@@ -255,20 +255,30 @@ fire the: clean.data
 
 ## 导出配置到文件
 
+> 可以使用 `config.DumpTo(out io.Writer, format string)` 将整个配置数据导出到指定的writer, 比如 buffer,file。
+
+**示例:导出为JSON文件**
+
 ```go
 buf := new(bytes.Buffer)
 
 _, err := config.DumpTo(buf, config.JSON)
-
 ioutil.WriteFile("my-config.json", buf.Bytes(), 0755)
 ```
 
-**示例:美化导出的JSON**
+**示例:导出格式化的JSON**
 
 可以设置默认变量 `JSONMarshalIndent` 的值 或 自定义新的 JSON 驱动程序。
 
 ```go
 config.JSONMarshalIndent = "    "
+```
+
+**示例:导出为YAML文件**
+
+```go
+_, err := config.DumpTo(buf, config.YAML)
+ioutil.WriteFile("my-config.yaml", buf.Bytes(), 0755)
 ```
 
 ## 可用选项

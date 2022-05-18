@@ -273,20 +273,30 @@ fire the: clean.data
 
 ## Dump config data
 
+> Can use `config.DumpTo()` export the configuration data to the specified `writer`, such as: buffer,file
+
+**Dump to JSON file**
+
 ```go
 buf := new(bytes.Buffer)
 
 _, err := config.DumpTo(buf, config.JSON)
-
 ioutil.WriteFile("my-config.json", buf.Bytes(), 0755)
 ```
 
-**Pretty dump JSON**
+**Dump pretty JSON**
 
 You can set the default var `JSONMarshalIndent` or custom a new JSON driver. 
 
 ```go
 config.JSONMarshalIndent = "    "
+```
+
+**Dump to YAML file**
+
+```go
+_, err := config.DumpTo(buf, config.YAML)
+ioutil.WriteFile("my-config.yaml", buf.Bytes(), 0755)
 ```
 
 ## Available options
