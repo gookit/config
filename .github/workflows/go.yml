@@ -34,7 +34,7 @@ jobs:
       uses: morphy2k/revive-action@v2.3.1
       with:
         # Exclude patterns, separated by semicolons (optional)
-        exclude: "./internal/..."
+        exclude: "./_examples/..."
 
     - name: Run static check
       uses: reviewdog/action-staticcheck@v1
