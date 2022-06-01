@@ -71,6 +71,7 @@ var dc = New("default")
 
 // Config structure definition
 type Config struct {
+	// save latest error, will clear after read.
 	err error
 	// config instance name
 	name string
@@ -189,9 +190,11 @@ func (c *Config) Name() string {
 	return c.name
 }
 
-// Error get last error
+// Error get last error, will clear after read.
 func (c *Config) Error() error {
-	return c.err
+	err := c.err
+	c.err = nil
+	return err
 }
 
 // IsEmpty of the config

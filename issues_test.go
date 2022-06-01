@@ -136,3 +136,29 @@ func TestIssues_59(t *testing.T) {
 	is.Contains(str, "name = app")
 	is.Contains(str, "key1 = val1")
 }
+
+// https://github.com/gookit/config/issues/76
+func TestIssues_76(t *testing.T) {
+	is := assert.New(t)
+	c := config.New("test")
+
+	err := c.LoadStrings(config.JSON, `
+{
+    "lang": {
+        "allowed": {
+            "en": "ddd"
+        }
+    },
+	"key0": 234
+}
+`)
+	is.NoError(err)
+
+	ss := c.Strings("key0")
+	is.Empty(ss)
+
+	lastErr := c.Error()
+	is.Error(lastErr)
+	is.Equal("value cannot be convert to []string, key is 'key0'", lastErr.Error())
+	is.NoError(c.Error())
+}
