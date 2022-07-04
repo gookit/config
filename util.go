@@ -77,12 +77,18 @@ func (c *Config) SetEncoders(encoders map[string]Encoder) {
  * helper methods/functions
  *************************************************************/
 
+// LoadENVFiles load
+// func LoadENVFiles(filePaths ...string) error {
+// 	return dotenv.LoadFiles(filePaths...)
+// }
+
 // GetEnv get os ENV value by name
 func GetEnv(name string, defVal ...string) (val string) {
 	return Getenv(name, defVal...)
 }
 
 // Getenv get os ENV value by name. like os.Getenv, but support default value
+//
 // Notice:
 // - Key is not case-sensitive when getting
 func Getenv(name string, defVal ...string) (val string) {

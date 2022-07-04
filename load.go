@@ -106,6 +106,7 @@ var validTypes = map[string]int{
 func LoadFlags(keys []string) error { return dc.LoadFlags(keys) }
 
 // LoadFlags parse command line arguments, based on provide keys.
+//
 // Usage:
 // 	// debug flag is bool type
 // 	c.LoadFlags([]string{"env", "debug:bool"})

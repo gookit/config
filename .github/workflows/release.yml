@@ -36,7 +36,7 @@ jobs:
       - name: Generate changelog
         run: |
           go install github.com/gookit/gitw/cmd/chlog@latest
-          chlog -config .github/changelog.yml -output testdata/changelog.md prev last 
+          chlog -c .github/changelog.yml -o testdata/changelog.md prev last 
 
       # https://github.com/softprops/action-gh-release
       - name: Create release and upload assets
