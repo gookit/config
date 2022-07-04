@@ -15,24 +15,27 @@ type HookFunc func(event string, c *Config)
 
 // Options config options
 type Options struct {
-	// parse env value. like: "${EnvName}" "${EnvName|default}"
+	// ParseEnv parse env value. like: "${EnvName}" "${EnvName|default}"
 	ParseEnv bool
-	// config is readonly
+	// ParseTime parses a duration string to time.Duration
+	// eg: 10s, 2m
+	ParseTime bool
+	// Readonly config is readonly
 	Readonly bool
-	// enable config data cache
+	// EnableCache enable config data cache
 	EnableCache bool
-	// parse key, allow find value by key path. eg: 'key.sub' will find `map[key]sub`
+	// ParseKey parse key path, allow find value by key path. eg: 'key.sub' will find `map[key]sub`
 	ParseKey bool
-	// tag name for binding data to struct
+	// TagName tag name for binding data to struct
 	// Deprecated: please set tag name by DecoderConfig
 	TagName string
-	// the delimiter char for split key path, if `FindByPath=true`. default is '.'
+	// Delimiter the delimiter char for split key path, if `FindByPath=true`. default is '.'
 	Delimiter byte
-	// default write format
+	// DumpFormat default write format
 	DumpFormat string
-	// default input format
+	// ReadFormat default input format
 	ReadFormat string
-	// DecoderConfig setting for binding data to struct
+	// DecoderConfig setting for binding data to struct. such as: TagName
 	DecoderConfig *mapstructure.DecoderConfig
 	// HookFunc on data changed.
 	HookFunc HookFunc
@@ -57,16 +60,23 @@ func newDefaultDecoderConfig() *mapstructure.DecoderConfig {
 		TagName: defaultStructTag,
 		// will auto convert string to int/uint
 		WeaklyTypedInput: true,
-		// DecodeHook: ParseEnvVarStringHookFunc,
+		// DecodeHook: ValDecodeHookFunc,
 	}
+}
+
+func (o *Options) shouldAddHookFunc() bool {
+	return o.ParseTime || o.ParseEnv
 }
 
 /*************************************************************
  * config setting
  *************************************************************/
 
-// ParseEnv set parse env
+// ParseEnv set parse env value
 func ParseEnv(opts *Options) { opts.ParseEnv = true }
+
+// ParseTime set parse time string.
+func ParseTime(opts *Options) { opts.ParseTime = true }
 
 // Readonly set readonly
 func Readonly(opts *Options) { opts.Readonly = true }

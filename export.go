@@ -66,15 +66,15 @@ func (c *Config) Structure(key string, dst interface{}) error {
 		bindConf = newDefaultDecoderConfig()
 	} else {
 		bindConf = c.opts.DecoderConfig
-		// Compatible with previous settings opts.TagName
+		// compatible with previous settings opts.TagName
 		if bindConf.TagName == "" {
 			bindConf.TagName = c.opts.TagName
 		}
 	}
 
-	// parse env var
-	if c.opts.ParseEnv && bindConf.DecodeHook == nil {
-		bindConf.DecodeHook = ParseEnvVarStringHookFunc()
+	// add hook on decode value to struct
+	if bindConf.DecodeHook == nil && c.opts.shouldAddHookFunc() {
+		bindConf.DecodeHook = ValDecodeHookFunc(c.opts.ParseEnv, c.opts.ParseTime)
 	}
 
 	bindConf.Result = dst // set result struct ptr

@@ -2,6 +2,7 @@ package config_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/ini"
@@ -161,4 +162,41 @@ func TestIssues_76(t *testing.T) {
 	is.Error(lastErr)
 	is.Equal("value cannot be convert to []string, key is 'key0'", lastErr.Error())
 	is.NoError(c.Error())
+}
+
+// https://github.com/gookit/config/issues/81
+func TestIssues_81(t *testing.T) {
+	is := assert.New(t)
+	c := config.New("test").WithOptions(config.ParseTime, func(options *config.Options) {
+		options.DecoderConfig.TagName = "json"
+	})
+
+	err := c.LoadStrings(config.JSON, `
+{
+	"key0": "abc",
+	"age": 12,
+	"connTime": "10s",
+	"idleTime": "1m"
+}
+`)
+	is.NoError(err)
+
+	type Options struct {
+		ConnTime time.Duration `json:"connTime"`
+		IdleTime time.Duration `json:"idleTime"`
+	}
+
+	opt := &Options{}
+	err = c.BindStruct("", opt)
+
+	is.NoError(err)
+	is.Equal("10s", c.String("connTime"))
+	wantTm, err := time.ParseDuration("10s")
+	is.NoError(err)
+	is.Equal(wantTm, opt.ConnTime)
+
+	is.Equal("1m", c.String("idleTime"))
+	wantTm, err = time.ParseDuration("1m")
+	is.NoError(err)
+	is.Equal(wantTm, opt.IdleTime)
 }

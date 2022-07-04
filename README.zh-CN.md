@@ -288,6 +288,9 @@ ioutil.WriteFile("my-config.yaml", buf.Bytes(), 0755)
 type Options struct {
 	// parse env value. like: "${EnvName}" "${EnvName|default}"
 	ParseEnv bool
+    // ParseTime parses a duration string to time.Duration
+    // eg: 10s, 2m
+    ParseTime bool
 	// config is readonly. default is False
 	Readonly bool
 	// enable config data cache. default is False
