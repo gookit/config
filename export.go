@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 
 	"github.com/mitchellh/mapstructure"
 )
@@ -12,8 +13,9 @@ import (
 // MapStruct alias method of the 'Structure'
 //
 // Usage:
-// 	dbInfo := &Db{}
-// 	config.MapStruct("db", dbInfo)
+//
+//	dbInfo := &Db{}
+//	config.MapStruct("db", dbInfo)
 func MapStruct(key string, dst interface{}) error { return dc.MapStruct(key, dst) }
 
 // MapStruct alias method of the 'Structure'
@@ -47,8 +49,9 @@ func (c *Config) MapOnExists(key string, dst interface{}) error {
 // Structure get config data and binding to the dst structure.
 //
 // Usage:
-// 	dbInfo := Db{}
-// 	config.Structure("db", &dbInfo)
+//
+//	dbInfo := Db{}
+//	config.Structure("db", &dbInfo)
 func (c *Config) Structure(key string, dst interface{}) error {
 	var data interface{}
 	if key == "" { // binding all data
@@ -135,4 +138,31 @@ func (c *Config) DumpTo(out io.Writer, format string) (n int64, err error) {
 	num, _ := fmt.Fprintln(out, string(encoded))
 
 	return int64(num), nil
+}
+
+// DumpToFile use the format(json,yaml,toml) dump config data to a writer
+func (c *Config) DumpToFile(fileName string, format string) (err error) {
+	var ok bool
+	var encoder Encoder
+
+	format = fixFormat(format)
+	if encoder, ok = c.encoders[format]; !ok {
+		err = errors.New("not exists/register encoder for the format: " + format)
+		return
+	}
+
+	// is empty
+	if len(c.data) == 0 {
+		return
+	}
+
+	// encode data to string
+	encoded, err := encoder(c.data)
+	if err != nil {
+		return
+	}
+
+	// write content to out
+	//num, _ := fmt.Fprintln(out, string(encoded))
+	return os.WriteFile(fileName, encoded, os.ModePerm)
 }
