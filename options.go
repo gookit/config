@@ -91,6 +91,7 @@ func Delimiter(sep byte) func(*Options) {
 	}
 }
 
+// WithSetSaveFile set hook func
 func WithSetSaveFile(fileName string, format string) func(options *Options) {
 	return func(opts *Options) {
 		opts.HookFunc = func(event string, c *Config) {
