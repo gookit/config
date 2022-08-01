@@ -74,8 +74,8 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 	}
 
 	switch typeData := item.(type) {
-	case map[interface{}]interface{}: // from yaml
-		dstItem := make(map[string]interface{})
+	case map[interface{}]interface{}: // from yaml.v2
+		dstItem := make(map[interface{}]interface{}, len(typeData))
 		for k, v := range typeData {
 			sk := fmt.Sprintf("%v", k)
 			dstItem[sk] = v
@@ -90,7 +90,7 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 		}
 
 		c.data[topK] = dstItem
-	case map[string]interface{}: // from json,toml
+	case map[string]interface{}: // from json,toml,yaml.v3
 		// create a new item for the topK
 		newItem := buildValueByPath(paths, val)
 		// merge new item to old item
