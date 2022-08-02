@@ -1,6 +1,9 @@
 package config
 
-import "github.com/mitchellh/mapstructure"
+import (
+	"github.com/mitchellh/mapstructure"
+	"strings"
+)
 
 // there are some event names for config data changed.
 const (
@@ -88,6 +91,20 @@ func Delimiter(sep byte) func(*Options) {
 	}
 }
 
+// WithSetSaveFile set hook func
+func WithSetSaveFile(fileName string, format string) func(options *Options) {
+	return func(opts *Options) {
+		opts.HookFunc = func(event string, c *Config) {
+			if strings.HasPrefix(event, "set.") {
+				err := c.DumpToFile(fileName, format)
+				if err != nil {
+					panic(err)
+				}
+			}
+		}
+	}
+}
+
 // WithHookFunc set hook func
 func WithHookFunc(fn HookFunc) func(*Options) {
 	return func(opts *Options) {
@@ -131,8 +148,9 @@ func (c *Config) With(fn func(c *Config)) *Config {
 // Readonly disable set data to config.
 //
 // Usage:
-// 	config.LoadFiles(a, b, c)
-// 	config.Readonly()
+//
+//	config.LoadFiles(a, b, c)
+//	config.Readonly()
 func (c *Config) Readonly() {
 	c.opts.Readonly = true
 }
