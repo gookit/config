@@ -6,7 +6,7 @@ require (
 	github.com/BurntSushi/toml v1.2.0
 	github.com/gookit/goutil v0.5.7
 	github.com/gookit/ini/v2 v2.1.1
-	github.com/gookit/properties v0.0.0-20220808091034-7fbd8454e142
+	github.com/gookit/properties v0.0.0-20220809153718-db6ef1a19b3e
 	github.com/hashicorp/hcl v1.0.0
 	github.com/hashicorp/hcl/v2 v2.13.0
 	github.com/imdario/mergo v0.3.13
