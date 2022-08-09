@@ -4,7 +4,7 @@ style: gh-release
 # group names
 names: [Refactor, Fixed, Feature, Update, Other]
 # if empty will auto fetch by git remote
-#repo_url: https://github.com/gookit/config
+#repo_url: https://github.com/gookit/goutil
 
 filters:
   # message length should >= 12
@@ -31,7 +31,7 @@ rules:
     contains: ['fix:']
   - name: Feature
     start_withs: [feat, new]
-    contains: [feature]
+    contains: [feature, 'feat:']
   - name: Update
-    start_withs: [update, 'up:']
-    contains: [' update']
+    start_withs: [up]
+    contains: ['update:', 'up:']

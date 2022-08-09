@@ -67,14 +67,14 @@ func Example() {
 func TestDriver(t *testing.T) {
 	is := assert.New(t)
 
-	is.Equal(json5.NAME, json5.Driver.Name())
+	is.Equal(json5.Name, json5.Driver.Name())
 
 	c := config.NewEmpty("test")
-	is.False(c.HasDecoder(json5.NAME))
+	is.False(c.HasDecoder(json5.Name))
 	c.AddDriver(json5.Driver)
 
-	is.True(c.HasDecoder(json5.NAME))
-	is.True(c.HasEncoder(json5.NAME))
+	is.True(c.HasDecoder(json5.Name))
+	is.True(c.HasEncoder(json5.Name))
 
 	m := struct {
 		N string

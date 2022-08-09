@@ -11,8 +11,8 @@ import (
 	"github.com/gookit/properties"
 )
 
-// DriverName string
-const DriverName = "properties"
+// Name string
+const Name = "properties"
 
 var (
 	// Decoder the properties content decoder
@@ -21,6 +21,6 @@ var (
 	// Encoder the properties content encoder
 	Encoder config.Encoder = properties.Encode
 
-	// Driver for yaml
-	Driver = config.NewDriver(DriverName, Decoder, Encoder)
+	// Driver for properties
+	Driver = config.NewDriver(Name, Decoder, Encoder)
 )

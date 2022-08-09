@@ -9,6 +9,9 @@ import (
 // NAME for driver
 const NAME = "json5"
 
+// Name for driver
+const Name = "json5"
+
 // JSONMarshalIndent if not empty, will use json.MarshalIndent for encode data.
 var JSONMarshalIndent string
 
@@ -26,5 +29,5 @@ var (
 	}
 
 	// Driver for json5
-	Driver = config.NewDriver(NAME, Decoder, Encoder)
+	Driver = config.NewDriver(Name, Decoder, Encoder)
 )
