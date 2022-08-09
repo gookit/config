@@ -403,6 +403,24 @@ func TestJSONAllowComments(t *testing.T) {
 	JSONAllowComments = old
 }
 
+func TestSaveFileOnSet(t *testing.T) {
+	old := JSONMarshalIndent
+	JSONMarshalIndent = "  "
+	defer func() {
+		JSONMarshalIndent = old
+	}()
+
+	is := assert.New(t)
+	c := New("test")
+	c.WithOptions(SaveFileOnSet("testdata/config.bak.json", JSON))
+
+	err := c.LoadStrings(JSON, jsonStr)
+	is.Nil(err)
+
+	is.NoError(c.Set("new-key", "new-value"))
+	is.Equal("new-value", c.Get("new-key"))
+}
+
 func TestMapStringStringParseEnv(t *testing.T) {
 	is := assert.New(t)
 	c := New("test")

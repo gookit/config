@@ -155,7 +155,6 @@ func (c *Config) DumpToFile(fileName string, format string) (err error) {
 		return
 	}
 
-	// is empty
 	if len(c.data) == 0 {
 		return
 	}
@@ -167,6 +166,15 @@ func (c *Config) DumpToFile(fileName string, format string) (err error) {
 	}
 
 	// write content to out
-	//num, _ := fmt.Fprintln(out, string(encoded))
-	return os.WriteFile(fileName, encoded, os.ModePerm)
+	fsFlags := os.O_CREATE | os.O_WRONLY | os.O_TRUNC
+	f, err := os.OpenFile(fileName, fsFlags, os.ModePerm)
+	if err != nil {
+		return err
+	}
+
+	_, err = f.Write(encoded)
+	if err1 := f.Close(); err1 != nil && err == nil {
+		err = err1
+	}
+	return err
 }
