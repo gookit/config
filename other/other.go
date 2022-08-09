@@ -8,7 +8,8 @@ import (
 	"github.com/gookit/config/v2/ini"
 )
 
-const driverName = "other"
+// DriverName string
+const DriverName = "other"
 
 var (
 	// Encoder is the encoder for this driver
@@ -16,5 +17,5 @@ var (
 	// Decoder is the decoder for this driver
 	Decoder = ini.Decoder
 	// Driver is the exported symbol
-	Driver = config.NewDriver(driverName, Decoder, Encoder)
+	Driver = config.NewDriver(DriverName, Decoder, Encoder)
 )

@@ -42,6 +42,7 @@ type Options struct {
 	DecoderConfig *mapstructure.DecoderConfig
 	// HookFunc on data changed.
 	HookFunc HookFunc
+	// WatchChange bool
 }
 
 func newDefaultOption() *Options {
@@ -63,7 +64,6 @@ func newDefaultDecoderConfig() *mapstructure.DecoderConfig {
 		TagName: defaultStructTag,
 		// will auto convert string to int/uint
 		WeaklyTypedInput: true,
-		// DecodeHook: ValDecodeHookFunc,
 	}
 }
 

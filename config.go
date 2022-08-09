@@ -186,9 +186,7 @@ func (c *Config) DelDriver(format string) {
  *************************************************************/
 
 // Name get config name
-func (c *Config) Name() string {
-	return c.name
-}
+func (c *Config) Name() string { return c.name }
 
 // Error get last error, will clear after read.
 func (c *Config) Error() error {
@@ -203,14 +201,10 @@ func (c *Config) IsEmpty() bool {
 }
 
 // LoadedFiles get loaded files name
-func (c *Config) LoadedFiles() []string {
-	return c.loadedFiles
-}
+func (c *Config) LoadedFiles() []string { return c.loadedFiles }
 
 // DriverNames get loaded driver names
-func (c *Config) DriverNames() []string {
-	return c.driverNames
-}
+func (c *Config) DriverNames() []string { return c.driverNames }
 
 // ClearAll data and caches
 func ClearAll() { dc.ClearAll() }

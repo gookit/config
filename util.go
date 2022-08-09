@@ -23,7 +23,7 @@ func ValDecodeHookFunc(parseEnv, parseTime bool) mapstructure.DecodeHookFunc {
 		}
 
 		// start char is number(1-9)
-		if str[0] > 48 && str[0] < 57 {
+		if str[0] > '0' && str[0] < '9' {
 			// parse time string. eg: 10s
 			if parseTime && t.Kind() == reflect.Int64 {
 				dur, err := time.ParseDuration(str)
