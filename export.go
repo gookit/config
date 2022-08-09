@@ -64,6 +64,10 @@ func (c *Config) Structure(key string, dst interface{}) error {
 		}
 	}
 
+	// add lock on binding values to struct
+	c.lock.RLock()
+	defer c.lock.RUnlock()
+
 	var bindConf *mapstructure.DecoderConfig
 	if c.opts.DecoderConfig == nil {
 		bindConf = newDefaultDecoderConfig()
