@@ -32,146 +32,145 @@ func TestSetData(t *testing.T) {
 }
 
 func TestSet(t *testing.T) {
-	st := assert.New(t)
-
+	is := assert.New(t)
 	c := Default()
 
 	// clear old
 	ClearAll()
 	// err := LoadFiles("testdata/json_base.json")
 	err := LoadStrings(JSON, jsonStr)
-	st.Nil(err)
+	is.Nil(err)
 
 	val := String("name")
-	st.Equal("app", val)
+	is.Equal("app", val)
 
 	// empty key
 	err = Set("", "val")
-	st.Error(err)
+	is.Error(err)
 
 	// set new value: int
 	err = Set("newInt", 23)
-	if st.Nil(err) {
+	if is.Nil(err) {
 		iv := Int("newInt")
-		st.Equal(23, iv)
+		is.Equal(23, iv)
 	}
 
 	// set new value: int
 	err = Set("newBool", false)
-	if st.Nil(err) {
+	if is.Nil(err) {
 		bv := Bool("newBool")
-		st.False(bv)
+		is.False(bv)
 	}
 
 	// set new value: string
 	err = Set("newKey", "new val")
-	if st.Nil(err) {
+	if is.Nil(err) {
 		val = String("newKey")
-		st.Equal("new val", val)
+		is.Equal("new val", val)
 	}
 
-	// like yml decoded data
+	// like yaml.v2 decoded data
 	err = Set("ymlLike", map[interface{}]interface{}{"k": "v"})
-	st.Nil(err)
+	is.Nil(err)
 	str := c.String("ymlLike.k")
-	st.Equal("v", str)
+	is.Equal("v", str)
 
 	err = Set("ymlLike.nk", "nv")
-	st.Nil(err)
+	is.Nil(err)
 	str = c.String("ymlLike.nk")
-	st.Equal("nv", str)
+	is.Equal("nv", str)
 
 	// disable setByPath
 	err = Set("some.key", "val", false)
-	if st.Nil(err) {
+	if is.Nil(err) {
 		val = String("some")
-		st.Equal("", val)
+		is.Equal("", val)
 
 		val = String("some.key")
-		st.Equal("val", val)
+		is.Equal("val", val)
 	}
 	// fmt.Printf("%#v\n", c.Data())
 
 	// set value
 	err = Set("name", "new name")
-	if st.Nil(err) {
+	if is.Nil(err) {
 		val = String("name")
-		st.Equal("new name", val)
+		is.Equal("new name", val)
 	}
 
 	// set value to arr: by path
 	err = Set("arr1.1", "new val")
-	if st.Nil(err) {
+	if is.Nil(err) {
 		val = String("arr1.1")
-		st.Equal("new val", val)
+		is.Equal("new val", val)
 	}
 
 	// array only support add 1 level value
 	err = Set("arr1.1.key", "new val")
-	st.Error(err)
+	is.Error(err)
 
 	// set value to map: by path
 	err = Set("map1.key", "new val")
-	if st.Nil(err) {
+	if is.Nil(err) {
 		val = String("map1.key")
-		st.Equal("new val", val)
+		is.Equal("new val", val)
 	}
 
 	// more path nodes
 	err = Set("map1.info.key", "val200")
-	if st.Nil(err) {
+	if is.Nil(err) {
 		// fmt.Printf("%v\n", c.Data())
 		smp := StringMap("map1.info")
-		st.Equal("val200", smp["key"])
+		is.Equal("val200", smp["key"])
 
 		str = String("map1.info.key")
-		st.Equal("val200", str)
+		is.Equal("val200", str)
 	}
 
 	// new map
 	err = Set("map2.key", "new val")
-	if st.Nil(err) {
+	if is.Nil(err) {
 		val = String("map2.key")
 
-		st.Equal("new val", val)
+		is.Equal("new val", val)
 	}
 
 	// set new value: array(slice)
 	err = Set("newArr", []string{"a", "b"})
-	if st.Nil(err) {
+	if is.Nil(err) {
 		arr := Strings("newArr")
 
-		st.Equal(`[]string{"a", "b"}`, fmt.Sprintf("%#v", arr))
+		is.Equal(`[]string{"a", "b"}`, fmt.Sprintf("%#v", arr))
 
 		val = String("newArr.1")
-		st.Equal("b", val)
+		is.Equal("b", val)
 
 		val = String("newArr.100")
-		st.Equal("", val)
+		is.Equal("", val)
 	}
 
 	// set new value: map
 	err = Set("newMap", map[string]string{"k1": "a", "k2": "b"})
-	if st.Nil(err) {
+	if is.Nil(err) {
 		mp := StringMap("newMap")
-		st.NotEmpty(mp)
-		// st.Equal("map[k1:a k2:b]", fmt.Sprintf("%v", mp))
+		is.NotEmpty(mp)
+		// is.Equal("map[k1:a k2:b]", fmt.Sprintf("%v", mp))
 
 		val = String("newMap.k1")
-		st.Equal("a", val)
+		is.Equal("a", val)
 
 		val = String("newMap.notExist")
-		st.Equal("", val)
+		is.Equal("", val)
 	}
 
-	st.NoError(Set("name.sub", []int{2}))
+	is.NoError(Set("name.sub", []int{2}))
 	ints := Ints("name.sub")
-	st.Equal([]int{2}, ints)
+	is.Equal([]int{2}, ints)
 
 	// Readonly
 	Default().Readonly()
-	st.True(c.Options().Readonly)
-	st.Error(Set("name", "new name"))
+	is.True(c.Options().Readonly)
+	is.Error(Set("name", "new name"))
 }
 
 func TestSet_fireEvent(t *testing.T) {

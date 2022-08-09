@@ -2,10 +2,11 @@ package config
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
+	"github.com/gookit/goutil/arrutil"
+	"github.com/gookit/goutil/strutil"
 	"github.com/imdario/mergo"
 )
 
@@ -77,15 +78,13 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 	case map[interface{}]interface{}: // from yaml.v2
 		dstItem := make(map[interface{}]interface{}, len(typeData))
 		for k, v := range typeData {
-			sk := fmt.Sprintf("%v", k)
-			dstItem[sk] = v
+			dstItem[strutil.QuietString(k)] = v
 		}
 
 		// create a new item for the topK
-		newItem := buildValueByPath(paths, val)
+		newItem := buildValueByPath1(paths, val)
 		// merge new item to old item
-		err = mergo.Merge(&dstItem, newItem, mergo.WithOverride)
-		if err != nil {
+		if err = mergo.Merge(&dstItem, newItem, mergo.WithOverride); err != nil {
 			return
 		}
 
@@ -94,13 +93,12 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 		// create a new item for the topK
 		newItem := buildValueByPath(paths, val)
 		// merge new item to old item
-		err = mergo.Merge(&typeData, &newItem, mergo.WithOverride)
-		if err != nil {
+		if err = mergo.Merge(&typeData, &newItem, mergo.WithOverride); err != nil {
 			return
 		}
 
 		c.data[topK] = typeData
-	case []interface{}: // is array
+	case []interface{}: // is list array
 		index, err := strconv.Atoi(keys[1])
 		if len(keys) == 2 && err == nil {
 			if index <= len(typeData) {
@@ -131,7 +129,7 @@ func buildValueByPath(paths []string, val interface{}) (newItem map[string]inter
 		return map[string]interface{}{paths[0]: val}
 	}
 
-	sliceReverse(paths)
+	arrutil.Reverse(paths)
 
 	// multi nodes
 	for _, p := range paths {
@@ -144,12 +142,22 @@ func buildValueByPath(paths []string, val interface{}) (newItem map[string]inter
 	return
 }
 
-// reverse a slice. (slice 是引用，所以可以直接改变)
-func sliceReverse(ss []string) {
-	ln := len(ss)
-	for i := 0; i < ln/2; i++ {
-		li := ln - i - 1
-		// fmt.Println(i, "<=>", li)
-		ss[i], ss[li] = ss[li], ss[i]
+// build new value by key paths, only for yaml.v2
+// "site.info" -> map[interface{}]map[string]val
+func buildValueByPath1(paths []string, val interface{}) (newItem map[interface{}]interface{}) {
+	if len(paths) == 1 {
+		return map[interface{}]interface{}{paths[0]: val}
 	}
+
+	arrutil.Reverse(paths)
+
+	// multi nodes
+	for _, p := range paths {
+		if newItem == nil {
+			newItem = map[interface{}]interface{}{p: val}
+		} else {
+			newItem = map[interface{}]interface{}{p: newItem}
+		}
+	}
+	return
 }
