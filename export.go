@@ -64,15 +64,14 @@ func (c *Config) Structure(key string, dst interface{}) error {
 		}
 	}
 
-	// add lock on binding values to struct
-	c.lock.RLock()
-	defer c.lock.RUnlock()
-
 	var bindConf *mapstructure.DecoderConfig
 	if c.opts.DecoderConfig == nil {
-		bindConf = newDefaultDecoderConfig()
+		bindConf = newDefaultDecoderConfig(c.opts.TagName)
 	} else {
-		bindConf = c.opts.DecoderConfig
+		// copy new config for each binding.
+		copyConf := *c.opts.DecoderConfig
+		bindConf = &copyConf
+
 		// compatible with previous settings opts.TagName
 		if bindConf.TagName == "" {
 			bindConf.TagName = c.opts.TagName
@@ -86,11 +85,11 @@ func (c *Config) Structure(key string, dst interface{}) error {
 
 	bindConf.Result = dst // set result struct ptr
 	decoder, err := mapstructure.NewDecoder(bindConf)
-	if err != nil {
-		return err
-	}
 
-	return decoder.Decode(data)
+	if err == nil {
+		err = decoder.Decode(data)
+	}
+	return err
 }
 
 // ToJSON string

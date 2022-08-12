@@ -31,6 +31,7 @@ type Options struct {
 	// ParseKey parse key path, allow find value by key path. eg: 'key.sub' will find `map[key]sub`
 	ParseKey bool
 	// TagName tag name for binding data to struct
+	//
 	// Deprecated: please set tag name by DecoderConfig
 	TagName string
 	// Delimiter the delimiter char for split key path, if `FindByPath=true`. default is '.'
@@ -55,14 +56,18 @@ func newDefaultOption() *Options {
 		DumpFormat: JSON,
 		ReadFormat: JSON,
 		// struct decoder config
-		DecoderConfig: newDefaultDecoderConfig(),
+		DecoderConfig: newDefaultDecoderConfig(""),
 	}
 }
 
-func newDefaultDecoderConfig() *mapstructure.DecoderConfig {
+func newDefaultDecoderConfig(tagName string) *mapstructure.DecoderConfig {
+	if tagName == "" {
+		tagName = defaultStructTag
+	}
+
 	return &mapstructure.DecoderConfig{
 		// tag name for binding struct
-		TagName: defaultStructTag,
+		TagName: tagName,
 		// will auto convert string to int/uint
 		WeaklyTypedInput: true,
 	}
