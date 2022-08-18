@@ -14,7 +14,7 @@ Golang's application config manage tool library.
 
 ## Features
 
-- Support multi format: `JSON`(default), `JSON5`, `INI`, `YAML`, `TOML`, `HCL`, `ENV`, `Flags`
+- Support multi format: `JSON`(default), `JSON5`, `INI`, `Properties`, `YAML`, `TOML`, `HCL`, `ENV`, `Flags`
   - `JSON` content support comments. will auto clear comments
   - Other drivers are used on demand, not used will not be loaded into the application.
     - Possibility to add custom driver for your specific format
@@ -411,6 +411,7 @@ Check out these projects, which use https://github.com/gookit/config :
 ## See also
 
 - Ini parse [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser)
+- Properties parse [gookit/properties](https://github.com/gookit/properties)
 - Json5 parse [json5](https://github.com/yosuke-furukawa/json5)
 - Yaml parse [go-yaml](https://github.com/go-yaml/yaml)
 - Toml parse [go toml](https://github.com/BurntSushi/toml)

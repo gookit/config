@@ -14,7 +14,7 @@
 
 ## 功能简介
 
-- 支持多种格式: `JSON`(默认), `JSON5`, `INI`, `YAML`, `TOML`, `HCL`, `ENV`, `Flags`
+- 支持多种格式: `JSON`(默认), `JSON5`, `INI`, `Properties`, `YAML`, `TOML`, `HCL`, `ENV`, `Flags`
   - `JSON` 内容支持注释，可以设置解析时清除注释
   - 其他驱动都是按需使用，不使用的不会加载编译到应用中
 - 支持多个文件、多数据加载
@@ -391,6 +391,7 @@ go test -cover ./...
 ## 相关包
 
 - Ini 解析 [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser)
+- Properties 解析 [gookit/properties](https://github.com/gookit/properties)
 - Yaml 解析 [go-yaml](https://github.com/go-yaml/yaml)
 - Toml 解析 [go toml](https://github.com/BurntSushi/toml)
 - 数据合并 [mergo](https://github.com/imdario/mergo)
