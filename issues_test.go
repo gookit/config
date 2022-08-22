@@ -11,7 +11,7 @@ import (
 	"github.com/gookit/goutil/dump"
 	"github.com/gookit/goutil/fsutil"
 	"github.com/gookit/goutil/testutil"
-	"github.com/stretchr/testify/assert"
+	"github.com/gookit/goutil/testutil/assert"
 )
 
 // https://github.com/gookit/config/issues/37
@@ -30,7 +30,7 @@ func TestIssues_37(t *testing.T) {
     }
 }
 `)
-	is.NoError(err)
+	is.NoErr(err)
 	dump.Println(c.Data())
 
 	is.Panics(func() {
@@ -58,7 +58,7 @@ func TestIssues37_yaml_v3(t *testing.T) {
     }
 }
 `)
-	is.NoError(err)
+	is.NoErr(err)
 	dump.Println(c.Data())
 
 	err = c.LoadStrings(config.Yaml, `
@@ -67,7 +67,7 @@ lang:
   allowed:
     en: "666"
 `)
-	is.NoError(err)
+	is.NoErr(err)
 	dump.Println(c.Data())
 }
 
@@ -85,18 +85,18 @@ func TestIssues_46(t *testing.T) {
 }
 `)
 
-	is.NoError(err)
+	is.NoErr(err)
 	dump.Println(c.Data())
 
 	val, _ := c.GetValue("http")
 	mp := val.(map[string]interface{})
 	dump.Println(mp)
-	is.Equal("${HTTP_PORT|8080}", mp["port"])
+	is.Eq("${HTTP_PORT|8080}", mp["port"])
 
 	smp := c.StringMap("http")
 	dump.Println(smp)
 	is.Contains(smp, "port")
-	is.Equal("8080", smp["port"])
+	is.Eq("8080", smp["port"])
 
 	type Http struct {
 		Port int
@@ -104,16 +104,16 @@ func TestIssues_46(t *testing.T) {
 
 	h := &Http{}
 	err = c.BindStruct("http", h)
-	is.NoError(err)
+	is.NoErr(err)
 	dump.Println(h)
-	is.Equal(8080, h.Port)
+	is.Eq(8080, h.Port)
 
 	testutil.MockEnvValue("HTTP_PORT", "19090", func(_ string) {
 		h := &Http{}
 		err = c.BindStruct("http", h)
-		is.NoError(err)
+		is.NoErr(err)
 		dump.Println(h)
-		is.Equal(19090, h.Port)
+		is.Eq(19090, h.Port)
 	})
 }
 
@@ -125,17 +125,46 @@ func TestIssues_59(t *testing.T) {
 	c.AddDriver(ini.Driver)
 
 	err := c.LoadFiles("testdata/ini_base.ini")
-	is.NoError(err)
+	is.NoErr(err)
 	dump.Println(c.Data())
 
 	dumpfile := "testdata/issues59.ini"
 	out := fsutil.MustCreateFile(dumpfile, 0666, 0666)
 	_, err = c.DumpTo(out, config.Ini)
-	is.NoError(err)
+	is.NoErr(err)
 
 	str := string(fsutil.MustReadFile(dumpfile))
 	is.Contains(str, "name = app")
 	is.Contains(str, "key1 = val1")
+}
+
+// https://github.com/gookit/config/issues/70
+func TestIssues_70(t *testing.T) {
+	c := config.New("test")
+
+	err := c.LoadStrings(config.JSON, `{
+  "parent": {
+    "child": "Test Var"  
+  }
+}`)
+
+	assert.NoErr(t, err)
+	assert.Eq(t, "Test Var", c.String("parent.child"))
+	dump.P(c.Data())
+
+	// cannot this.
+	err = c.Set("parent.child.grandChild", "New Val")
+	assert.Err(t, err)
+
+	err = c.Set("parent.child", map[string]interface{}{
+		"grandChild": "New Val",
+	})
+	assert.NoErr(t, err)
+	assert.Eq(t, map[string]interface{}{
+		"grandChild": "New Val",
+	}, c.Get("parent.child"))
+
+	dump.P(c.Data())
 }
 
 // https://github.com/gookit/config/issues/76
@@ -153,15 +182,15 @@ func TestIssues_76(t *testing.T) {
 	"key0": 234
 }
 `)
-	is.NoError(err)
+	is.NoErr(err)
 
 	ss := c.Strings("key0")
 	is.Empty(ss)
 
 	lastErr := c.Error()
-	is.Error(lastErr)
-	is.Equal("value cannot be convert to []string, key is 'key0'", lastErr.Error())
-	is.NoError(c.Error())
+	is.Err(lastErr)
+	is.Eq("value cannot be convert to []string, key is 'key0'", lastErr.Error())
+	is.NoErr(c.Error())
 }
 
 // https://github.com/gookit/config/issues/81
@@ -179,7 +208,7 @@ func TestIssues_81(t *testing.T) {
 	"idleTime": "1m"
 }
 `)
-	is.NoError(err)
+	is.NoErr(err)
 
 	type Options struct {
 		ConnTime time.Duration `json:"connTime"`
@@ -189,14 +218,14 @@ func TestIssues_81(t *testing.T) {
 	opt := &Options{}
 	err = c.BindStruct("", opt)
 
-	is.NoError(err)
-	is.Equal("10s", c.String("connTime"))
+	is.NoErr(err)
+	is.Eq("10s", c.String("connTime"))
 	wantTm, err := time.ParseDuration("10s")
-	is.NoError(err)
-	is.Equal(wantTm, opt.ConnTime)
+	is.NoErr(err)
+	is.Eq(wantTm, opt.ConnTime)
 
-	is.Equal("1m", c.String("idleTime"))
+	is.Eq("1m", c.String("idleTime"))
 	wantTm, err = time.ParseDuration("1m")
-	is.NoError(err)
-	is.Equal(wantTm, opt.IdleTime)
+	is.NoErr(err)
+	is.Eq(wantTm, opt.IdleTime)
 }

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/gookit/goutil/arrutil"
+	"github.com/gookit/goutil/maputil"
 	"github.com/gookit/goutil/strutil"
 	"github.com/imdario/mergo"
 )
@@ -90,10 +91,8 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 
 		c.data[topK] = dstItem
 	case map[string]interface{}: // from json,toml,yaml.v3
-		// create a new item for the topK
-		newItem := buildValueByPath(paths, val)
-		// merge new item to old item
-		if err = mergo.Merge(&typeData, &newItem, mergo.WithOverride); err != nil {
+		// enhanced: 'top.sub'=string, can set 'top.sub' to other type. eg: 'top.sub'=map
+		if err = maputil.SetByKeys(&typeData, paths, val); err != nil {
 			return
 		}
 
