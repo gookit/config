@@ -1,4 +1,5 @@
 # TODO
 
 - remote `etcd` `consul`
-- watch config files
+- watch changed config files and reload
+- set default value on binding struct. use tag `defalut`
