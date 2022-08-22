@@ -64,9 +64,13 @@ func (d *StdDriver) GetEncoder() Encoder {
 
 var (
 	// JSONAllowComments support write comments on json file.
+	//
+	// Deprecated: please use JSONDriver.ClearComments = true
 	JSONAllowComments = true
 
 	// JSONMarshalIndent if not empty, will use json.MarshalIndent for encode data.
+	//
+	// Deprecated: please use JSONDriver.MarshalIndent
 	JSONMarshalIndent string
 )
 
@@ -84,19 +88,14 @@ var JSONEncoder Encoder = func(v interface{}) (out []byte, err error) {
 
 // JSONDriver instance fot json
 var JSONDriver = &jsonDriver{
+	driverName:    JSON,
 	ClearComments: JSONAllowComments,
 	MarshalIndent: JSONMarshalIndent,
-	// inject
-	StdDriver: StdDriver{
-		name:    JSON,
-		decoder: JSONDecoder,
-		encoder: JSONEncoder,
-	},
 }
 
 // jsonDriver for json format content
 type jsonDriver struct {
-	StdDriver
+	driverName string
 	// ClearComments before parse JSON string.
 	ClearComments bool
 	// MarshalIndent if not empty, will use json.MarshalIndent for encode data.
@@ -105,7 +104,7 @@ type jsonDriver struct {
 
 // Name of the driver
 func (d *jsonDriver) Name() string {
-	return d.name
+	return d.driverName
 }
 
 // Decode for the driver
@@ -125,7 +124,7 @@ func (d *jsonDriver) GetDecoder() Decoder {
 // Encode for the driver
 func (d *jsonDriver) Encode(v interface{}) (out []byte, err error) {
 	if len(d.MarshalIndent) > 0 {
-		return json.MarshalIndent(v, "", JSONMarshalIndent)
+		return json.MarshalIndent(v, "", d.MarshalIndent)
 	}
 	return json.Marshal(v)
 }

@@ -397,6 +397,12 @@ func TestJSONAllowComments(t *testing.T) {
 `), &m)
 	is.Error(err)
 
+	JSONAllowComments = true
+	err = JSONDecoder([]byte(`{
+// comments
+"n":"v"}
+`), &m)
+	is.NoError(err)
 	JSONAllowComments = old
 }
 
