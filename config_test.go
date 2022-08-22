@@ -34,15 +34,12 @@ var jsonStr = `{
 func Example() {
 	// WithOptions(ParseEnv)
 
-	// add Decoder and Encoder
-	// use yaml github.com/gookit/config/yaml
-	// AddDriver(Yaml, yaml.Driver)
+	// use yaml github.com/gookit/config/yamlv3
+	// AddDriver(Yaml, yamlv3.Driver)
 	// use toml github.com/gookit/config/toml
 	// AddDriver(Toml, toml.Driver)
 	// use toml github.com/gookit/config/hcl
 	// AddDriver(Hcl, hcl.Driver)
-	// Or
-	// config.DecoderEncoder(config.JSON, yaml.Decoder, yaml.Encoder)
 
 	err := LoadFiles("testdata/json_base.json")
 	if err != nil {

@@ -2,7 +2,6 @@
 Package yaml is a driver use YAML format content as config source
 
 Usage please see example:
-
 */
 package yaml
 
@@ -19,4 +18,5 @@ var Decoder config.Decoder = yaml.Unmarshal
 var Encoder config.Encoder = yaml.Marshal
 
 // Driver for yaml
+// TIP: recommended use the yamlv3.Driver
 var Driver = config.NewDriver(config.Yaml, Decoder, Encoder)

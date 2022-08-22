@@ -88,27 +88,3 @@ func TestLoadFromMap(t *testing.T) {
 	})
 	assert.Error(t, err)
 }
-
-func TestDontUpperEnvKey(t *testing.T) {
-	assert.Equal(t, "", os.Getenv("DONT_ENV_TEST"))
-
-	DontUpperEnvKey()
-
-	err := LoadFromMap(map[string]string{
-		"dont_env_test": "val",
-	})
-
-	assert.Contains(t, fmt.Sprint(os.Environ()), "dont_env_test=val")
-	assert.NoError(t, err)
-	assert.Equal(t, "val", Get("dont_env_test"))
-
-	// on windows, os.Getenv() not case sensitive
-	if runtime.GOOS == "windows" {
-		assert.Equal(t, "val", Get("DONT_ENV_TEST"))
-	} else {
-		assert.Equal(t, "", Get("DONT_ENV_TEST"))
-	}
-
-	UpperEnvKey = true // revert
-	ClearLoaded()
-}

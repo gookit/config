@@ -75,7 +75,7 @@ package main
 
 import (
     "github.com/gookit/config/v2"
-    "github.com/gookit/config/v2/yaml"
+    "github.com/gookit/config/v2/yamlv3"
 )
 
 // go run ./examples/yaml.go
@@ -84,7 +84,7 @@ func main() {
 	config.WithOptions(config.ParseEnv)
 
 	// 添加驱动程序以支持yaml内容解析（除了JSON是默认支持，其他的则是按需使用）
-	config.AddDriver(yaml.Driver)
+	config.AddDriver(yamlv3.Driver)
 
 	// 加载配置，可以同时传入多个文件
 	err := config.LoadFiles("testdata/yml_base.yml")

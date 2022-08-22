@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gookit/config/v2"
-	"github.com/gookit/config/v2/yaml"
+	"github.com/gookit/config/v2/yamlv3"
 )
 
 // go run ./examples/yaml.go
@@ -12,9 +12,9 @@ func main() {
 	config.WithOptions(config.ParseEnv)
 
 	// only add decoder
-	// config.SetDecoder(config.Yaml, yaml.Decoder)
+	// config.SetDecoder(config.Yaml, yamlv3.Decoder)
 	// Or
-	config.AddDriver(yaml.Driver)
+	config.AddDriver(yamlv3.Driver)
 
 	err := config.LoadFiles("testdata/yml_base.yml")
 	if err != nil {
