@@ -57,11 +57,11 @@ func (c *Config) Exists(key string, findByPath ...bool) (ok bool) {
 			if item, ok = typeData[k]; !ok {
 				return
 			}
-		case map[string]interface{}: // is map(decode from toml/json)
+		case map[string]interface{}: // is map(decode from toml/json/yaml.v3)
 			if item, ok = typeData[k]; !ok {
 				return
 			}
-		case map[interface{}]interface{}: // is map(decode from yaml)
+		case map[interface{}]interface{}: // is map(decode from yaml.v2)
 			if item, ok = typeData[k]; !ok {
 				return
 			}
@@ -102,8 +102,9 @@ func (c *Config) Data() map[string]interface{} {
 }
 
 // Get config value by key string, support get sub-value by key path(eg. 'map.key'),
-// ok is true, find value from config
-// ok is false, not found or error
+//
+//   - ok is true, find value from config
+//   - ok is false, not found or error
 func Get(key string, findByPath ...bool) interface{} { return dc.Get(key, findByPath...) }
 
 // Get config value by key
@@ -317,7 +318,7 @@ func (c *Config) Int64(key string, defVal ...int64) (value int64) {
 	return
 }
 
-// try get a int64 value by given key
+// try to get an int64 value by given key
 func (c *Config) tryInt64(key string) (value int64, ok bool) {
 	strVal, ok := c.getString(key)
 	if !ok {
@@ -356,13 +357,15 @@ func Bool(key string, defVal ...bool) bool { return dc.Bool(key, defVal...) }
 
 // Bool looks up a value for a key in this section and attempts to parse that value as a boolean,
 // along with a boolean result similar to a map lookup.
+//
 // of following(case insensitive):
-//  - true
-//  - yes
-//  - false
-//  - no
-//  - 1
-//  - 0
+//   - true
+//   - yes
+//   - false
+//   - no
+//   - 1
+//   - 0
+//
 // The `ok` boolean will be false in the event that the value could not be parsed as a bool
 func (c *Config) Bool(key string, defVal ...bool) (value bool) {
 	rawVal, ok := c.getString(key)

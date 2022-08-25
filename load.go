@@ -46,7 +46,8 @@ func LoadRemote(format, url string) error { return dc.LoadRemote(format, url) }
 // LoadRemote load config data from remote URL.
 //
 // Usage:
-// 	c.LoadRemote(config.JSON, "http://abc.com/api-config.json")
+//
+//	c.LoadRemote(config.JSON, "http://abc.com/api-config.json")
 func (c *Config) LoadRemote(format, url string) (err error) {
 	// create http client
 	client := http.Client{Timeout: 300 * time.Second}
@@ -59,13 +60,12 @@ func (c *Config) LoadRemote(format, url string) (err error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("fetch remote resource error, reply status code is not equals to 200")
+		return fmt.Errorf("fetch remote config error, reply status code is %d", resp.StatusCode)
 	}
 
 	// read response content
 	bts, err := ioutil.ReadAll(resp.Body)
 	if err == nil {
-		// parse file content
 		if err = c.parseSourceCode(format, bts); err != nil {
 			return
 		}
@@ -81,7 +81,7 @@ func LoadOSEnv(keys []string, keyToLower bool) { dc.LoadOSEnv(keys, keyToLower) 
 func (c *Config) LoadOSEnv(keys []string, keyToLower bool) {
 	for _, key := range keys {
 		// NOTICE:
-		// if is windows os, os.Getenv() Key is not case sensitive
+		// if is windows os, os.Getenv() Key is not case-sensitive
 		val := os.Getenv(key)
 		if keyToLower {
 			key = strings.ToLower(key)
@@ -108,8 +108,9 @@ func LoadFlags(keys []string) error { return dc.LoadFlags(keys) }
 // LoadFlags parse command line arguments, based on provide keys.
 //
 // Usage:
-// 	// debug flag is bool type
-// 	c.LoadFlags([]string{"env", "debug:bool"})
+//
+//	// debug flag is bool type
+//	c.LoadFlags([]string{"env", "debug:bool"})
 func (c *Config) LoadFlags(keys []string) (err error) {
 	hash := map[string]interface{}{}
 
@@ -161,7 +162,7 @@ func LoadData(dataSource ...interface{}) error { return dc.LoadData(dataSource..
 // LoadData load data from map OR struct
 //
 // The dataSources can be:
-//  - map[string]interface{}
+//   - map[string]interface{}
 func (c *Config) LoadData(dataSources ...interface{}) (err error) {
 	if c.opts.Delimiter == 0 {
 		c.opts.Delimiter = defaultDelimiter
@@ -186,10 +187,12 @@ func LoadSources(format string, src []byte, more ...[]byte) error {
 // LoadSources load data from byte content.
 //
 // Usage:
-// 	config.LoadSources(config.Yml, []byte(`
-// 	name: blog
-// 	arr:
-// 		key: val
+//
+//	config.LoadSources(config.Yml, []byte(`
+//	name: blog
+//	arr:
+//		key: val
+//
 // `))
 func (c *Config) LoadSources(format string, src []byte, more ...[]byte) (err error) {
 	err = c.parseSourceCode(format, src)
@@ -259,7 +262,6 @@ func (c *Config) LoadExistsByFormat(format string, sourceFiles ...string) (err e
 
 // load config file
 func (c *Config) loadFile(file string, loadExist bool, format string) (err error) {
-	// open file
 	fd, err := os.Open(file)
 	if err != nil {
 		// skip not exist file
@@ -274,8 +276,8 @@ func (c *Config) loadFile(file string, loadExist bool, format string) (err error
 	// read file content
 	bts, err := ioutil.ReadAll(fd)
 	if err == nil {
+		// get format for file ext
 		if format == "" {
-			// get format for file ext
 			format = strings.Trim(filepath.Ext(file), ".")
 		}
 
@@ -317,7 +319,7 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 		err = mergo.Merge(&c.data, data, mergo.WithOverride, mergo.WithTypeCheck)
 	}
 
-	if err != nil {
+	if err == nil {
 		c.fireHook(OnLoadData)
 	}
 	data = nil

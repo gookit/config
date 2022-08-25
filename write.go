@@ -4,11 +4,10 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/gookit/goutil/arrutil"
 	"github.com/gookit/goutil/maputil"
 )
 
-// some common errors
+// some common errors on set value
 var (
 	ErrReadonly   = errors.New("the config instance in 'readonly' mode")
 	ErrKeyIsEmpty = errors.New("the config key is cannot be empty")
@@ -62,48 +61,4 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 	// set by path
 	keys := strings.Split(key, string(sep))
 	return maputil.SetByKeys(&c.data, keys, val)
-}
-
-/**
-more setter: SetIntArr, SetIntMap, SetString, SetStringArr, SetStringMap
-*/
-
-// build new value by key paths
-// "site.info" -> map[string]map[string]val
-func buildValueByPath(paths []string, val interface{}) (newItem map[string]interface{}) {
-	if len(paths) == 1 {
-		return map[string]interface{}{paths[0]: val}
-	}
-
-	arrutil.Reverse(paths)
-
-	// multi nodes
-	for _, p := range paths {
-		if newItem == nil {
-			newItem = map[string]interface{}{p: val}
-		} else {
-			newItem = map[string]interface{}{p: newItem}
-		}
-	}
-	return
-}
-
-// build new value by key paths, only for yaml.v2
-// "site.info" -> map[interface{}]map[string]val
-func buildValueByPath1(paths []string, val interface{}) (newItem map[interface{}]interface{}) {
-	if len(paths) == 1 {
-		return map[interface{}]interface{}{paths[0]: val}
-	}
-
-	arrutil.Reverse(paths)
-
-	// multi nodes
-	for _, p := range paths {
-		if newItem == nil {
-			newItem = map[interface{}]interface{}{p: val}
-		} else {
-			newItem = map[interface{}]interface{}{p: newItem}
-		}
-	}
-	return
 }
