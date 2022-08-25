@@ -229,3 +229,18 @@ func TestIssues_81(t *testing.T) {
 	is.NoErr(err)
 	is.Eq(wantTm, opt.IdleTime)
 }
+
+// https://github.com/gookit/config/issues/96
+func TestIssues_96(t *testing.T) {
+	is := assert.New(t)
+	c := config.New("test")
+
+	err := c.Set("parent.child[0]", "Test1")
+	is.NoErr(err)
+	err = c.Set("parent.child[1]", "Test2")
+	is.NoErr(err)
+
+	dump.Println(c.Data())
+	is.NotEmpty(c.Data())
+	is.Eq([]string{"Test1", "Test2"}, c.Get("parent.child"))
+}

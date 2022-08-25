@@ -9,6 +9,10 @@ import (
 )
 
 func TestSetData(t *testing.T) {
+	defer func() {
+		Reset()
+	}()
+
 	c := Default()
 
 	err := c.LoadStrings(JSON, jsonStr)
@@ -32,6 +36,10 @@ func TestSetData(t *testing.T) {
 }
 
 func TestSet(t *testing.T) {
+	defer func() {
+		ClearAll()
+	}()
+
 	is := assert.New(t)
 	c := Default()
 
@@ -163,7 +171,7 @@ func TestSet(t *testing.T) {
 		is.Equal("", val)
 	}
 
-	is.NoError(Set("name.sub", []int{2}))
+	is.NoError(Set("name.sub", []int{2}, false))
 	ints := Ints("name.sub")
 	is.Equal([]int{2}, ints)
 

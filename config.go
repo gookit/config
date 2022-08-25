@@ -35,7 +35,6 @@ JSON format content example:
 	}
 
 Usage please see example(more example please see examples folder in the lib):
-
 */
 package config
 
@@ -205,6 +204,9 @@ func (c *Config) LoadedFiles() []string { return c.loadedFiles }
 
 // DriverNames get loaded driver names
 func (c *Config) DriverNames() []string { return c.driverNames }
+
+// Reset data and caches
+func Reset() { dc.ClearAll() }
 
 // ClearAll data and caches
 func ClearAll() { dc.ClearAll() }

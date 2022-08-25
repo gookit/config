@@ -2,18 +2,16 @@ package config
 
 import (
 	"errors"
-	"strconv"
 	"strings"
 
 	"github.com/gookit/goutil/arrutil"
 	"github.com/gookit/goutil/maputil"
-	"github.com/gookit/goutil/strutil"
-	"github.com/imdario/mergo"
 )
 
+// some common errors
 var (
-	errReadonly   = errors.New("the config instance in 'readonly' mode")
-	errKeyIsEmpty = errors.New("the config key is cannot be empty")
+	ErrReadonly   = errors.New("the config instance in 'readonly' mode")
+	ErrKeyIsEmpty = errors.New("the config key is cannot be empty")
 )
 
 // SetData for override the Config.Data
@@ -38,7 +36,7 @@ func Set(key string, val interface{}, setByPath ...bool) error {
 // Set a value by key string.
 func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error) {
 	if c.opts.Readonly {
-		return errReadonly
+		return ErrReadonly
 	}
 
 	c.lock.Lock()
@@ -46,7 +44,7 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 
 	sep := c.opts.Delimiter
 	if key = formatKey(key, string(sep)); key == "" {
-		return errKeyIsEmpty
+		return ErrKeyIsEmpty
 	}
 
 	defer c.fireHook(OnSetValue)
@@ -61,60 +59,9 @@ func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error)
 		return
 	}
 
+	// set by path
 	keys := strings.Split(key, string(sep))
-	topK := keys[0]
-	paths := keys[1:]
-
-	var ok bool
-	var item interface{}
-
-	// find top item data based on top key
-	if item, ok = c.data[topK]; !ok {
-		// not found, is new add
-		c.data[topK] = buildValueByPath(paths, val)
-		return
-	}
-
-	switch typeData := item.(type) {
-	case map[interface{}]interface{}: // from yaml.v2
-		dstItem := make(map[interface{}]interface{}, len(typeData))
-		for k, v := range typeData {
-			dstItem[strutil.QuietString(k)] = v
-		}
-
-		// create a new item for the topK
-		newItem := buildValueByPath1(paths, val)
-		// merge new item to old item
-		if err = mergo.Merge(&dstItem, newItem, mergo.WithOverride); err != nil {
-			return
-		}
-
-		c.data[topK] = dstItem
-	case map[string]interface{}: // from json,toml,yaml.v3
-		// enhanced: 'top.sub'=string, can set 'top.sub' to other type. eg: 'top.sub'=map
-		if err = maputil.SetByKeys(&typeData, paths, val); err != nil {
-			return
-		}
-
-		c.data[topK] = typeData
-	case []interface{}: // is list array
-		index, err := strconv.Atoi(keys[1])
-		if len(keys) == 2 && err == nil {
-			if index <= len(typeData) {
-				typeData[index] = val
-			}
-
-			c.data[topK] = typeData
-		} else {
-			err = errors.New("max allow 1 level for setting array value, current key: " + key)
-			return err
-		}
-	default:
-		// as a top key
-		c.data[key] = val
-		// err = errors.New("not supported value type, cannot setting value for the key: " + key)
-	}
-	return
+	return maputil.SetByKeys(&c.data, keys, val)
 }
 
 /**
