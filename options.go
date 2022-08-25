@@ -42,8 +42,10 @@ type Options struct {
 	ReadFormat string
 	// DecoderConfig setting for binding data to struct. such as: TagName
 	DecoderConfig *mapstructure.DecoderConfig
-	// HookFunc on data changed.
+	// HookFunc on data changed. you can do something...
 	HookFunc HookFunc
+	// ParseDefault tag on binding data to struct. tag: default
+	ParseDefault bool
 	// WatchChange bool
 }
 
@@ -77,6 +79,29 @@ func (o *Options) shouldAddHookFunc() bool {
 	return o.ParseTime || o.ParseEnv
 }
 
+func (o *Options) makeDecoderConfig() *mapstructure.DecoderConfig {
+	var bindConf *mapstructure.DecoderConfig
+	if o.DecoderConfig == nil {
+		bindConf = newDefaultDecoderConfig(o.TagName)
+	} else {
+		// copy new config for each binding.
+		copyConf := *o.DecoderConfig
+		bindConf = &copyConf
+
+		// compatible with previous settings opts.TagName
+		if bindConf.TagName == "" {
+			bindConf.TagName = o.TagName
+		}
+	}
+
+	// add hook on decode value to struct
+	if bindConf.DecodeHook == nil && o.shouldAddHookFunc() {
+		bindConf.DecodeHook = ValDecodeHookFunc(o.ParseEnv, o.ParseTime)
+	}
+
+	return bindConf
+}
+
 /*************************************************************
  * config setting
  *************************************************************/
@@ -86,6 +111,9 @@ func ParseEnv(opts *Options) { opts.ParseEnv = true }
 
 // ParseTime set parse time string.
 func ParseTime(opts *Options) { opts.ParseTime = true }
+
+// ParseDefault tag value on binding data to struct.
+func ParseDefault(opts *Options) { opts.ParseDefault = true }
 
 // Readonly set readonly
 func Readonly(opts *Options) { opts.Readonly = true }

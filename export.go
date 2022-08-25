@@ -56,7 +56,7 @@ func MapOnExists(key string, dst interface{}) error {
 // MapOnExists mapping data to the dst structure only on key exists.
 func (c *Config) MapOnExists(key string, dst interface{}) error {
 	err := c.Structure(key, dst)
-	if err != nil && err == errNotFound {
+	if err != nil && err == ErrNotFound {
 		return nil
 	}
 
@@ -71,36 +71,21 @@ func (c *Config) MapOnExists(key string, dst interface{}) error {
 //	config.Structure("db", &dbInfo)
 func (c *Config) Structure(key string, dst interface{}) error {
 	var data interface{}
-	if key == "" { // binding all data
+	// binding all data
+	if key == "" {
 		data = c.data
-	} else { // some data of the config
+	} else {
+		// binding sub-data of the config
 		var ok bool
 		data, ok = c.GetValue(key)
 		if !ok {
-			return errNotFound
+			return ErrNotFound
 		}
 	}
 
-	var bindConf *mapstructure.DecoderConfig
-	if c.opts.DecoderConfig == nil {
-		bindConf = newDefaultDecoderConfig(c.opts.TagName)
-	} else {
-		// copy new config for each binding.
-		copyConf := *c.opts.DecoderConfig
-		bindConf = &copyConf
-
-		// compatible with previous settings opts.TagName
-		if bindConf.TagName == "" {
-			bindConf.TagName = c.opts.TagName
-		}
-	}
-
-	// add hook on decode value to struct
-	if bindConf.DecodeHook == nil && c.opts.shouldAddHookFunc() {
-		bindConf.DecodeHook = ValDecodeHookFunc(c.opts.ParseEnv, c.opts.ParseTime)
-	}
-
-	bindConf.Result = dst // set result struct ptr
+	bindConf := c.opts.makeDecoderConfig()
+	// set result struct ptr
+	bindConf.Result = dst
 	decoder, err := mapstructure.NewDecoder(bindConf)
 
 	if err == nil {

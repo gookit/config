@@ -1,18 +1,12 @@
 package config
 
 import (
-	"errors"
 	"strconv"
 	"strings"
 
 	"github.com/gookit/goutil/envutil"
 	"github.com/gookit/goutil/mathutil"
 	"github.com/gookit/goutil/strutil"
-)
-
-var (
-	errInvalidKey = errors.New("invalid config key string")
-	errNotFound   = errors.New("this key does not exist in the config")
 )
 
 // Exists key exists check
@@ -122,7 +116,7 @@ func GetValue(key string, findByPath ...bool) (interface{}, bool) {
 func (c *Config) GetValue(key string, findByPath ...bool) (value interface{}, ok bool) {
 	sep := c.opts.Delimiter
 	if key = formatKey(key, string(sep)); key == "" {
-		c.addError(errInvalidKey)
+		c.addError(ErrKeyIsEmpty)
 		return
 	}
 
@@ -139,13 +133,13 @@ func (c *Config) GetValue(key string, findByPath ...bool) (value interface{}, ok
 
 	// disable find by path.
 	if len(findByPath) > 0 && !findByPath[0] {
-		// c.addError(errNotFound)
+		// c.addError(ErrNotFound)
 		return
 	}
 
 	// has sub key? eg. "lang.dir"
 	if strings.IndexByte(key, sep) == -1 {
-		// c.addError(errNotFound)
+		// c.addError(ErrNotFound)
 		return
 	}
 
@@ -155,7 +149,7 @@ func (c *Config) GetValue(key string, findByPath ...bool) (value interface{}, ok
 	// find top item data based on top key
 	var item interface{}
 	if item, ok = c.data[topK]; !ok {
-		// c.addError(errNotFound)
+		// c.addError(ErrNotFound)
 		return
 	}
 

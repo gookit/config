@@ -7,10 +7,11 @@ import (
 	"github.com/gookit/goutil/maputil"
 )
 
-// some common errors on set value
+// some common errors definitions
 var (
 	ErrReadonly   = errors.New("the config instance in 'readonly' mode")
 	ErrKeyIsEmpty = errors.New("the config key is cannot be empty")
+	ErrNotFound   = errors.New("this key does not exist in the config")
 )
 
 // SetData for override the Config.Data
