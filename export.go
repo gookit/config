@@ -10,6 +10,23 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
+// Decode all config data to the dst ptr
+//
+// Usage:
+//
+//	myConf := &MyConf{}
+//	config.Decode(myConf)
+func Decode(dst interface{}) error { return dc.Decode(dst) }
+
+// Decode all config data to the dst ptr.
+//
+// It's equals:
+//
+//	c.Structure("", dst)
+func (c *Config) Decode(dst interface{}) error {
+	return c.Structure("", dst)
+}
+
 // MapStruct alias method of the 'Structure'
 //
 // Usage:
@@ -145,33 +162,13 @@ func (c *Config) DumpTo(out io.Writer, format string) (n int64, err error) {
 
 // DumpToFile use the format(json,yaml,toml) dump config data to a writer
 func (c *Config) DumpToFile(fileName string, format string) (err error) {
-	var ok bool
-	var encoder Encoder
-
-	format = fixFormat(format)
-	if encoder, ok = c.encoders[format]; !ok {
-		err = errors.New("not exists/register encoder for the format: " + format)
-		return
-	}
-
-	if len(c.data) == 0 {
-		return
-	}
-
-	// encode data to string
-	encoded, err := encoder(c.data)
-	if err != nil {
-		return
-	}
-
-	// write content to out
 	fsFlags := os.O_CREATE | os.O_WRONLY | os.O_TRUNC
 	f, err := os.OpenFile(fileName, fsFlags, os.ModePerm)
 	if err != nil {
 		return err
 	}
 
-	_, err = f.Write(encoded)
+	_, err = c.DumpTo(f, format)
 	if err1 := f.Close(); err1 != nil && err == nil {
 		err = err1
 	}

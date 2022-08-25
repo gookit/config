@@ -51,12 +51,13 @@ func TestConfig_Structure(t *testing.T) {
 }`)
 
 	is.Nil(err)
-
-	user := &struct {
+	type User struct {
 		Age    int // always float64 from JSON
 		Name   string
 		Sports []string
-	}{}
+	}
+
+	user := &User{}
 	// map all data
 	err = MapStruct("", user)
 	is.Nil(err)
@@ -64,6 +65,15 @@ func TestConfig_Structure(t *testing.T) {
 	is.Equal(28, user.Age)
 	is.Equal("inhere", user.Name)
 	is.Equal("pingPong", user.Sports[0])
+
+	// map all data
+	u1 := &User{}
+	err = Decode(u1)
+	is.Nil(err)
+
+	is.Equal(28, u1.Age)
+	is.Equal("inhere", u1.Name)
+	is.Equal("pingPong", u1.Sports[0])
 
 	// - auto convert string to int
 	// age use string in JSON
@@ -76,11 +86,7 @@ func TestConfig_Structure(t *testing.T) {
 
 	is.Nil(err)
 
-	user1 := &struct {
-		Age    int // always float64 from JSON
-		Name   string
-		Sports []string
-	}{}
+	user1 := &User{}
 	err = cfg1.MapStruct("", user1)
 	is.Nil(err)
 

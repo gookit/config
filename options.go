@@ -32,7 +32,7 @@ type Options struct {
 	ParseKey bool
 	// TagName tag name for binding data to struct
 	//
-	// Deprecated: please set tag name by DecoderConfig
+	// Tips: please set tag name by DecoderConfig
 	TagName string
 	// Delimiter the delimiter char for split key path, if `FindByPath=true`. default is '.'
 	Delimiter byte
