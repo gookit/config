@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/gookit/goutil/structs"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -80,6 +81,14 @@ func (c *Config) Structure(key string, dst interface{}) error {
 		data, ok = c.GetValue(key)
 		if !ok {
 			return ErrNotFound
+		}
+	}
+
+	// init default value by tag: default
+	if c.opts.ParseDefault {
+		err := structs.InitDefaults(dst)
+		if err != nil {
+			return err
 		}
 	}
 

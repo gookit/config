@@ -10,7 +10,8 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-// ValDecodeHookFunc returns a mapstructure.DecodeHookFunc that parse ENV var, and more custom parse
+// ValDecodeHookFunc returns a mapstructure.DecodeHookFunc
+// that parse ENV var, and more custom parse
 func ValDecodeHookFunc(parseEnv, parseTime bool) mapstructure.DecodeHookFunc {
 	return func(f reflect.Type, t reflect.Type, data interface{}) (interface{}, error) {
 		if f.Kind() != reflect.String {

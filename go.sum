@@ -22,8 +22,9 @@ github.com/gookit/color v1.5.0/go.mod h1:43aQb+Zerm/BWh2GnrgOQm7ffz7tvQXEKV6BFMl
 github.com/gookit/color v1.5.1 h1:Vjg2VEcdHpwq+oY63s/ksHrgJYCTo0bwWvmmYWdE9fQ=
 github.com/gookit/color v1.5.1/go.mod h1:wZFzea4X8qN6vHOSP2apMb4/+w/orMznEzYsIHPaqKM=
 github.com/gookit/goutil v0.5.3/go.mod h1:W0rVeVN9EcoRV+ODq91TXvqoUA87BXGi36WFVykCKRI=
-github.com/gookit/goutil v0.5.9 h1:DBaSHaealbqxLWEZrEt/vqnPKiJHLQJau9dbcFQG/ng=
 github.com/gookit/goutil v0.5.9/go.mod h1:iZLXpRhMqKGvKtJ9+b0cdls2gXRH4HaGWQfkf2mdHRQ=
+github.com/gookit/goutil v0.5.10 h1:tKvo3LzE6j8vTXizQoPvZq9jt4VrVriuD5lQMbQbhH4=
+github.com/gookit/goutil v0.5.10/go.mod h1:rZCjNKf63zWuD5N0vyn6718utvN9m2uT0jsHBV66hAU=
 github.com/gookit/ini/v2 v2.1.1 h1:q2VtSSl/ivTOZMPvxhjWxO3f146NvWM84jBQZETj/1o=
 github.com/gookit/ini/v2 v2.1.1/go.mod h1:zkMTCrnE2QgDW0izB/pRtgEKKjXmT/22dfk5eZg+IHo=
 github.com/gookit/properties v0.1.0 h1:UHwgz0UCjxJ0q36qmvOAWNSdNh+yGIBUjUDaKzLryJY=

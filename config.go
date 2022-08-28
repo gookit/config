@@ -51,11 +51,16 @@ const (
 	JSON = "json"
 	Yaml = "yaml"
 	Toml = "toml"
+	Prop = "properties"
+)
 
+const (
 	// default delimiter
 	defaultDelimiter byte = '.'
 	// default struct tag name for binding data to struct
 	defaultStructTag = "mapstructure"
+	// struct tag name for set default-value on binding data
+	defaultValueTag = "default"
 )
 
 // internal vars
@@ -70,7 +75,7 @@ var dc = New("default")
 
 // Config structure definition
 type Config struct {
-	// save latest error, will clear after read.
+	// save the latest error, will clear after read.
 	err error
 	// config instance name
 	name string

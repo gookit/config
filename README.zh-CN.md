@@ -25,6 +25,7 @@
   - 可用事件: `set.value`, `set.data`, `load.data`, `clean.data`
 - 支持数据覆盖合并，加载多份数据时将按key自动合并
 - 支持将全部或部分配置数据绑定到结构体 `config.BindStruct("key", &s)`
+  - NEW: 支持通过结构标签 `default` 解析并设置默认值
 - 支持通过 `.` 分隔符来按路径获取子级值，也支持自定义分隔符。 e.g `map.key` `arr.2`
 - 支持解析ENV变量名称。 like `shell: ${SHELL}` -> `shell: /bin/zsh`
 - 简洁的使用API `Get` `Int` `Uint` `Int64` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
@@ -309,7 +310,45 @@ type Options struct {
     DecoderConfig *mapstructure.DecoderConfig
     // HookFunc on data changed.
     HookFunc HookFunc
+	// ParseDefault tag on binding data to struct. tag: default
+	ParseDefault bool
 }
+```
+
+### 选项: 解析默认值
+
+NEW: 支持通过结构标签 `default` 解析并设置默认值
+
+```go
+	// add option: config.ParseDefault
+	c := config.New("test").WithOptions(config.ParseDefault)
+
+	// only set name
+	c.SetData(map[string]interface{}{
+		"name": "inhere",
+	})
+
+	// age load from default tag
+	type User struct {
+		Age  int `default:"30"`
+		Name string
+		Tags []int
+	}
+
+	user := &User{}
+	goutil.MustOk(c.Decode(user))
+	dump.Println(user)
+```
+
+**Output**:
+
+```shell
+&config_test.User {
+  Age: int(30),
+  Name: string("inhere"), #len=6
+  Tags: []int [ #len=0
+  ],
+},
 ```
 
 ## API方法参考

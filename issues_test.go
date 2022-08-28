@@ -230,6 +230,44 @@ func TestIssues_81(t *testing.T) {
 	is.Eq(wantTm, opt.IdleTime)
 }
 
+// https://github.com/gookit/config/issues/94
+func TestIssues_94(t *testing.T) {
+	is := assert.New(t)
+	// add option: config.ParseDefault
+	c := config.New("test").WithOptions(config.ParseDefault)
+
+	// only set name
+	c.SetData(map[string]interface{}{
+		"name": "inhere",
+	})
+
+	// age load from default tag
+	type User struct {
+		Age  int `json:"age" default:"30"`
+		Name string
+		Tags []int
+	}
+
+	user := &User{}
+	is.NoErr(c.Decode(user))
+	dump.Println(user)
+	is.Eq("inhere", user.Name)
+	is.Eq(30, user.Age)
+
+	// field use ptr
+	type User1 struct {
+		Age  *int `json:"age" default:"30"`
+		Name string
+		Tags []int
+	}
+
+	u1 := &User1{}
+	is.NoErr(c.Decode(u1))
+	dump.Println(u1)
+	is.Eq("inhere", u1.Name)
+	is.Eq(30, *u1.Age)
+}
+
 // https://github.com/gookit/config/issues/96
 func TestIssues_96(t *testing.T) {
 	is := assert.New(t)
