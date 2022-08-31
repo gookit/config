@@ -32,23 +32,23 @@ Golang's application config manage tool library.
 - Generic api `Get` `Int` `Uint` `Int64` `Float` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
 - Complete unit test(code coverage > 95%)
 
-> Provide a sub-package `dotenv` that supports importing data from files (eg `.env`) to ENV
-
 ## Only use INI
 
-> If you just want to use INI for simple config management, recommended use [gookit/ini](https://github.com/gookit/ini)
+If you just want to use INI for simple config management, recommended use [gookit/ini](https://github.com/gookit/ini)
+
+> gookit/ini: Provide a sub-package `dotenv` that supports importing data from files (eg `.env`) to ENV
 
 ## GoDoc
 
 - [godoc for github](https://pkg.go.dev/github.com/gookit/config)
 
-## Usage
-
-**Install**:
+## Install
 
 ```bash
 go get github.com/gookit/config/v2
 ```
+
+## Usage
 
 Here using the yaml format as an example(`testdata/yml_other.yml`):
 
@@ -129,9 +129,11 @@ config.WithOptions(func(opt *Options) {
 })
 ```
 
-Can use empty string for bind all config data to a struct:
+**Can bind all config data to a struct**:
 
 ```go
+config.Decode(&myConf)
+// can also
 config.BindStruct("", &myConf)
 ```
 

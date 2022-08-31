@@ -25,31 +25,31 @@
   - 可用事件: `set.value`, `set.data`, `load.data`, `clean.data`
 - 支持数据覆盖合并，加载多份数据时将按key自动合并
 - 支持将全部或部分配置数据绑定到结构体 `config.BindStruct("key", &s)`
-  - NEW: 支持通过结构标签 `default` 解析并设置默认值
+  - NEW: 支持通过结构体标签 `default` 解析并设置默认值
 - 支持通过 `.` 分隔符来按路径获取子级值，也支持自定义分隔符。 e.g `map.key` `arr.2`
 - 支持解析ENV变量名称。 like `shell: ${SHELL}` -> `shell: /bin/zsh`
 - 简洁的使用API `Get` `Int` `Uint` `Int64` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
 - 完善的单元测试(code coverage > 95%)
 
-> 提供一个子包 `dotenv`，支持从文件（eg `.env`）中导入数据到ENV
-
 ## 只使用INI
 
-> 如果你仅仅想用INI来做简单配置管理，推荐使用 [gookit/ini](https://github.com/gookit/ini)
+如果你仅仅想用INI来做简单配置管理，推荐使用 [gookit/ini](https://github.com/gookit/ini)
+
+> gookit/ini: 提供一个子包 `dotenv`，支持从文件（eg `.env`）中导入数据到ENV
 
 ## GoDoc
 
 - [godoc for github](https://godoc.org/github.com/gookit/config)
 
-## 快速使用
-
-**获取包**:
+## 安装包
 
 ```bash
 go get github.com/gookit/config/v2
 ```
 
-这里使用yaml格式作为示例(`testdata/yml_other.yml`):
+## 快速使用
+
+这里使用yaml格式内容作为示例(`testdata/yml_other.yml`):
 
 ```yaml
 name: app2
@@ -97,7 +97,7 @@ func main() {
 
 	// 加载更多文件
 	err = config.LoadFiles("testdata/yml_other.yml")
-	// can also load multi at once
+	// 也可以一次性加载多个文件
 	// err := config.LoadFiles("testdata/yml_base.yml", "testdata/yml_other.yml")
 	if err != nil {
 		panic(err)
@@ -129,9 +129,11 @@ config.WithOptions(func(opt *Options) {
 })
 ```
 
-可以使用空字符串将所有配置数据绑定到结构:
+将所有配置数据绑定到结构:
 
 ```go
+config.Decode(&myConf)
+// 也可以
 config.BindStruct("", &myConf)
 ```
 
@@ -154,11 +156,11 @@ fmt.Print(name) // inhere
 
 // 获取字符串数组
 arr1 := config.Strings("arr1")
-fmt.Printf("%v %#v", arr1) // []string{"val1", "val21"}
+fmt.Printf("%#v", arr1) // []string{"val1", "val21"}
 
 // 获取字符串KV映射
 val := config.StringMap("map1")
-fmt.Printf("%v %#v",val) // map[string]string{"key":"val2", "key2":"val20"}
+fmt.Printf("%#v",val) // map[string]string{"key":"val2", "key2":"val20"}
 
 // 值包含ENV变量
 value := config.String("shell")
