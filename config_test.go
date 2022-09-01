@@ -266,6 +266,15 @@ func TestDriver(t *testing.T) {
 	is.True(c.HasEncoder(JSON))
 
 	c.DelDriver(JSON)
+	is.False(c.HasDecoder(JSON))
+	is.False(c.HasEncoder(JSON))
+
+	WithDriver(JSONDriver)
+	is.True(c.HasDecoder(JSON))
+	is.True(c.HasEncoder(JSON))
+
+	c.DelDriver(JSON)
+
 	c.SetDecoders(map[string]Decoder{JSON: JSONDecoder})
 	c.SetEncoders(map[string]Encoder{JSON: JSONEncoder})
 	is.True(c.HasDecoder(JSON))

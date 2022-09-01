@@ -25,7 +25,8 @@
   - 可用事件: `set.value`, `set.data`, `load.data`, `clean.data`
 - 支持数据覆盖合并，加载多份数据时将按key自动合并
 - 支持将全部或部分配置数据绑定到结构体 `config.BindStruct("key", &s)`
-  - NEW: 支持通过结构体标签 `default` 解析并设置默认值
+  - 支持通过结构体标签 `default` 解析并设置默认值. eg: `default:"def_value"`
+  - 支持从 ENV 初始化设置字段值 `default:"${APP_ENV | dev}"`
 - 支持通过 `.` 分隔符来按路径获取子级值，也支持自定义分隔符。 e.g `map.key` `arr.2`
 - 支持解析ENV变量名称。 like `shell: ${SHELL}` -> `shell: /bin/zsh`
 - 简洁的使用API `Get` `Int` `Uint` `Int64` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...

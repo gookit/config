@@ -106,6 +106,14 @@ func (o *Options) makeDecoderConfig() *mapstructure.DecoderConfig {
  * config setting
  *************************************************************/
 
+// WithTagName set tag name for export to struct
+func WithTagName(tagName string) func(*Options) {
+	return func(opts *Options) {
+		opts.TagName = tagName
+		opts.DecoderConfig.TagName = tagName
+	}
+}
+
 // ParseEnv set parse env value
 func ParseEnv(opts *Options) { opts.ParseEnv = true }
 
@@ -153,7 +161,7 @@ func EnableCache(opts *Options) { opts.EnableCache = true }
 func WithOptions(opts ...func(*Options)) { dc.WithOptions(opts...) }
 
 // WithOptions apply some options
-func (c *Config) WithOptions(opts ...func(*Options)) *Config {
+func (c *Config) WithOptions(opts ...func(opts *Options)) *Config {
 	if !c.IsEmpty() {
 		panic("config: Cannot set options after data has been loaded")
 	}

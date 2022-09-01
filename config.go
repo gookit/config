@@ -139,7 +139,7 @@ func NewWith(name string, fn func(c *Config)) *Config {
 }
 
 // NewWithOptions config instance
-func NewWithOptions(name string, opts ...func(*Options)) *Config {
+func NewWithOptions(name string, opts ...func(opts *Options)) *Config {
 	return New(name).WithOptions(opts...)
 }
 
@@ -151,6 +151,17 @@ func Default() *Config {
 /*************************************************************
  * config drivers
  *************************************************************/
+
+// WithDriver set multi drivers at once.
+func WithDriver(drivers ...Driver) { dc.WithDriver(drivers...) }
+
+// WithDriver set multi drivers at once.
+func (c *Config) WithDriver(drivers ...Driver) *Config {
+	for _, driver := range drivers {
+		c.AddDriver(driver)
+	}
+	return c
+}
 
 // AddDriver set a decoder and encoder driver for a format.
 func AddDriver(driver Driver) { dc.AddDriver(driver) }

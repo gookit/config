@@ -26,7 +26,8 @@ Golang's application config manage tool library.
   - allow events: `set.value`, `set.data`, `load.data`, `clean.data`
 - Support data overlay and merge, automatically load by key when loading multiple copies of data
 - Support for binding all or part of the configuration data to the structure
-  - Support init default value by struct tag `default`
+  - Support init default value by struct tag `default:"def_value"`
+  - Support init default value from ENV `default:"${APP_ENV | dev}"`
 - Support get sub value by path, like `map.key` `arr.2`
 - Support parse ENV name and allow with default value. like `envKey: ${SHELL|/bin/bash}` -> `envKey: /bin/zsh`
 - Generic api `Get` `Int` `Uint` `Int64` `Float` `String` `Bool` `Ints` `IntMap` `Strings` `StringMap` ...
