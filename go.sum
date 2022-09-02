@@ -31,8 +31,8 @@ github.com/gookit/properties v0.1.0 h1:UHwgz0UCjxJ0q36qmvOAWNSdNh+yGIBUjUDaKzLry
 github.com/gookit/properties v0.1.0/go.mod h1:qg423zj2UMRsOilko6MAqyUBYQETTLjkk9NejTlMeBE=
 github.com/hashicorp/hcl v1.0.0 h1:0Anlzjpi4vEasTeNFn2mLJgTSwt0+6sfsiTG8qcWGx4=
 github.com/hashicorp/hcl v1.0.0/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
-github.com/hashicorp/hcl/v2 v2.13.0 h1:0Apadu1w6M11dyGFxWnmhhcMjkbAiKCv7G1r/2QgCNc=
-github.com/hashicorp/hcl/v2 v2.13.0/go.mod h1:e4z5nxYlWNPdDSNYX+ph14EvWYMFm3eP0zIUqPc2jr0=
+github.com/hashicorp/hcl/v2 v2.14.0 h1:jX6+Q38Ly9zaAJlAjnFVyeNSNCKKW8D0wvyg7vij5Wc=
+github.com/hashicorp/hcl/v2 v2.14.0/go.mod h1:e4z5nxYlWNPdDSNYX+ph14EvWYMFm3eP0zIUqPc2jr0=
 github.com/imdario/mergo v0.3.13 h1:lFzP57bqS/wsqKssCGmtLAb8A0wKjLGrve2q3PPVcBk=
 github.com/imdario/mergo v0.3.13/go.mod h1:4lJ1jqUDcsbIECGy0RUJAXNIhg+6ocWgb1ALK2O4oXg=
 github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
