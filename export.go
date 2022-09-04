@@ -86,7 +86,9 @@ func (c *Config) Structure(key string, dst interface{}) error {
 
 	// init default value by tag: default
 	if c.opts.ParseDefault {
-		err := structs.InitDefaults(dst)
+		err := structs.InitDefaults(dst, func(opt *structs.InitOptions) {
+			opt.ParseEnv = c.opts.ParseEnv
+		})
 		if err != nil {
 			return err
 		}

@@ -286,3 +286,23 @@ func TestConfig_BindStruct_set_DecoderConfig(t *testing.T) {
 func TestConfig_BindStruct_error(t *testing.T) {
 	// cfg := NewEmpty()
 }
+
+func TestConfig_BindStruct_default(t *testing.T) {
+	type MyConf struct {
+		Env   string `default:"${APP_ENV | dev}"`
+		Debug bool   `default:"${APP_DEBUG | false}"`
+	}
+
+	cfg := NewWithOptions("test", ParseEnv, ParseDefault)
+	// cfg.SetData(map[string]interface{}{
+	// 	"env": "prod",
+	// 	"debug": "true",
+	// })
+
+	mc := &MyConf{}
+	err := cfg.Decode(mc)
+	dump.P(mc)
+	assert.NoError(t, err)
+	assert.Equal(t, "dev", mc.Env)
+	assert.False(t, mc.Debug)
+}
