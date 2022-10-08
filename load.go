@@ -75,19 +75,40 @@ func (c *Config) LoadRemote(format, url string) (err error) {
 }
 
 // LoadOSEnv load data from OS ENV
+//
+// Deprecated: please use LoadOSEnvs()
 func LoadOSEnv(keys []string, keyToLower bool) { dc.LoadOSEnv(keys, keyToLower) }
 
 // LoadOSEnv load data from os ENV
+//
+// Deprecated: please use Config.LoadOSEnvs()
 func (c *Config) LoadOSEnv(keys []string, keyToLower bool) {
 	for _, key := range keys {
-		// NOTICE:
-		// if is windows os, os.Getenv() Key is not case-sensitive
+		// NOTICE: if is Windows os, os.Getenv() Key is not case-sensitive
 		val := os.Getenv(key)
 		if keyToLower {
 			key = strings.ToLower(key)
 		}
 
 		_ = c.Set(key, val)
+	}
+
+	c.fireHook(OnLoadData)
+}
+
+// LoadOSEnvs load data from OS ENVs. format: {ENV_NAME: config_key}
+func LoadOSEnvs(nameToKeyMap map[string]string) { dc.LoadOSEnvs(nameToKeyMap) }
+
+// LoadOSEnvs load data from os ENVs. format: {ENV_NAME: config_key}
+func (c *Config) LoadOSEnvs(nameToKeyMap map[string]string) {
+	for name, key := range nameToKeyMap {
+		if val := os.Getenv(name); val != "" {
+			if key == "" {
+				key = strings.ToLower(name)
+			}
+
+			_ = c.Set(key, val)
+		}
 	}
 
 	c.fireHook(OnLoadData)

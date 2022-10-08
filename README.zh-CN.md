@@ -106,17 +106,27 @@ func main() {
 }
 ```
 
+**使用提示**:
+
+- 可以使用 `WithOptions()` 添加更多额外选项功能. 例如: `ParseEnv`, `ParseDefault`
+- 可以使用 `AddDriver()` 添加需要使用的格式驱动器(`json` 是默认加载的的,无需添加)
+- 然后就可以使用 `LoadFiles()` `LoadStrings()` 等方法加载配置数据
+  - 可以传入多个文件,也可以调用多次
+  - 多次加载的数据会自动按key进行合并处理
+
 ### 绑定数据到结构体
 
 > 注意：结构体默认的绑定映射tag是 `mapstructure`，可以通过设置 `Options.TagName` 来更改它
 
 ```go
-user := struct {
-    Age  int
-    Kye  string
-    UserName string `mapstructure:"user_name"`
-    Tags []int
-}{}
+type User struct {
+  Age  int  `mapstructure:"age"`
+  Key  string `mapstructure:"key"`
+  UserName  string `mapstructure:"user_name"`
+  Tags []int  `mapstructure:"tags"`
+}
+
+user := User{}
 err = config.BindStruct("user", &user)
 
 fmt.Println(user.UserName) // inhere
@@ -126,8 +136,19 @@ fmt.Println(user.UserName) // inhere
 
 ```go
 config.WithOptions(func(opt *Options) {
-    opt.TagName = "config"
+    options.DecoderConfig.TagName = "config"
 })
+
+// use custom tag name.
+type User struct {
+  Age  int  `config:"age"`
+  Key  string `config:"key"`
+  UserName  string `config:"user_name"`
+  Tags []int  `config:"tags"`
+}
+
+user := User{}
+err = config.Decode(&user)
 ```
 
 将所有配置数据绑定到结构:
@@ -192,7 +213,7 @@ fmt.Print(name) // new name
 ```go
 // os env: APP_NAME=config APP_DEBUG=true
 // load ENV info
-config.LoadOSEnv([]string{"APP_NAME", "APP_NAME"}, true)
+config.LoadOSEnvs(map[string]string{"APP_NAME": "app_name", "APP_DEBUG": "app_debug"})
 
 // read
 config.Bool("app_debug") // true
@@ -201,7 +222,7 @@ config.String("app_name") // "config"
 
 ## 从命令行参数载入数据
 
-> 支持简单的命令行 `flag` 参数解析，加载数据
+支持简单的从命令行 `flag` 参数解析，加载数据
 
 ```go
 // flags like: --name inhere --env dev --age 99 --debug
@@ -239,13 +260,13 @@ myConf := config.NewWithOptions("my-conf", config.ParseEnv, config.ReadOnly)
 在创建配置时添加钩子函数:
 
 ```go
-	hookFn := func(event string, c *Config) {
-		fmt.Println("fire the:", event)
-	}
+hookFn := func(event string, c *Config) {
+    fmt.Println("fire the:", event)
+}
 
-	c := NewWithOptions("test", WithHookFunc(hookFn))
-	// for global config
-	config.WithOptions(WithHookFunc(hookFn))
+c := NewWithOptions("test", WithHookFunc(hookFn))
+// for global config
+config.WithOptions(WithHookFunc(hookFn))
 ```
 
 之后, 当调用 `LoadXXX, Set, SetData, ClearData` 等方法时, 就会输出:
@@ -358,9 +379,9 @@ NEW: 支持通过结构标签 `default` 解析并设置默认值
 
 ### 载入配置
 
-- `LoadOSEnv(keys []string)` 从ENV载入数据
 - `LoadData(dataSource ...interface{}) (err error)` 从struct或map加载数据
 - `LoadFlags(keys []string) (err error)` 从命令行参数载入数据
+- `LoadOSEnvs(nameToKeyMap map[string]string)` 从ENV载入数据
 - `LoadExists(sourceFiles ...string) (err error)` 从存在的配置文件里加载数据，会忽略不存在的文件
 - `LoadFiles(sourceFiles ...string) (err error)` 从给定的配置文件里加载数据，有文件不存在则会panic
 - `LoadRemote(format, url string) (err error)` 从远程 URL 加载配置数据

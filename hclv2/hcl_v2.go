@@ -10,25 +10,23 @@ import (
 	"errors"
 
 	"github.com/gookit/config/v2"
-	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/hcl/v2/gohcl"
-	"github.com/hashicorp/hcl/v2/hclsyntax"
+	"github.com/hashicorp/hcl/v2/hclsimple"
 )
 
 // Decoder the hcl content decoder
 var Decoder config.Decoder = func(blob []byte, v interface{}) (err error) {
-	// return hclsimple.Decode("hcl2/config.hcl", blob, nil, v)
-	file, diags := hclsyntax.ParseConfig(
-		blob,
-		"hcl2/config.hcl",
-		hcl.Pos{Line: 0, Column: 0},
-	)
-	// if diags.HasErrors() {
-	if len(diags) != 0 {
-		return diags
-	}
-
-	return gohcl.DecodeBody(file.Body, nil, v)
+	return hclsimple.Decode("hcl2/config.hcl", blob, nil, v)
+	// file, diags := hclsyntax.ParseConfig(
+	// 	blob,
+	// 	"hcl2/config.hcl",
+	// 	hcl.Pos{Line: 0, Column: 0},
+	// )
+	// // if diags.HasErrors() {
+	// if len(diags) != 0 {
+	// 	return diags
+	// }
+	//
+	// return gohcl.DecodeBody(file.Body, nil, v)
 }
 
 // Encoder the hcl content encoder

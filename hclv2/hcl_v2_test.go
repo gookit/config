@@ -11,6 +11,7 @@ import (
 func TestDriver(t *testing.T) {
 	is := assert.New(t)
 	is.Equal("hcl", Driver.Name())
+	is.Equal(config.Hcl, Driver.Name())
 
 	c := config.NewEmpty("test")
 	is.False(c.HasDecoder(config.Hcl))
@@ -29,6 +30,7 @@ func TestLoadFile(t *testing.T) {
 	c.AddDriver(Driver)
 	is.True(c.HasDecoder(config.Hcl))
 
+	t.Skip("Not completed")
 	return
 	err := c.LoadFiles("../testdata/hcl2_base.hcl")
 	is.NoError(err)

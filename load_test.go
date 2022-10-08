@@ -212,3 +212,30 @@ func TestLoadOSEnv(t *testing.T) {
 
 	ClearAll()
 }
+
+func TestLoadOSEnvs(t *testing.T) {
+	ClearAll()
+
+	testutil.MockEnvValues(map[string]string{
+		"APP_NAME":  "config",
+		"APP_DEBUG": "true",
+		"TEST_ENV0": "val0",
+		"TEST_ENV1": "val1",
+	}, func() {
+		assert.Equal(t, "", String("test_env0"))
+		assert.Equal(t, "val0", Getenv("TEST_ENV0"))
+
+		LoadOSEnvs(map[string]string{
+			"APP_NAME":  "",
+			"APP_DEBUG": "app_debug",
+			"TEST_ENV0": "test0",
+		})
+
+		assert.True(t, Bool("app_debug"))
+		assert.Equal(t, "config", String("app_name"))
+		assert.Equal(t, "val0", String("test0"))
+		assert.Equal(t, "", String("test_env1"))
+	})
+
+	ClearAll()
+}

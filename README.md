@@ -104,19 +104,27 @@ func main() {
 	// fmt.Printf("config data: \n %#v\n", config.Data())
 }
 ```
+**Usage tips**:
+
+- More extra options can be added using `WithOptions()`. For example: `ParseEnv`, `ParseDefault`
+- You can use `AddDriver()` to add the required format driver (`json` is loaded by default, no need to add)
+- The configuration data can then be loaded using `LoadFiles()` `LoadStrings()` etc.
+  - You can pass in multiple files or call multiple times
+  - Data loaded multiple times will be automatically merged by key
 
 ## Bind Structure
 
 > Note: The default binding mapping tag of a structure is `mapstructure`, which can be changed by setting the decoder's option `options.DecoderConfig.TagName`
 
 ```go
-user := struct {
+type User struct {
     Age  int  `mapstructure:"age"`
     Key  string `mapstructure:"key"`
     UserName  string `mapstructure:"user_name"`
     Tags []int  `mapstructure:"tags"`
-}{}
+}
 
+user := User{}
 err = config.BindStruct("user", &user)
 
 fmt.Println(user.UserName) // inhere
@@ -128,6 +136,17 @@ fmt.Println(user.UserName) // inhere
 config.WithOptions(func(opt *Options) {
     options.DecoderConfig.TagName = "config"
 })
+
+// use custom tag name.
+type User struct {
+  Age  int  `config:"age"`
+  Key  string `config:"key"`
+  UserName  string `config:"user_name"`
+  Tags []int  `config:"tags"`
+}
+
+user := User{}
+err = config.Decode(&user)
 ```
 
 **Can bind all config data to a struct**:
@@ -228,7 +247,7 @@ config.Bool("debug") // true
 ```go
 // os env: APP_NAME=config APP_DEBUG=true
 // load ENV info
-config.LoadOSEnv([]string{"APP_NAME", "APP_DEBUG"}, true)
+config.LoadOSEnvs(map[string]string{"APP_NAME": "app_name", "APP_DEBUG": "app_debug"})
 
 // read
 config.Bool("app_debug") // true
@@ -378,7 +397,7 @@ Support parse default value by struct tag `default`
 
 ### Load Config
 
-- `LoadOSEnv(keys []string)` Load from os ENV
+- `LoadOSEnvs(nameToKeyMap map[string]string)` Load data from os ENV
 - `LoadData(dataSource ...interface{}) (err error)` Load from struts or maps
 - `LoadFlags(keys []string) (err error)` Load from CLI flags
 - `LoadExists(sourceFiles ...string) (err error)` 
