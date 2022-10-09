@@ -8,10 +8,11 @@ import (
 
 // there are some event names for config data changed.
 const (
-	OnSetValue  = "set.value"
-	OnSetData   = "set.data"
-	OnLoadData  = "load.data"
-	OnCleanData = "clean.data"
+	OnSetValue   = "set.value"
+	OnSetData    = "set.data"
+	OnLoadData   = "load.data"
+	OnReloadData = "reload.data"
+	OnCleanData  = "clean.data"
 )
 
 // HookFunc on config data changed.

@@ -121,6 +121,7 @@ func TestLoadRemote(t *testing.T) {
 	is.Error(err)
 
 	if runtime.GOOS == "windows" {
+		t.Skip("skip test load remote on Windows")
 		return
 	}
 
@@ -237,5 +238,37 @@ func TestLoadOSEnvs(t *testing.T) {
 		assert.Equal(t, "", String("test_env1"))
 	})
 
+	ClearAll()
+}
+
+func TestReloadFiles(t *testing.T) {
+	ClearAll()
+	c := Default()
+	// no loaded files
+	assert.NoError(t, ReloadFiles())
+
+	var eventName string
+	c.WithOptions(WithHookFunc(func(event string, c *Config) {
+		eventName = event
+	}))
+
+	// load files
+	err := LoadFiles("testdata/json_base.json", "testdata/json_other.json")
+	assert.NoError(t, err)
+	assert.Equal(t, OnLoadData, eventName)
+	assert.NotEmpty(t, c.LoadedFiles())
+	assert.Equal(t, "app2", c.String("name"))
+
+	// set value
+	assert.NoError(t, c.Set("name", "new value"))
+	assert.Equal(t, OnSetValue, eventName)
+	assert.Equal(t, "new value", c.String("name"))
+
+	// reload files
+	assert.NoError(t, ReloadFiles())
+	assert.Equal(t, OnReloadData, eventName)
+
+	// value is reverted
+	assert.Equal(t, "app2", c.String("name"))
 	ClearAll()
 }

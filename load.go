@@ -14,10 +14,14 @@ import (
 	"github.com/imdario/mergo"
 )
 
-// LoadFiles load one or multi files
+// LoadFiles load one or multi files, will fire OnLoadData event
+//
+// Usage:
+//
+//	config.LoadFiles(file1, file2, ...)
 func LoadFiles(sourceFiles ...string) error { return dc.LoadFiles(sourceFiles...) }
 
-// LoadFiles load and parse config files
+// LoadFiles load and parse config files, will fire OnLoadData event
 func (c *Config) LoadFiles(sourceFiles ...string) (err error) {
 	for _, file := range sourceFiles {
 		if err = c.loadFile(file, false, ""); err != nil {
@@ -28,6 +32,10 @@ func (c *Config) LoadFiles(sourceFiles ...string) (err error) {
 }
 
 // LoadExists load one or multi files, will ignore not exist
+//
+// Usage:
+//
+//	config.LoadExists(file1, file2, ...)
 func LoadExists(sourceFiles ...string) error { return dc.LoadExists(sourceFiles...) }
 
 // LoadExists load and parse config files, but will ignore not exists file.
@@ -58,7 +66,6 @@ func (c *Config) LoadRemote(format, url string) (err error) {
 
 	//noinspection GoUnhandledErrorResult
 	defer resp.Body.Close()
-
 	if resp.StatusCode != 200 {
 		return fmt.Errorf("fetch remote config error, reply status code is %d", resp.StatusCode)
 	}
@@ -69,7 +76,7 @@ func (c *Config) LoadRemote(format, url string) (err error) {
 		if err = c.parseSourceCode(format, bts); err != nil {
 			return
 		}
-		c.loadedFiles = append(c.loadedFiles, url)
+		// c.loadedFiles = append(c.loadedFiles, url)
 	}
 	return
 }
@@ -130,32 +137,33 @@ func LoadFlags(keys []string) error { return dc.LoadFlags(keys) }
 //
 // Usage:
 //
-//	// debug flag is bool type
+//	// 'debug' flag is bool type
 //	c.LoadFlags([]string{"env", "debug:bool"})
 func (c *Config) LoadFlags(keys []string) (err error) {
-	hash := map[string]interface{}{}
+	hash := map[string]int8{}
 
 	// bind vars
 	for _, key := range keys {
 		key, typ := parseVarNameAndType(key)
+		desc := "config flag " + key
 
 		switch typ {
 		case "int":
 			ptr := new(int)
-			flag.IntVar(ptr, key, c.Int(key), "")
-			hash[key] = ptr
+			flag.IntVar(ptr, key, c.Int(key), desc)
+			hash[key] = 0
 		case "uint":
 			ptr := new(uint)
-			flag.UintVar(ptr, key, c.Uint(key), "")
-			hash[key] = ptr
+			flag.UintVar(ptr, key, c.Uint(key), desc)
+			hash[key] = 0
 		case "bool":
 			ptr := new(bool)
-			flag.BoolVar(ptr, key, c.Bool(key), "")
-			hash[key] = ptr
+			flag.BoolVar(ptr, key, c.Bool(key), desc)
+			hash[key] = 0
 		default: // as string
 			ptr := new(string)
-			flag.StringVar(ptr, key, c.String(key), "")
-			hash[key] = ptr
+			flag.StringVar(ptr, key, c.String(key), desc)
+			hash[key] = 0
 		}
 	}
 
@@ -163,14 +171,12 @@ func (c *Config) LoadFlags(keys []string) (err error) {
 	flag.Parse()
 	flag.Visit(func(f *flag.Flag) {
 		name := f.Name
-		// name := strings.Replace(f.Name, "-", ".", -1)
 		// only get name in the keys.
 		if _, ok := hash[name]; !ok {
 			return
 		}
 
-		// ignore error
-		_ = c.Set(name, f.Value.String())
+		_ = c.Set(name, f.Value.String()) // ignore error
 	})
 
 	c.fireHook(OnLoadData)
@@ -209,7 +215,7 @@ func LoadSources(format string, src []byte, more ...[]byte) error {
 //
 // Usage:
 //
-//	config.LoadSources(config.Yml, []byte(`
+//	config.LoadSources(config.Yaml, []byte(`
 //	name: blog
 //	arr:
 //		key: val
@@ -251,14 +257,14 @@ func (c *Config) LoadStrings(format string, str string, more ...string) (err err
 	return
 }
 
-// LoadFilesByFormat load one or multi files by give format
-func LoadFilesByFormat(format string, sourceFiles ...string) error {
-	return dc.LoadFilesByFormat(format, sourceFiles...)
+// LoadFilesByFormat load one or multi config files by give format, will fire OnLoadData event
+func LoadFilesByFormat(format string, configFiles ...string) error {
+	return dc.LoadFilesByFormat(format, configFiles...)
 }
 
-// LoadFilesByFormat load one or multi files by give format
-func (c *Config) LoadFilesByFormat(format string, sourceFiles ...string) (err error) {
-	for _, file := range sourceFiles {
+// LoadFilesByFormat load one or multi files by give format, will fire OnLoadData event
+func (c *Config) LoadFilesByFormat(format string, configFiles ...string) (err error) {
+	for _, file := range configFiles {
 		if err = c.loadFile(file, false, format); err != nil {
 			return
 		}
@@ -266,14 +272,14 @@ func (c *Config) LoadFilesByFormat(format string, sourceFiles ...string) (err er
 	return
 }
 
-// LoadExistsByFormat load one or multi files by give format
-func LoadExistsByFormat(format string, sourceFiles ...string) error {
-	return dc.LoadExistsByFormat(format, sourceFiles...)
+// LoadExistsByFormat load one or multi files by give format, will fire OnLoadData event
+func LoadExistsByFormat(format string, configFiles ...string) error {
+	return dc.LoadExistsByFormat(format, configFiles...)
 }
 
-// LoadExistsByFormat load one or multi files by give format
-func (c *Config) LoadExistsByFormat(format string, sourceFiles ...string) (err error) {
-	for _, file := range sourceFiles {
+// LoadExistsByFormat load one or multi files by give format, will fire OnLoadData event
+func (c *Config) LoadExistsByFormat(format string, configFiles ...string) (err error) {
+	for _, file := range configFiles {
 		if err = c.loadFile(file, true, format); err != nil {
 			return
 		}
@@ -281,7 +287,42 @@ func (c *Config) LoadExistsByFormat(format string, sourceFiles ...string) (err e
 	return
 }
 
-// load config file
+// ReloadFiles reload config data use loaded files
+func ReloadFiles() error { return dc.ReloadFiles() }
+
+// ReloadFiles reload config data use loaded files. use on watching loaded files change
+func (c *Config) ReloadFiles() (err error) {
+	files := c.loadedFiles
+	if len(files) == 0 {
+		return
+	}
+
+	data := c.Data()
+	c.reloading = true
+	c.ClearCaches()
+
+	defer func() {
+		// revert to back up data on error
+		if err != nil {
+			c.data = data
+		}
+
+		c.lock.Unlock()
+		c.reloading = false
+
+		if err == nil {
+			c.fireHook(OnReloadData)
+		}
+	}()
+
+	// with lock
+	c.lock.Lock()
+
+	// reload config files
+	return c.LoadFiles(files...)
+}
+
+// load config file, will fire OnLoadData event
 func (c *Config) loadFile(file string, loadExist bool, format string) (err error) {
 	fd, err := os.Open(file)
 	if err != nil {
@@ -307,7 +348,9 @@ func (c *Config) loadFile(file string, loadExist bool, format string) (err error
 			return
 		}
 
-		c.loadedFiles = append(c.loadedFiles, file)
+		if !c.reloading {
+			c.loadedFiles = append(c.loadedFiles, file)
+		}
 	}
 	return
 }
@@ -317,16 +360,15 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	format = fixFormat(format)
 	decode := c.decoders[format]
 	if decode == nil {
-		return errors.New("not exists or not register decoder for the format: " + format)
+		return errors.New("not register decoder for the format: " + format)
 	}
 
 	if c.opts.Delimiter == 0 {
 		c.opts.Delimiter = defaultDelimiter
 	}
 
-	data := make(map[string]interface{})
-
 	// decode content to data
+	data := make(map[string]interface{})
 	if err = decode(blob, &data); err != nil {
 		return
 	}
@@ -336,13 +378,13 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 		c.data = data
 	} else {
 		// again ... will merge data
-		// err = mergo.Map(&c.data, data, mergo.WithOverride)
 		err = mergo.Merge(&c.data, data, mergo.WithOverride, mergo.WithTypeCheck)
 	}
 
-	if err == nil {
+	if !c.reloading && err == nil {
 		c.fireHook(OnLoadData)
 	}
+
 	data = nil
 	return
 }

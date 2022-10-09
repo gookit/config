@@ -89,6 +89,7 @@ type Config struct {
 	// loaded config files records
 	loadedFiles []string
 	driverNames []string
+	reloading   bool
 
 	// TODO Deprecated decoder and encoder, use driver instead
 	// drivers map[string]Driver
