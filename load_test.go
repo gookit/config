@@ -132,8 +132,8 @@ func TestLoadRemote(t *testing.T) {
 	is.Nil(err)
 	is.Equal("123", c.String("age", ""))
 
-	is.Len(c.LoadedFiles(), 1)
-	is.Equal(url, c.LoadedFiles()[0])
+	is.Len(c.LoadedUrls(), 1)
+	is.Equal(url, c.LoadedUrls()[0])
 
 	// load invalid remote data
 	url1 := "https://raw.githubusercontent.com/gookit/config/master/testdata/json_error.json"

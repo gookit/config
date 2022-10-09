@@ -76,7 +76,7 @@ func (c *Config) LoadRemote(format, url string) (err error) {
 		if err = c.parseSourceCode(format, bts); err != nil {
 			return
 		}
-		// c.loadedFiles = append(c.loadedFiles, url)
+		c.loadedUrls = append(c.loadedUrls, url)
 	}
 	return
 }

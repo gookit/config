@@ -87,6 +87,7 @@ type Config struct {
 	data map[string]interface{}
 
 	// loaded config files records
+	loadedUrls  []string
 	loadedFiles []string
 	driverNames []string
 	reloading   bool
@@ -216,6 +217,9 @@ func (c *Config) IsEmpty() bool {
 	return len(c.data) == 0
 }
 
+// LoadedUrls get loaded urls list
+func (c *Config) LoadedUrls() []string { return c.loadedUrls }
+
 // LoadedFiles get loaded files name
 func (c *Config) LoadedFiles() []string { return c.loadedFiles }
 
@@ -233,6 +237,7 @@ func (c *Config) ClearAll() {
 	c.ClearData()
 	c.ClearCaches()
 
+	c.loadedUrls = []string{}
 	c.loadedFiles = []string{}
 	c.opts.Readonly = false
 }
@@ -242,6 +247,7 @@ func (c *Config) ClearData() {
 	c.fireHook(OnCleanData)
 
 	c.data = make(map[string]interface{})
+	c.loadedUrls = []string{}
 	c.loadedFiles = []string{}
 }
 
