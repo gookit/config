@@ -8,7 +8,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/gookit/config)](https://goreportcard.com/report/github.com/gookit/config)
 [![Go Reference](https://pkg.go.dev/badge/github.com/gookit/config/v2.svg)](https://pkg.go.dev/github.com/gookit/config/v2)
 
-简洁、功能完善的Golang应用程序配置管理工具库
+`config` - 简洁、功能完善的 Go 应用程序配置管理工具库
 
 > **[EN README](README.md)**
 
@@ -22,7 +22,7 @@
 - 支持从远程 URL 加载配置数据
 - 支持从命令行参数(`flags`)设置配置数据
 - 支持在配置数据更改时触发事件
-  - 可用事件: `set.value`, `set.data`, `load.data`, `clean.data`
+  - 可用事件: `set.value`, `set.data`, `load.data`, `clean.data`, `reload.data`
 - 支持数据覆盖合并，加载多份数据时将按key自动合并
 - 支持将全部或部分配置数据绑定到结构体 `config.BindStruct("key", &s)`
   - 支持通过结构体标签 `default` 解析并设置默认值. eg: `default:"def_value"`
