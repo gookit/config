@@ -273,19 +273,19 @@ myConf := config.NewWithOptions("my-conf", config.ParseEnv, config.ReadOnly)
 
 Now, you can add a hook func for listen config data change. then, you can do something like: write data to file
 
-Add hook func on create config:
+**Add hook func on create config**:
 
 ```go
-	hookFn := func(event string, c *Config) {
-		fmt.Println("fire the:", event)
-	}
+hookFn := func(event string, c *Config) {
+    fmt.Println("fire the:", event)
+}
 
-	c := NewWithOptions("test", WithHookFunc(hookFn))
-	// for global config
-	config.WithOptions(WithHookFunc(hookFn))
+c := NewWithOptions("test", config.WithHookFunc(hookFn))
+// for global config
+config.WithOptions(config.WithHookFunc(hookFn))
 ```
 
-After that, when calling `LoadXXX, Set, SetData, ClearData` etc methods, it will output:
+After that, when calling `LoadXXX, Set, SetData, ClearData` methods, it will output:
 
 ```text
 fire the: load.data
@@ -293,6 +293,23 @@ fire the: set.value
 fire the: set.data
 fire the: clean.data
 ```
+
+### Watch loaded config files
+
+To listen for changes to loaded config files, and reload the config when it changes, you need to use the https://github.com/fsnotify/fsnotify library. 
+For usage, please refer to the example [./_example/watch_file.go](_examples/watch_file.go)
+
+Also, you need to listen to the `reload.data` event:
+
+```go
+config.WithOptions(config.WithHookFunc(func(event string, c *config.Config) {
+    if event == config.OnReloadData {
+        fmt.Println("config reloaded, you can do something ....")
+    }
+}))
+```
+
+When the configuration changes, you can do related things, for example: rebind the configuration to your struct.
 
 ## Dump config data
 
@@ -362,24 +379,24 @@ type Options struct {
 Support parse default value by struct tag `default`
 
 ```go
-	// add option: config.ParseDefault
-	c := config.New("test").WithOptions(config.ParseDefault)
+// add option: config.ParseDefault
+c := config.New("test").WithOptions(config.ParseDefault)
 
-	// only set name
-	c.SetData(map[string]interface{}{
-		"name": "inhere",
-	})
+// only set name
+c.SetData(map[string]interface{}{
+    "name": "inhere",
+})
 
-	// age load from default tag
-	type User struct {
-		Age  int `default:"30"`
-		Name string
-		Tags []int
-	}
+// age load from default tag
+type User struct {
+    Age  int `default:"30"`
+    Name string
+    Tags []int
+}
 
-	user := &User{}
-	goutil.MustOk(c.Decode(user))
-	dump.Println(user)
+user := &User{}
+goutil.MustOk(c.Decode(user))
+dump.Println(user)
 ```
 
 **Output**:

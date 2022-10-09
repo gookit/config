@@ -2,6 +2,7 @@
   "name": "app",
   "debug": false,
   "baseKey": "value",
+  "key_in_json": "hello jsond",
   "age": 123,
   "envKey": "${SHELL}",
   "envKey1": "${NotExist|defValue}",

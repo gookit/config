@@ -255,9 +255,9 @@ myConf := config.NewWithOptions("my-conf", config.ParseEnv, config.ReadOnly)
 
 ## 监听配置更改
 
-现在，您可以添加一个挂钩函数来监听配置数据更改。然后，您可以执行一些自定义操作, 例如：将数据写入文件
+现在，您可以添加一个钩子函数来监听配置数据更改。然后，您可以执行一些自定义操作, 例如：将数据写入文件
 
-在创建配置时添加钩子函数:
+**在创建配置时添加钩子函数**:
 
 ```go
 hookFn := func(event string, c *Config) {
@@ -269,7 +269,7 @@ c := NewWithOptions("test", WithHookFunc(hookFn))
 config.WithOptions(WithHookFunc(hookFn))
 ```
 
-之后, 当调用 `LoadXXX, Set, SetData, ClearData` 等方法时, 就会输出:
+**之后**, 当调用 `LoadXXX, Set, SetData, ClearData` 等方法时, 就会输出:
 
 ```text
 fire the: load.data
@@ -277,6 +277,23 @@ fire the: set.value
 fire the: set.data
 fire the: clean.data
 ```
+
+### 监听载入的配置文件变动
+
+想要监听载入的配置文件变动，并在变动时重新加载配置，你需要使用 https://github.com/fsnotify/fsnotify 库。
+使用方法可以参考示例 [./_example/watch_file.go](_examples/watch_file.go)
+
+同时，你需要监听 `reload.data` 事件:
+
+```go
+config.WithOptions(config.WithHookFunc(func(event string, c *config.Config) {
+    if event == config.OnReloadData {
+        fmt.Println("config reloaded, you can do something ....")
+    }
+}))
+```
+
+当配置发生变化并重新加载后，你可以做相关的事情，例如：重新绑定配置到你的结构体。
 
 ## 导出配置到文件
 
