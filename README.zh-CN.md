@@ -36,7 +36,13 @@
 
 如果你仅仅想用INI来做简单配置管理，推荐使用 [gookit/ini](https://github.com/gookit/ini)
 
-> gookit/ini: 提供一个子包 `dotenv`，支持从文件（eg `.env`）中导入数据到ENV
+### 加载 .env 文件
+
+`gookit/ini`: 提供一个子包 `dotenv`，支持从文件（eg `.env`）中导入数据到ENV
+
+```shell
+go get github.com/gookit/ini/v2/dotenv
+```
 
 ## GoDoc
 

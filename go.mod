@@ -4,9 +4,9 @@ go 1.16
 
 require (
 	github.com/BurntSushi/toml v1.2.0
-	github.com/gookit/goutil v0.5.13
-	github.com/gookit/ini/v2 v2.1.2
-	github.com/gookit/properties v0.2.0
+	github.com/gookit/goutil v0.5.15
+	github.com/gookit/ini/v2 v2.1.3
+	github.com/gookit/properties v0.2.1
 	github.com/hashicorp/hcl v1.0.0
 	github.com/hashicorp/hcl/v2 v2.14.1
 	github.com/imdario/mergo v0.3.13

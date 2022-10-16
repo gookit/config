@@ -37,7 +37,13 @@
 
 If you just want to use INI for simple config management, recommended use [gookit/ini](https://github.com/gookit/ini)
 
-> gookit/ini: Provide a sub-package `dotenv` that supports importing data from files (eg `.env`) to ENV
+### Load dotenv file
+
+On `gookit/ini`:  Provide a sub-package `dotenv` that supports importing data from files (eg `.env`) to ENV
+
+```shell
+go get github.com/gookit/ini/v2/dotenv
+```
 
 ## GoDoc
 
