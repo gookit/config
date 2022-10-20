@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/gookit/goutil/testutil"
-	"github.com/stretchr/testify/assert"
+	"github.com/gookit/goutil/testutil/assert"
 )
 
 var jsonStr = `{
@@ -22,6 +22,7 @@ var jsonStr = `{
         "key": "val",
         "key1": "val1",
         "key2": "val2",
+        "key4": "230",
         "key3": "${SHELL}"
     },
     "arr1": [
@@ -152,20 +153,20 @@ func BenchmarkGet(b *testing.B) {
 }
 
 func TestBasic(t *testing.T) {
-	st := assert.New(t)
+	is := assert.New(t)
 
 	ClearAll()
 	c := Default()
-	st.True(c.HasDecoder(JSON))
-	st.True(c.HasEncoder(JSON))
-	st.Equal("default", c.Name())
-	st.NoError(c.Error())
+	is.True(c.HasDecoder(JSON))
+	is.True(c.HasEncoder(JSON))
+	is.Eq("default", c.Name())
+	is.NoErr(c.Error())
 
 	c = NewWithOptions("test", Readonly)
 	opts := c.Options()
-	st.True(opts.Readonly)
-	st.Equal(JSON, opts.DumpFormat)
-	st.Equal(JSON, opts.ReadFormat)
+	is.True(opts.Readonly)
+	is.Eq(JSON, opts.DumpFormat)
+	is.Eq(JSON, opts.ReadFormat)
 }
 
 func TestGetEnv(t *testing.T) {
@@ -173,14 +174,14 @@ func TestGetEnv(t *testing.T) {
 		"APP_NAME":  "config",
 		"APP_DEBUG": "true",
 	}, func() {
-		assert.Equal(t, "config", Getenv("APP_NAME"))
-		assert.Equal(t, "true", Getenv("APP_DEBUG"))
-		assert.Equal(t, "defVal", GetEnv("not-exsit", "defVal"))
+		assert.Eq(t, "config", Getenv("APP_NAME"))
+		assert.Eq(t, "true", Getenv("APP_DEBUG"))
+		assert.Eq(t, "defVal", GetEnv("not-exsit", "defVal"))
 	})
 
-	assert.Equal(t, Yaml, fixFormat("yml"))
-	assert.Equal(t, Hcl, fixFormat("conf"))
-	assert.Equal(t, Ini, fixFormat("inc"))
+	assert.Eq(t, Yaml, fixFormat("yml"))
+	assert.Eq(t, Hcl, fixFormat("conf"))
+	assert.Eq(t, Ini, fixFormat("inc"))
 }
 
 func TestSetDecoderEncoder(t *testing.T) {
@@ -221,7 +222,7 @@ func TestDefault(t *testing.T) {
 
 func TestJSONDriver(t *testing.T) {
 	is := assert.New(t)
-	is.Equal("json", JSONDriver.Name())
+	is.Eq("json", JSONDriver.Name())
 
 	// empty
 	c := NewEmpty("test")
@@ -232,22 +233,22 @@ func TestJSONDriver(t *testing.T) {
 	is.True(c.HasEncoder(JSON))
 	is.Len(c.DriverNames(), 1)
 
-	is.Equal(byte('.'), c.Options().Delimiter)
-	is.Equal(".", string(c.Options().Delimiter))
+	is.Eq(byte('.'), c.Options().Delimiter)
+	is.Eq(".", string(c.Options().Delimiter))
 	c.WithOptions(func(opt *Options) {
 		opt.Delimiter = 0
 	})
-	is.Equal(byte(0), c.Options().Delimiter)
+	is.Eq(byte(0), c.Options().Delimiter)
 
 	err := c.LoadStrings(JSON, `{"key": 1}`)
-	is.NoError(err)
-	is.Equal(1, c.Int("key"))
+	is.NoErr(err)
+	is.Eq(1, c.Int("key"))
 
 	c = NewWith("test", func(c *Config) {
 		err = c.LoadData(map[string]interface{}{"key1": 2})
-		is.NoError(err)
+		is.NoErr(err)
 	})
-	is.Equal(2, c.Int("key1"))
+	is.Eq(2, c.Int("key1"))
 }
 
 func TestDriver(t *testing.T) {
@@ -294,7 +295,7 @@ func TestOptions(t *testing.T) {
 	is.Nil(err)
 
 	str := c.String("name")
-	is.Equal("app", str)
+	is.Eq("app", str)
 
 	// test: parse env name
 	shell := os.Getenv("SHELL")
@@ -316,7 +317,7 @@ func TestOptions(t *testing.T) {
 
 	str = c.String("envKey1")
 	is.NotContains(str, "${")
-	is.Equal("defValue", str)
+	is.Eq("defValue", str)
 
 	// options: Readonly
 	c = New("test")
@@ -328,10 +329,10 @@ func TestOptions(t *testing.T) {
 	is.Nil(err)
 
 	str = c.String("name")
-	is.Equal("app", str)
+	is.Eq("app", str)
 
 	err = c.Set("name", "new app")
-	is.Error(err)
+	is.Err(err)
 }
 
 func TestDelimiter(t *testing.T) {
@@ -339,26 +340,26 @@ func TestDelimiter(t *testing.T) {
 	is := assert.New(t)
 	c := New("test")
 	c.WithOptions(Delimiter(':'))
-	is.Equal(byte(':'), c.Options().Delimiter)
+	is.Eq(byte(':'), c.Options().Delimiter)
 
 	err := c.LoadData(map[string]interface{}{
 		"top0": 1,
 		"top1": map[string]int{"sub0": 2},
 	})
-	is.NoError(err)
-	// is.Equal(1, c.Int("top0"))
-	is.Equal(2, c.Int("top1:sub0"))
+	is.NoErr(err)
+	// is.Eq(1, c.Int("top0"))
+	is.Eq(2, c.Int("top1:sub0"))
 
 	// load will use defaultDelimiter
 	c = NewWithOptions("test", Delimiter(0))
-	is.Equal(byte(0), c.Options().Delimiter)
+	is.Eq(byte(0), c.Options().Delimiter)
 
 	err = c.LoadData(map[string]interface{}{
 		"top0": 1,
 		"top1": map[string]int{"sub0": 2},
 	})
-	is.NoError(err)
-	is.Equal(2, c.Int("top1.sub0"))
+	is.NoErr(err)
+	is.Eq(2, c.Int("top1.sub0"))
 }
 
 func TestEnableCache(t *testing.T) {
@@ -369,23 +370,23 @@ func TestEnableCache(t *testing.T) {
 	is.Nil(err)
 
 	str := c.String("name")
-	is.Equal("app", str)
+	is.Eq("app", str)
 
 	// re-get, from caches
 	str = c.String("name")
-	is.Equal("app", str)
+	is.Eq("app", str)
 
 	sArr := c.Strings("arr1")
-	is.Equal("val1", sArr[1])
+	is.Eq("val1", sArr[1])
 
 	// re-get, from caches
 	sArr = c.Strings("arr1")
-	is.Equal("val1", sArr[1])
+	is.Eq("val1", sArr[1])
 
 	sMap := c.StringMap("map1")
-	is.Equal("val1", sMap["key1"])
+	is.Eq("val1", sMap["key1"])
 	sMap = c.StringMap("map1")
-	is.Equal("val1", sMap["key1"])
+	is.Eq("val1", sMap["key1"])
 
 	c.ClearAll()
 }
@@ -404,14 +405,14 @@ func TestJSONAllowComments(t *testing.T) {
 // comments
 "n":"v"}
 `), &m)
-	is.Error(err)
+	is.Err(err)
 
 	JSONAllowComments = true
 	err = JSONDecoder([]byte(`{
 // comments
 "n":"v"}
 `), &m)
-	is.NoError(err)
+	is.NoErr(err)
 	JSONAllowComments = old
 }
 
@@ -429,8 +430,8 @@ func TestSaveFileOnSet(t *testing.T) {
 	err := c.LoadStrings(JSON, jsonStr)
 	is.Nil(err)
 
-	is.NoError(c.Set("new-key", "new-value"))
-	is.Equal("new-value", c.Get("new-key"))
+	is.NoErr(c.Set("new-key", "new-value"))
+	is.Eq("new-value", c.Get("new-key"))
 }
 
 func TestMapStringStringParseEnv(t *testing.T) {
@@ -443,6 +444,6 @@ func TestMapStringStringParseEnv(t *testing.T) {
 	shellVal := "/usr/bin/bash"
 	testutil.MockEnvValue("SHELL", shellVal, func(_ string) {
 		sMap := c.StringMap("map1")
-		is.Equal(shellVal, sMap["key3"])
+		is.Eq(shellVal, sMap["key3"])
 	})
 }

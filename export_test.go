@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/gookit/goutil/dump"
-	"github.com/stretchr/testify/assert"
+	"github.com/gookit/goutil/testutil/assert"
 )
 
 func TestExport(t *testing.T) {
@@ -14,7 +14,7 @@ func TestExport(t *testing.T) {
 	c := New("test")
 
 	str := c.ToJSON()
-	is.Equal("", str)
+	is.Eq("", str)
 
 	err := c.LoadStrings(JSON, jsonStr)
 	is.Nil(err)
@@ -29,10 +29,10 @@ func TestExport(t *testing.T) {
 	buf = &bytes.Buffer{}
 
 	_, err = c.DumpTo(buf, "invalid")
-	is.Error(err)
+	is.Err(err)
 
 	_, err = c.DumpTo(buf, Yml)
-	is.Error(err)
+	is.Err(err)
 
 	_, err = c.DumpTo(buf, JSON)
 	is.Nil(err)
@@ -62,18 +62,18 @@ func TestConfig_Structure(t *testing.T) {
 	err = MapStruct("", user)
 	is.Nil(err)
 
-	is.Equal(28, user.Age)
-	is.Equal("inhere", user.Name)
-	is.Equal("pingPong", user.Sports[0])
+	is.Eq(28, user.Age)
+	is.Eq("inhere", user.Name)
+	is.Eq("pingPong", user.Sports[0])
 
 	// map all data
 	u1 := &User{}
 	err = Decode(u1)
 	is.Nil(err)
 
-	is.Equal(28, u1.Age)
-	is.Equal("inhere", u1.Name)
-	is.Equal("pingPong", u1.Sports[0])
+	is.Eq(28, u1.Age)
+	is.Eq("inhere", u1.Name)
+	is.Eq("pingPong", u1.Sports[0])
 
 	// - auto convert string to int
 	// age use string in JSON
@@ -109,8 +109,8 @@ func TestConfig_Structure(t *testing.T) {
 	}{}
 	err = BindStruct("sec", &some)
 	is.Nil(err)
-	is.Equal(120, some.Age)
-	is.Equal(12, some.Tags[0])
+	is.Eq(120, some.Age)
+	is.Eq(12, some.Tags[0])
 	cfg.ClearAll()
 
 	// custom data
@@ -120,7 +120,7 @@ func TestConfig_Structure(t *testing.T) {
 		"age":  120,
 		"tags": []int{12, 34},
 	})
-	is.NoError(err)
+	is.NoErr(err)
 
 	s1 := struct {
 		Age  int
@@ -129,17 +129,17 @@ func TestConfig_Structure(t *testing.T) {
 	}{}
 	err = cfg.BindStruct("", &s1)
 	is.Nil(err)
-	is.Equal(120, s1.Age)
-	is.Equal(12, s1.Tags[0])
+	is.Eq(120, s1.Age)
+	is.Eq(12, s1.Tags[0])
 
 	// key not exist
 	err = cfg.BindStruct("not-exist", &s1)
-	is.Error(err)
-	is.Equal("this key does not exist in the config", err.Error())
+	is.Err(err)
+	is.Eq("this key does not exist in the config", err.Error())
 
 	// invalid dst
 	err = cfg.BindStruct("sec", "invalid")
-	is.Error(err)
+	is.Err(err)
 
 	cfg.ClearAll()
 }
@@ -159,10 +159,10 @@ func TestMapStruct_embedded_struct_squash_false(t *testing.T) {
   }
 }
 `)
-	assert.NoError(t, err)
+	assert.NoErr(t, err)
 	dump.Println(loader.Data())
-	assert.Equal(t, 12, loader.Int("c"))
-	assert.Equal(t, 34, loader.Int("test1.b"))
+	assert.Eq(t, 12, loader.Int("c"))
+	assert.Eq(t, 34, loader.Int("test1.b"))
 
 	type Test1 struct {
 		B int `json:"b"`
@@ -174,9 +174,9 @@ func TestMapStruct_embedded_struct_squash_false(t *testing.T) {
 	cfg := &Test2{}
 
 	err = loader.MapStruct("", cfg)
-	assert.NoError(t, err)
+	assert.NoErr(t, err)
 	dump.Println(cfg)
-	assert.Equal(t, 34, cfg.Test1.B)
+	assert.Eq(t, 34, cfg.Test1.B)
 
 	type Test3 struct {
 		*Test1
@@ -184,9 +184,9 @@ func TestMapStruct_embedded_struct_squash_false(t *testing.T) {
 	}
 	cfg1 := &Test3{}
 	err = loader.MapStruct("", cfg1)
-	assert.NoError(t, err)
+	assert.NoErr(t, err)
 	dump.Println(cfg1)
-	assert.Equal(t, 34, cfg1.Test1.B)
+	assert.Eq(t, 34, cfg1.Test1.B)
 }
 
 func TestMapStruct_embedded_struct_squash_true(t *testing.T) {
@@ -204,10 +204,10 @@ func TestMapStruct_embedded_struct_squash_true(t *testing.T) {
   }
 }
 `)
-	assert.NoError(t, err)
+	assert.NoErr(t, err)
 	dump.Println(loader.Data())
-	assert.Equal(t, 12, loader.Int("c"))
-	assert.Equal(t, 34, loader.Int("test1.b"))
+	assert.Eq(t, 12, loader.Int("c"))
+	assert.Eq(t, 34, loader.Int("test1.b"))
 
 	type Test1 struct {
 		B int `json:"b"`
@@ -220,9 +220,9 @@ func TestMapStruct_embedded_struct_squash_true(t *testing.T) {
 	cfg := &Test2{}
 
 	err = loader.MapStruct("", cfg)
-	assert.NoError(t, err)
+	assert.NoErr(t, err)
 	dump.Println(cfg)
-	assert.Equal(t, 0, cfg.Test1.B)
+	assert.Eq(t, 0, cfg.Test1.B)
 
 	type Test3 struct {
 		*Test1
@@ -230,9 +230,9 @@ func TestMapStruct_embedded_struct_squash_true(t *testing.T) {
 	}
 	cfg1 := &Test3{}
 	err = loader.MapStruct("", cfg1)
-	assert.NoError(t, err)
+	assert.NoErr(t, err)
 	dump.Println(cfg1)
-	assert.Equal(t, 34, cfg1.Test1.B)
+	assert.Eq(t, 34, cfg1.Test1.B)
 }
 
 func TestMapOnExists(t *testing.T) {
@@ -244,18 +244,18 @@ func TestMapOnExists(t *testing.T) {
 "name": "inhere",
 "sports": ["pingPong", "跑步"]
 }`)
-	assert.NoError(t, err)
-	assert.NoError(t, MapOnExists("not-exists", nil))
+	assert.NoErr(t, err)
+	assert.NoErr(t, MapOnExists("not-exists", nil))
 
 	user := &struct {
 		Age    int
 		Name   string
 		Sports []string
 	}{}
-	assert.NoError(t, MapOnExists("", user))
+	assert.NoErr(t, MapOnExists("", user))
 
-	assert.Equal(t, 28, user.Age)
-	assert.Equal(t, "inhere", user.Name)
+	assert.Eq(t, 28, user.Age)
+	assert.Eq(t, "inhere", user.Name)
 }
 
 func TestConfig_BindStruct_set_DecoderConfig(t *testing.T) {
@@ -267,20 +267,20 @@ func TestConfig_BindStruct_set_DecoderConfig(t *testing.T) {
 "name": "inhere",
 "sports": ["pingPong", "跑步"]
 }`)
-	assert.NoError(t, err)
+	assert.NoErr(t, err)
 
 	user := &struct {
 		Age    int
 		Name   string
 		Sports []string
 	}{}
-	assert.NoError(t, cfg.BindStruct("", user))
+	assert.NoErr(t, cfg.BindStruct("", user))
 
-	assert.Equal(t, 28, user.Age)
-	assert.Equal(t, "inhere", user.Name)
+	assert.Eq(t, 28, user.Age)
+	assert.Eq(t, "inhere", user.Name)
 
 	// not use ptr
-	assert.Error(t, cfg.BindStruct("", *user))
+	assert.Err(t, cfg.BindStruct("", *user))
 }
 
 func TestConfig_BindStruct_error(t *testing.T) {
@@ -302,7 +302,7 @@ func TestConfig_BindStruct_default(t *testing.T) {
 	mc := &MyConf{}
 	err := cfg.Decode(mc)
 	dump.P(mc)
-	assert.NoError(t, err)
-	assert.Equal(t, "dev", mc.Env)
+	assert.NoErr(t, err)
+	assert.Eq(t, "dev", mc.Env)
 	assert.False(t, mc.Debug)
 }

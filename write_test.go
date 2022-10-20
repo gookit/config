@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/gookit/goutil/testutil/assert"
 )
 
 func TestSetData(t *testing.T) {
@@ -16,23 +16,23 @@ func TestSetData(t *testing.T) {
 	c := Default()
 
 	err := c.LoadStrings(JSON, jsonStr)
-	assert.NoError(t, err)
-	assert.Equal(t, "app", c.String("name"))
+	assert.NoErr(t, err)
+	assert.Eq(t, "app", c.String("name"))
 	assert.True(t, c.Exists("age"))
 
 	SetData(map[string]interface{}{
 		"name": "new app",
 	})
-	assert.Equal(t, "new app", c.String("name"))
+	assert.Eq(t, "new app", c.String("name"))
 	assert.False(t, c.Exists("age"))
 
 	c.SetData(map[string]interface{}{
 		"age": 222,
 	})
-	assert.Equal(t, "", c.String("name"))
+	assert.Eq(t, "", c.String("name"))
 	assert.False(t, c.Exists("name"))
 	assert.True(t, c.Exists("age"))
-	assert.Equal(t, 222, c.Int("age"))
+	assert.Eq(t, 222, c.Int("age"))
 }
 
 func TestSet(t *testing.T) {
@@ -50,135 +50,135 @@ func TestSet(t *testing.T) {
 	is.Nil(err)
 
 	val := String("name")
-	is.Equal("app", val)
+	is.Eq("app", val)
 
 	// empty key
 	err = Set("", "val")
-	is.Error(err)
+	is.Err(err)
 
 	// set new value: int
 	err = Set("newInt", 23)
-	if is.Nil(err) {
+	if is.Nil(err).IsOk() {
 		iv := Int("newInt")
-		is.Equal(23, iv)
+		is.Eq(23, iv)
 	}
 
 	// set new value: int
 	err = Set("newBool", false)
-	if is.Nil(err) {
+	if is.Nil(err).IsOk() {
 		bv := Bool("newBool")
 		is.False(bv)
 	}
 
 	// set new value: string
 	err = Set("newKey", "new val")
-	if is.Nil(err) {
+	if is.Nil(err).IsOk() {
 		val = String("newKey")
-		is.Equal("new val", val)
+		is.Eq("new val", val)
 	}
 
 	// like yaml.v2 decoded data
 	err = Set("ymlLike", map[interface{}]interface{}{"k": "v"})
 	is.Nil(err)
 	str := c.String("ymlLike.k")
-	is.Equal("v", str)
+	is.Eq("v", str)
 
 	err = Set("ymlLike.nk", "nv")
 	is.Nil(err)
 	str = c.String("ymlLike.nk")
-	is.Equal("nv", str)
+	is.Eq("nv", str)
 
 	// disable setByPath
 	err = Set("some.key", "val", false)
-	if is.Nil(err) {
+	if is.Nil(err).IsOk() {
 		val = String("some")
-		is.Equal("", val)
+		is.Eq("", val)
 
 		val = String("some.key")
-		is.Equal("val", val)
+		is.Eq("val", val)
 	}
 	// fmt.Printf("%#v\n", c.Data())
 
 	// set value
 	err = Set("name", "new name")
-	if is.Nil(err) {
+	if is.Nil(err).IsOk() {
 		val = String("name")
-		is.Equal("new name", val)
+		is.Eq("new name", val)
 	}
 
 	// set value to arr: by path
 	err = Set("arr1.1", "new val")
-	if is.Nil(err) {
+	if is.Nil(err).IsOk() {
 		val = String("arr1.1")
-		is.Equal("new val", val)
+		is.Eq("new val", val)
 	}
 
 	// array only support add 1 level value
 	err = Set("arr1.1.key", "new val")
-	is.Error(err)
+	is.Err(err)
 
 	// set value to map: by path
 	err = Set("map1.key", "new val")
-	if is.Nil(err) {
+	if is.Nil(err).IsOk() {
 		val = String("map1.key")
-		is.Equal("new val", val)
+		is.Eq("new val", val)
 	}
 
 	// more path nodes
 	err = Set("map1.info.key", "val200")
-	if is.Nil(err) {
+	if is.Nil(err).IsOk() {
 		// fmt.Printf("%v\n", c.Data())
 		smp := StringMap("map1.info")
-		is.Equal("val200", smp["key"])
+		is.Eq("val200", smp["key"])
 
 		str = String("map1.info.key")
-		is.Equal("val200", str)
+		is.Eq("val200", str)
 	}
 
 	// new map
 	err = Set("map2.key", "new val")
-	if is.Nil(err) {
+	if is.Nil(err).IsOk() {
 		val = String("map2.key")
 
-		is.Equal("new val", val)
+		is.Eq("new val", val)
 	}
 
 	// set new value: array(slice)
 	err = Set("newArr", []string{"a", "b"})
-	if is.Nil(err) {
+	if is.Nil(err).IsOk() {
 		arr := Strings("newArr")
 
-		is.Equal(`[]string{"a", "b"}`, fmt.Sprintf("%#v", arr))
+		is.Eq(`[]string{"a", "b"}`, fmt.Sprintf("%#v", arr))
 
 		val = String("newArr.1")
-		is.Equal("b", val)
+		is.Eq("b", val)
 
 		val = String("newArr.100")
-		is.Equal("", val)
+		is.Eq("", val)
 	}
 
 	// set new value: map
 	err = Set("newMap", map[string]string{"k1": "a", "k2": "b"})
-	if is.Nil(err) {
+	if is.Nil(err).IsOk() {
 		mp := StringMap("newMap")
 		is.NotEmpty(mp)
-		// is.Equal("map[k1:a k2:b]", fmt.Sprintf("%v", mp))
+		// is.Eq("map[k1:a k2:b]", fmt.Sprintf("%v", mp))
 
 		val = String("newMap.k1")
-		is.Equal("a", val)
+		is.Eq("a", val)
 
 		val = String("newMap.notExist")
-		is.Equal("", val)
+		is.Eq("", val)
 	}
 
-	is.NoError(Set("name.sub", []int{2}, false))
+	is.NoErr(Set("name.sub", []int{2}, false))
 	ints := Ints("name.sub")
-	is.Equal([]int{2}, ints)
+	is.Eq([]int{2}, ints)
 
 	// Readonly
 	Default().Readonly()
 	is.True(c.Options().Readonly)
-	is.Error(Set("name", "new name"))
+	is.Err(Set("name", "new name"))
 }
 
 func TestSet_fireEvent(t *testing.T) {
@@ -192,12 +192,12 @@ func TestSet_fireEvent(t *testing.T) {
 	err := c.LoadData(map[string]interface{}{
 		"key": "value",
 	})
-	assert.NoError(t, err)
-	assert.Equal(t, "fire the: load.data", buf.String())
+	assert.NoErr(t, err)
+	assert.Eq(t, "fire the: load.data", buf.String())
 	buf.Reset()
 
 	err = c.Set("key", "value2")
-	assert.NoError(t, err)
-	assert.Equal(t, "fire the: set.value", buf.String())
+	assert.NoErr(t, err)
+	assert.Eq(t, "fire the: set.value", buf.String())
 	buf.Reset()
 }

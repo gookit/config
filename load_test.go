@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/gookit/goutil/testutil"
-	"github.com/stretchr/testify/assert"
+	"github.com/gookit/goutil/testutil/assert"
 )
 
 func TestDefaultLoad(t *testing.T) {
@@ -53,7 +53,7 @@ func TestLoad(t *testing.T) {
 	is.Nil(err)
 
 	c.ClearAll()
-	is.Equal(OnCleanData, name)
+	is.Eq(OnCleanData, name)
 
 	// load map data
 	err = c.LoadData(map[string]interface{}{
@@ -64,13 +64,13 @@ func TestLoad(t *testing.T) {
 		"info":    map[string]string{"k1": "a", "k2": "b"},
 	})
 
-	is.Equal(OnLoadData, name)
+	is.Eq(OnLoadData, name)
 	is.NotEmpty(c.Data())
 	is.Nil(err)
 
 	// LoadData
 	err = c.LoadData("invalid")
-	is.Error(err)
+	is.Err(err)
 
 	is.Panics(func() {
 		c.WithOptions(ParseEnv)
@@ -84,32 +84,32 @@ func TestLoad(t *testing.T) {
 	is.Nil(err)
 
 	err = c.LoadSources(JSON, []byte(`invalid`))
-	is.Error(err)
+	is.Err(err)
 
 	err = c.LoadSources(JSON, []byte(`{"name": "inhere"}`), []byte(`invalid`))
-	is.Error(err)
+	is.Err(err)
 
 	c = New("test")
 
 	// LoadFiles
 	err = c.LoadFiles("not-exist.json")
-	is.Error(err)
+	is.Err(err)
 
 	err = c.LoadFiles("testdata/json_error.json")
-	is.Error(err)
+	is.Err(err)
 
 	err = c.LoadExists("testdata/json_error.json")
-	is.Error(err)
+	is.Err(err)
 
 	// LoadStrings
 	err = c.LoadStrings("invalid", jsonStr)
-	is.Error(err)
+	is.Err(err)
 
 	err = c.LoadStrings(JSON, "invalid")
-	is.Error(err)
+	is.Err(err)
 
 	err = c.LoadStrings(JSON, `{"name": "inhere"}`, "invalid")
-	is.Error(err)
+	is.Err(err)
 }
 
 func TestLoadRemote(t *testing.T) {
@@ -118,7 +118,7 @@ func TestLoadRemote(t *testing.T) {
 	// invalid remote url
 	url3 := "invalid-url"
 	err := LoadRemote(JSON, url3)
-	is.Error(err)
+	is.Err(err)
 
 	if runtime.GOOS == "windows" {
 		t.Skip("skip test load remote on Windows")
@@ -130,20 +130,20 @@ func TestLoadRemote(t *testing.T) {
 	url := "https://raw.githubusercontent.com/gookit/config/master/testdata/json_base.json"
 	err = c.LoadRemote(JSON, url)
 	is.Nil(err)
-	is.Equal("123", c.String("age", ""))
+	is.Eq("123", c.String("age", ""))
 
 	is.Len(c.LoadedUrls(), 1)
-	is.Equal(url, c.LoadedUrls()[0])
+	is.Eq(url, c.LoadedUrls()[0])
 
 	// load invalid remote data
 	url1 := "https://raw.githubusercontent.com/gookit/config/master/testdata/json_error.json"
 	err = c.LoadRemote(JSON, url1)
-	is.Error(err)
+	is.Err(err)
 
 	// load not exist
 	url2 := "https://raw.githubusercontent.com/gookit/config/master/testdata/not-exist.txt"
 	err = c.LoadRemote(JSON, url2)
-	is.Error(err)
+	is.Err(err)
 }
 
 func TestLoadFlags(t *testing.T) {
@@ -167,12 +167,12 @@ func TestLoadFlags(t *testing.T) {
 	keys := []string{"name", "env", "debug:bool", "age:int", "var0:uint", "unknownTyp:notExist"}
 	err := LoadFlags(keys)
 	is.Nil(err)
-	is.Equal("inhere", c.String("name", ""))
-	is.Equal("dev", c.String("env", ""))
-	is.Equal(99, c.Int("age"))
-	is.Equal(uint(12), c.Uint("var0"))
-	is.Equal(uint(20), c.Uint("not-exist", uint(20)))
-	is.Equal("val", c.Get("unknownTyp"))
+	is.Eq("inhere", c.String("name", ""))
+	is.Eq("dev", c.String("env", ""))
+	is.Eq(99, c.Int("age"))
+	is.Eq(uint(12), c.Uint("var0"))
+	is.Eq(uint(20), c.Uint("not-exist", uint(20)))
+	is.Eq("val", c.Get("unknownTyp"))
 	is.True(c.Bool("debug", false))
 
 	// set sub key
@@ -182,10 +182,10 @@ func TestLoadFlags(t *testing.T) {
 		"./binFile",
 		"--map1.key", "new val",
 	}
-	is.Equal("val", c.String("map1.key"))
+	is.Eq("val", c.String("map1.key"))
 	err = c.LoadFlags([]string{"--map1.key"})
-	is.NoError(err)
-	is.Equal("new val", c.String("map1.key"))
+	is.NoErr(err)
+	is.Eq("new val", c.String("map1.key"))
 	// fmt.Println(err)
 	// fmt.Printf("%#v\n", c.Data())
 
@@ -201,14 +201,14 @@ func TestLoadOSEnv(t *testing.T) {
 		"test_env0": "val0",
 		"TEST_ENV1": "val1",
 	}, func() {
-		assert.Equal(t, "", String("test_env0"))
+		assert.Eq(t, "", String("test_env0"))
 
 		LoadOSEnv([]string{"APP_NAME", "app_debug", "test_env0"}, true)
 
 		assert.True(t, Bool("app_debug"))
-		assert.Equal(t, "config", String("app_name"))
-		assert.Equal(t, "val0", String("test_env0"))
-		assert.Equal(t, "", String("test_env1"))
+		assert.Eq(t, "config", String("app_name"))
+		assert.Eq(t, "val0", String("test_env0"))
+		assert.Eq(t, "", String("test_env1"))
 	})
 
 	ClearAll()
@@ -223,8 +223,8 @@ func TestLoadOSEnvs(t *testing.T) {
 		"TEST_ENV0": "val0",
 		"TEST_ENV1": "val1",
 	}, func() {
-		assert.Equal(t, "", String("test_env0"))
-		assert.Equal(t, "val0", Getenv("TEST_ENV0"))
+		assert.Eq(t, "", String("test_env0"))
+		assert.Eq(t, "val0", Getenv("TEST_ENV0"))
 
 		LoadOSEnvs(map[string]string{
 			"APP_NAME":  "",
@@ -233,9 +233,9 @@ func TestLoadOSEnvs(t *testing.T) {
 		})
 
 		assert.True(t, Bool("app_debug"))
-		assert.Equal(t, "config", String("app_name"))
-		assert.Equal(t, "val0", String("test0"))
-		assert.Equal(t, "", String("test_env1"))
+		assert.Eq(t, "config", String("app_name"))
+		assert.Eq(t, "val0", String("test0"))
+		assert.Eq(t, "", String("test_env1"))
 	})
 
 	ClearAll()
@@ -245,7 +245,7 @@ func TestReloadFiles(t *testing.T) {
 	ClearAll()
 	c := Default()
 	// no loaded files
-	assert.NoError(t, ReloadFiles())
+	assert.NoErr(t, ReloadFiles())
 
 	var eventName string
 	c.WithOptions(WithHookFunc(func(event string, c *Config) {
@@ -254,21 +254,21 @@ func TestReloadFiles(t *testing.T) {
 
 	// load files
 	err := LoadFiles("testdata/json_base.json", "testdata/json_other.json")
-	assert.NoError(t, err)
-	assert.Equal(t, OnLoadData, eventName)
+	assert.NoErr(t, err)
+	assert.Eq(t, OnLoadData, eventName)
 	assert.NotEmpty(t, c.LoadedFiles())
-	assert.Equal(t, "app2", c.String("name"))
+	assert.Eq(t, "app2", c.String("name"))
 
 	// set value
-	assert.NoError(t, c.Set("name", "new value"))
-	assert.Equal(t, OnSetValue, eventName)
-	assert.Equal(t, "new value", c.String("name"))
+	assert.NoErr(t, c.Set("name", "new value"))
+	assert.Eq(t, OnSetValue, eventName)
+	assert.Eq(t, "new value", c.String("name"))
 
 	// reload files
-	assert.NoError(t, ReloadFiles())
-	assert.Equal(t, OnReloadData, eventName)
+	assert.NoErr(t, ReloadFiles())
+	assert.Eq(t, OnReloadData, eventName)
 
 	// value is reverted
-	assert.Equal(t, "app2", c.String("name"))
+	assert.Eq(t, "app2", c.String("name"))
 	ClearAll()
 }

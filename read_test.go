@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/gookit/goutil/testutil"
-	"github.com/stretchr/testify/assert"
+	"github.com/gookit/goutil/testutil/assert"
 )
 
 func TestConfig_GetValue(t *testing.T) {
@@ -25,7 +25,7 @@ func TestConfig_GetValue(t *testing.T) {
 	is.False(ok)
 	_, ok = c.GetValue("name.sub")
 	is.False(ok)
-	is.Error(c.Error())
+	is.Err(c.Error())
 
 	_, ok = c.GetValue("map1.key", false)
 	is.False(ok)
@@ -63,12 +63,12 @@ func TestConfig_GetValue(t *testing.T) {
 	is.Nil(err)
 	// -- assert map[string]string
 	is.True(Exists("setStrMap.k"))
-	is.Equal("v", Get("setStrMap.k"))
+	is.Eq("v", Get("setStrMap.k"))
 	is.False(Exists("setStrMap.k1"))
 
 	// -- assert map[string]int
 	is.True(Exists("setIntMap.k2"))
-	is.Equal(23, Get("setIntMap.k2"))
+	is.Eq(23, Get("setIntMap.k2"))
 	is.False(Exists("setIntMap.k1"))
 
 	ClearAll()
@@ -95,14 +95,14 @@ func TestGet(t *testing.T) {
 
 	// get value
 	val := Get("age")
-	is.Equal(float64(123), val)
-	is.Equal("float64", fmt.Sprintf("%T", val))
+	is.Eq(float64(123), val)
+	is.Eq("float64", fmt.Sprintf("%T", val))
 
 	val = Get("not-exist")
 	is.Nil(val)
 
 	val = Get("name")
-	is.Equal("app", val)
+	is.Eq("app", val)
 
 	// get string array
 	arr := Strings("notExist")
@@ -112,10 +112,10 @@ func TestGet(t *testing.T) {
 	is.Empty(arr)
 
 	arr = Strings("arr1")
-	is.Equal(`[]string{"val", "val1", "val2"}`, fmt.Sprintf("%#v", arr))
+	is.Eq(`[]string{"val", "val1", "val2"}`, fmt.Sprintf("%#v", arr))
 
 	val = String("arr1.1")
-	is.Equal("val1", val)
+	is.Eq("val1", val)
 
 	err = LoadStrings(JSON, `{
 "iArr": [12, 34, 36],
@@ -132,13 +132,13 @@ func TestGet(t *testing.T) {
 	is.Empty(iarr)
 
 	iarr = Ints("iArr")
-	is.Equal(`[]int{12, 34, 36}`, fmt.Sprintf("%#v", iarr))
+	is.Eq(`[]int{12, 34, 36}`, fmt.Sprintf("%#v", iarr))
 
 	iv := Int("iArr.1")
-	is.Equal(34, iv)
+	is.Eq(34, iv)
 
 	iv = Int("iArr.100")
-	is.Equal(0, iv)
+	is.Eq(0, iv)
 
 	// IntMap: get int map
 	imp := IntMap("name")
@@ -150,11 +150,11 @@ func TestGet(t *testing.T) {
 	is.NotEmpty(imp)
 
 	iv = Int("iMap.k2")
-	is.Equal(34, iv)
+	is.Eq(34, iv)
 	is.True(Exists("iMap.k2"))
 
 	iv = Int("iMap.notExist")
-	is.Equal(0, iv)
+	is.Eq(0, iv)
 	is.False(Exists("iMap.notExist"))
 
 	// set a intMap
@@ -163,14 +163,14 @@ func TestGet(t *testing.T) {
 
 	imp = IntMap("intMap0")
 	is.NotEmpty(imp)
-	is.Equal(1, imp["a"])
-	is.Equal(2, Get("intMap0.b"))
+	is.Eq(1, imp["a"])
+	is.Eq(2, Get("intMap0.b"))
 	is.True(Exists("intMap0.a"))
 	is.False(Exists("intMap0.c"))
 
 	// StringMap: get string map
 	smp := StringMap("map1")
-	is.Equal("val1", smp["key1"])
+	is.Eq("val1", smp["key1"])
 
 	// like load from yaml content
 	// c = New("test")
@@ -203,20 +203,20 @@ func TestGet(t *testing.T) {
 	is.Nil(err)
 
 	iarr = Ints("newIArr")
-	is.Equal("[2 3]", fmt.Sprintf("%v", iarr))
+	is.Eq("[2 3]", fmt.Sprintf("%v", iarr))
 
 	iarr = Ints("newIArr1")
-	is.Equal("[12 23]", fmt.Sprintf("%v", iarr))
+	is.Eq("[12 23]", fmt.Sprintf("%v", iarr))
 	iarr = Ints("newIArr2")
 	is.Empty(iarr)
 
 	iv = Int("newIArr.1")
 	is.True(Exists("newIArr.1"))
-	is.Equal(3, iv)
+	is.Eq(3, iv)
 
 	iv = Int("newIArr.200")
 	is.False(Exists("newIArr.200"))
-	is.Equal(0, iv)
+	is.Eq(0, iv)
 
 	// invalid intMap
 	imp = IntMap("yMap1")
@@ -226,15 +226,15 @@ func TestGet(t *testing.T) {
 	is.Empty(imp)
 
 	imp = IntMap("yMap2")
-	is.Equal(2, imp["k"])
+	is.Eq(2, imp["k"])
 
 	val = String("newSArr.1")
 	is.True(Exists("newSArr.1"))
-	is.Equal("b", val)
+	is.Eq("b", val)
 
 	val = String("newSArr.100")
 	is.False(Exists("newSArr.100"))
-	is.Equal("", val)
+	is.Eq("", val)
 
 	smp = StringMap("invalidMap")
 	is.Nil(smp)
@@ -245,10 +245,10 @@ func TestGet(t *testing.T) {
 	smp = StringMap("yMap")
 	is.True(Exists("yMap.k0"))
 	is.False(Exists("yMap.k100"))
-	is.Equal("v0", smp["k0"])
+	is.Eq("v0", smp["k0"])
 
 	iarr = Ints("yMap1.k2")
-	is.Equal("[23 45]", fmt.Sprintf("%v", iarr))
+	is.Eq("[23 45]", fmt.Sprintf("%v", iarr))
 }
 
 func TestInt(t *testing.T) {
@@ -259,22 +259,22 @@ func TestInt(t *testing.T) {
 	is.True(Exists("age"))
 
 	iv := Int("age")
-	is.Equal(123, iv)
+	is.Eq(123, iv)
 
 	iv = Int("name")
-	is.Equal(0, iv)
+	is.Eq(0, iv)
 
 	iv = Int("notExist", 34)
-	is.Equal(34, iv)
+	is.Eq(34, iv)
 
 	c := Default()
 	iv = c.Int("age")
-	is.Equal(123, iv)
+	is.Eq(123, iv)
 	iv = c.Int("notExist")
-	is.Equal(0, iv)
+	is.Eq(0, iv)
 
 	uiv := Uint("age")
-	is.Equal(uint(123), uiv)
+	is.Eq(uint(123), uiv)
 
 	ClearAll()
 }
@@ -286,21 +286,21 @@ func TestInt64(t *testing.T) {
 
 	// get int64
 	iv64 := Int64("age")
-	is.Equal(int64(123), iv64)
+	is.Eq(int64(123), iv64)
 
 	iv64 = Int64("name")
-	is.Equal(iv64, int64(0))
+	is.Eq(iv64, int64(0))
 
 	iv64 = Int64("age", 34)
-	is.Equal(int64(123), iv64)
+	is.Eq(int64(123), iv64)
 	iv64 = Int64("notExist", 34)
-	is.Equal(int64(34), iv64)
+	is.Eq(int64(34), iv64)
 
 	c := Default()
 	iv64 = c.Int64("age")
-	is.Equal(int64(123), iv64)
+	is.Eq(int64(123), iv64)
 	iv64 = c.Int64("notExist")
-	is.Equal(int64(0), iv64)
+	is.Eq(int64(0), iv64)
 
 	ClearAll()
 }
@@ -315,19 +315,19 @@ func TestFloat(t *testing.T) {
 	err := c.Set("flVal", 23.45)
 	is.Nil(err)
 	flt := c.Float("flVal")
-	is.Equal(23.45, flt)
+	is.Eq(23.45, flt)
 
 	flt = Float("name")
-	is.Equal(float64(0), flt)
+	is.Eq(float64(0), flt)
 
 	flt = c.Float("notExists")
-	is.Equal(float64(0), flt)
+	is.Eq(float64(0), flt)
 
 	flt = c.Float("notExists", 10)
-	is.Equal(float64(10), flt)
+	is.Eq(float64(10), flt)
 
 	flt = Float("flVal", 0)
-	is.Equal(23.45, flt)
+	is.Eq(23.45, flt)
 
 	ClearAll()
 }
@@ -339,19 +339,19 @@ func TestString(t *testing.T) {
 
 	// get string
 	val := String("arr1")
-	is.Equal("[val val1 val2]", val)
+	is.Eq("[val val1 val2]", val)
 
 	str := String("notExists")
-	is.Equal("", str)
+	is.Eq("", str)
 
 	str = String("notExists", "defVal")
-	is.Equal("defVal", str)
+	is.Eq("defVal", str)
 
 	c := Default()
 	str = c.String("name")
-	is.Equal("app", str)
+	is.Eq("app", str)
 	str = c.String("notExist")
-	is.Equal("", str)
+	is.Eq("", str)
 
 	ClearAll()
 }
@@ -363,25 +363,41 @@ func TestBool(t *testing.T) {
 
 	// get bool
 	val := Get("debug")
-	is.Equal(true, val)
+	is.Eq(true, val)
 
 	bv := Bool("debug")
-	is.Equal(true, bv)
+	is.Eq(true, bv)
 
 	bv = Bool("age")
-	is.Equal(false, bv)
+	is.Eq(false, bv)
 
 	bv = Bool("debug", false)
-	is.Equal(true, bv)
+	is.Eq(true, bv)
 
 	bv = Bool("notExist", false)
-	is.Equal(false, bv)
+	is.Eq(false, bv)
 
 	c := Default()
 	bv = c.Bool("debug")
 	is.True(bv)
 	bv = c.Bool("notExist")
 	is.False(bv)
+
+	ClearAll()
+}
+
+func TestSubDataMap(t *testing.T) {
+	is := assert.New(t)
+	ClearAll()
+	_ = LoadSources(JSON, []byte(jsonStr))
+
+	mp := SubDataMap("map1")
+	is.NotEmpty(mp)
+	is.Eq("230", mp.Get("key4"))
+	is.Eq(230, mp.Int("key4"))
+
+	mp = SubDataMap("notExist")
+	is.Empty(mp)
 
 	ClearAll()
 }
@@ -403,7 +419,7 @@ func TestParseEnv(t *testing.T) {
 "ekey8": "${ EnvKey8 | app/run }"
 }`)
 
-	is.NoError(err)
+	is.NoErr(err)
 
 	tests := []struct{ EKey, EVal, CKey, CVal string }{
 		{"EnvKey", "EnvKey val", "ekey", "EnvKey val"},
@@ -419,31 +435,31 @@ func TestParseEnv(t *testing.T) {
 	}
 
 	for _, smp := range tests {
-		is.Equal("", Getenv(smp.EKey))
+		is.Eq("", Getenv(smp.EKey))
 
 		testutil.MockEnvValue(smp.EKey, smp.EVal, func(eVal string) {
-			is.Equal(smp.EVal, eVal)
-			is.Equal(smp.CVal, cfg.String(smp.CKey))
+			is.Eq(smp.EVal, eVal)
+			is.Eq(smp.CVal, cfg.String(smp.CKey))
 		})
 	}
 
 	// test multi ENV key
-	is.Equal("", Getenv("FirstEnv"))
+	is.Eq("", Getenv("FirstEnv"))
 
 	testutil.MockEnvValues(map[string]string{
 		"FirstEnv":  "abc",
 		"SecondEnv": "def",
 	}, func() {
-		is.Equal("abc", Getenv("FirstEnv"))
-		is.Equal("def", Getenv("SecondEnv"))
-		is.Equal("abc/def", cfg.String("ekey4"))
+		is.Eq("abc", Getenv("FirstEnv"))
+		is.Eq("def", Getenv("SecondEnv"))
+		is.Eq("abc/def", cfg.String("ekey4"))
 	})
 
 	testutil.MockEnvValues(map[string]string{
 		"FirstEnv": "abc",
 	}, func() {
-		is.Equal("abc", Getenv("FirstEnv"))
-		is.Equal("", Getenv("SecondEnv"))
-		is.Equal("abc/${ SecondEnv }", cfg.String("ekey4"))
+		is.Eq("abc", Getenv("FirstEnv"))
+		is.Eq("", Getenv("SecondEnv"))
+		is.Eq("abc/${ SecondEnv }", cfg.String("ekey4"))
 	})
 }

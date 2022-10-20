@@ -1,7 +1,6 @@
-//go:build !go1.18
-// +build !go1.18
-
 package config
 
-// alias of interface{}, use for go < 1.18
+// alias of interface{}
+//
+// TIP: cannot add `go:build !go1.18` in file head, that require the go.mod set `go 1.18`
 type any = interface{}
