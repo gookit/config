@@ -5,26 +5,26 @@ import (
 	"testing"
 
 	"github.com/gookit/config/v2"
-	"github.com/stretchr/testify/assert"
+	"github.com/gookit/goutil/testutil/assert"
 )
 
 func TestOtherDriver(t *testing.T) {
-	st := assert.New(t)
+	is := assert.New(t)
 
-	st.Equal("other", Driver.Name())
+	is.Eq("other", Driver.Name())
 
 	c := config.NewEmpty("test")
-	st.False(c.HasDecoder("other"))
+	is.False(c.HasDecoder("other"))
 
 	c.AddDriver(Driver)
-	st.True(c.HasDecoder("other"))
-	st.True(c.HasEncoder("other"))
+	is.True(c.HasDecoder("other"))
+	is.True(c.HasEncoder("other"))
 
 	_, err := Encoder(map[string]interface{}{"k": "v"})
-	st.Nil(err)
+	is.Nil(err)
 
 	_, err = Encoder("invalid")
-	st.Error(err)
+	is.Err(err)
 }
 
 func TestOtherLoader(t *testing.T) {

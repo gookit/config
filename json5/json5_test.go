@@ -6,7 +6,7 @@ import (
 
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/json5"
-	"github.com/stretchr/testify/assert"
+	"github.com/gookit/goutil/testutil/assert"
 )
 
 func Example() {
@@ -67,7 +67,7 @@ func Example() {
 func TestDriver(t *testing.T) {
 	is := assert.New(t)
 
-	is.Equal(json5.Name, json5.Driver.Name())
+	is.Eq(json5.Name, json5.Driver.Name())
 
 	c := config.NewEmpty("test")
 	is.False(c.HasDecoder(json5.Name))
@@ -84,5 +84,5 @@ func TestDriver(t *testing.T) {
 "n":"v"}
 `), &m)
 	is.Nil(err)
-	is.Equal("v", m.N)
+	is.Eq("v", m.N)
 }

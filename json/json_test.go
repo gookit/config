@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/gookit/config/v2"
-	"github.com/stretchr/testify/assert"
+	"github.com/gookit/goutil/testutil/assert"
 )
 
 func Example() {
@@ -64,16 +64,16 @@ func Example() {
 }
 
 func TestDriver(t *testing.T) {
-	st := assert.New(t)
+	is := assert.New(t)
 
-	st.Equal("json", Driver.Name())
+	is.Eq("json", Driver.Name())
 
 	c := config.NewEmpty("test")
-	st.False(c.HasDecoder(config.JSON))
+	is.False(c.HasDecoder(config.JSON))
 	c.AddDriver(Driver)
 
-	st.True(c.HasDecoder(config.JSON))
-	st.True(c.HasEncoder(config.JSON))
+	is.True(c.HasDecoder(config.JSON))
+	is.True(c.HasEncoder(config.JSON))
 
 	m := struct {
 		N string
@@ -82,8 +82,8 @@ func TestDriver(t *testing.T) {
 // comments
 "n":"v"}
 `), &m)
-	st.Nil(err)
-	st.Equal("v", m.N)
+	is.Nil(err)
+	is.Eq("v", m.N)
 
 	// disable clear comments
 	old := config.JSONAllowComments
@@ -92,7 +92,7 @@ func TestDriver(t *testing.T) {
 // comments
 "n":"v"}
 `), &m)
-	st.Error(err)
+	is.Err(err)
 
 	config.JSONAllowComments = old
 }

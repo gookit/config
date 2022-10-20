@@ -5,13 +5,13 @@ import (
 
 	"github.com/gookit/config/v2"
 	"github.com/gookit/goutil/dump"
-	"github.com/stretchr/testify/assert"
+	"github.com/gookit/goutil/testutil/assert"
 )
 
 func TestDriver(t *testing.T) {
 	is := assert.New(t)
-	is.Equal("hcl", Driver.Name())
-	is.Equal(config.Hcl, Driver.Name())
+	is.Eq("hcl", Driver.Name())
+	is.Eq(config.Hcl, Driver.Name())
 
 	c := config.NewEmpty("test")
 	is.False(c.HasDecoder(config.Hcl))
@@ -21,7 +21,7 @@ func TestDriver(t *testing.T) {
 	is.True(c.HasEncoder(config.Hcl))
 
 	_, err := Encoder("some data")
-	is.Error(err)
+	is.Err(err)
 }
 
 func TestLoadFile(t *testing.T) {
@@ -33,9 +33,9 @@ func TestLoadFile(t *testing.T) {
 	t.Skip("Not completed")
 	return
 	err := c.LoadFiles("../testdata/hcl2_base.hcl")
-	is.NoError(err)
+	is.NoErr(err)
 	dump.Println(c.Data())
 
 	err = c.LoadFiles("../testdata/hcl2_example.hcl")
-	is.NoError(err)
+	is.NoErr(err)
 }

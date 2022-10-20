@@ -7,7 +7,7 @@ import (
 
 	"github.com/gookit/config/v2"
 	"github.com/gookit/goutil/testutil"
-	"github.com/stretchr/testify/assert"
+	"github.com/gookit/goutil/testutil/assert"
 )
 
 var yamlStr = `
@@ -86,7 +86,7 @@ func TestDumpConfig(t *testing.T) {
 	// Notice: before dump please set driver encoder
 	c.AddDriver(Driver)
 	err := c.LoadStrings(config.Yaml, yamlStr)
-	is.NoError(err)
+	is.NoErr(err)
 
 	buf := new(bytes.Buffer)
 	_, err = c.DumpTo(buf, config.Yaml)
@@ -108,7 +108,7 @@ func TestLoadFile(t *testing.T) {
 	}
 
 	fmt.Printf("config data: \n %#v\n", c.Data())
-	assert.Equal(t, "app", c.String("name"))
+	assert.Eq(t, "app", c.String("name"))
 
 	err = c.LoadFiles("../testdata/yml_other.yml")
 	// config.LoadFiles("testdata/yml_base.yml", "testdata/yml_other.yml")
@@ -117,13 +117,13 @@ func TestLoadFile(t *testing.T) {
 	}
 
 	fmt.Printf("config data: \n %#v\n", c.Data())
-	assert.Equal(t, "app2", c.String("name"))
+	assert.Eq(t, "app2", c.String("name"))
 }
 
 func TestDriver(t *testing.T) {
 	is := assert.New(t)
 
-	is.Equal("yaml", Driver.Name())
+	is.Eq("yaml", Driver.Name())
 	// is.IsType(new(Encoder), JSONDriver.GetEncoder())
 
 	c := config.NewEmpty("test")
@@ -136,7 +136,7 @@ func TestDriver(t *testing.T) {
 // Support "=", ":", "." characters for default values
 // see https://github.com/gookit/config/issues/9
 func TestIssue2(t *testing.T) {
-	ris := assert.New(t)
+	is := assert.New(t)
 
 	c := config.NewEmpty("test")
 	c.AddDriver(Driver)
@@ -145,24 +145,24 @@ func TestIssue2(t *testing.T) {
 	err := c.LoadStrings(config.Yaml, `
 command: ${APP_COMMAND|app:run}
 `)
-	ris.NoError(err)
+	is.NoErr(err)
 	testutil.MockEnvValue("APP_COMMAND", "new val", func(nv string) {
-		ris.Equal("new val", nv)
-		ris.Equal("new val", c.String("command"))
+		is.Eq("new val", nv)
+		is.Eq("new val", c.String("command"))
 	})
 
-	ris.Equal("", config.Getenv("APP_COMMAND"))
-	ris.Equal("app:run", c.String("command"))
+	is.Eq("", config.Getenv("APP_COMMAND"))
+	is.Eq("app:run", c.String("command"))
 
 	c.ClearAll()
 	err = c.LoadStrings(config.Yaml, `
 command: ${ APP_COMMAND | app:run }
 `)
-	ris.NoError(err)
+	is.NoErr(err)
 	testutil.MockEnvValue("APP_COMMAND", "new val", func(nv string) {
-		ris.Equal("new val", nv)
-		ris.Equal("new val", c.String("command"))
+		is.Eq("new val", nv)
+		is.Eq("new val", c.String("command"))
 	})
-	ris.Equal("", config.Getenv("APP_COMMAND"))
-	ris.Equal("app:run", c.String("command"))
+	is.Eq("", config.Getenv("APP_COMMAND"))
+	is.Eq("app:run", c.String("command"))
 }

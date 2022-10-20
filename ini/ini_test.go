@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/gookit/config/v2"
-	"github.com/stretchr/testify/assert"
+	"github.com/gookit/goutil/testutil/assert"
 )
 
 func Example() {
@@ -56,7 +56,7 @@ func Example() {
 func TestDriver(t *testing.T) {
 	st := assert.New(t)
 
-	st.Equal("ini", Driver.Name())
+	st.Eq("ini", Driver.Name())
 	// st.IsType(new(Encoder), JSONDriver.GetEncoder())
 
 	c := config.NewEmpty("test")
@@ -70,5 +70,5 @@ func TestDriver(t *testing.T) {
 	st.Nil(err)
 
 	_, err = Encoder("invalid")
-	st.Error(err)
+	st.Err(err)
 }

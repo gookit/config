@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/gookit/config/v2"
-	"github.com/stretchr/testify/assert"
+	"github.com/gookit/goutil/testutil/assert"
 )
 
 var tomlStr = `
@@ -88,25 +88,25 @@ func Example() {
 }
 
 func TestDriver(t *testing.T) {
-	st := assert.New(t)
+	is := assert.New(t)
 
-	st.Equal("toml", Driver.Name())
+	is.Eq("toml", Driver.Name())
 
 	c := config.NewEmpty("test")
-	st.False(c.HasDecoder(config.Toml))
+	is.False(c.HasDecoder(config.Toml))
 
 	c.AddDriver(Driver)
-	st.True(c.HasDecoder(config.Toml))
-	st.True(c.HasEncoder(config.Toml))
+	is.True(c.HasDecoder(config.Toml))
+	is.True(c.HasEncoder(config.Toml))
 
 	tg := new(map[string]interface{})
 	err := Decoder([]byte("invalid"), tg)
-	st.Error(err)
+	is.Err(err)
 
 	_, err = Encoder("invalid")
-	st.Error(err)
+	is.Err(err)
 
 	out, err := Encoder(map[string]interface{}{"k": "v"})
-	st.Nil(err)
-	st.Contains(string(out), `k = "v"`)
+	is.Nil(err)
+	is.Contains(string(out), `k = "v"`)
 }
