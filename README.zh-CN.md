@@ -407,6 +407,7 @@ NEW: 支持通过结构标签 `default` 解析并设置默认值
 - `LoadOSEnvs(nameToKeyMap map[string]string)` 从ENV载入数据
 - `LoadExists(sourceFiles ...string) (err error)` 从存在的配置文件里加载数据，会忽略不存在的文件
 - `LoadFiles(sourceFiles ...string) (err error)` 从给定的配置文件里加载数据，有文件不存在则会panic
+- `LoadFromDir(dirPath, format string) (err error)` 从给定目录里加载自定格式的文件,文件名会作为 key
 - `LoadRemote(format, url string) (err error)` 从远程 URL 加载配置数据
 - `LoadSources(format string, src []byte, more ...[]byte) (err error)` 从给定格式的字节数据加载配置
 - `LoadStrings(format string, str string, more ...string) (err error)` 从给定格式的字符串配置里加载配置数据
@@ -425,6 +426,7 @@ NEW: 支持通过结构标签 `default` 解析并设置默认值
 - `String(key string, defVal ...string) string`
 - `Strings(key string) (arr []string)`
 - `StringMap(key string) (mp map[string]string)`
+- `SubDataMap(key string) maputi.Data`
 - `Get(key string, findByPath ...bool) (value interface{})`
 
 **将数据映射到结构体:**

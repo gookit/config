@@ -241,6 +241,20 @@ func TestLoadOSEnvs(t *testing.T) {
 	ClearAll()
 }
 
+func TestLoadFromDir(t *testing.T) {
+	ClearAll()
+	assert.NoErr(t, LoadFiles("testdata/json_base.json"))
+
+	err := LoadFromDir("testdata/subdir", JSON)
+	assert.NoErr(t, err)
+	// dump.P(Data())
+
+	assert.Eq(t, "value in sub data", Get("subdata.key01"))
+	assert.Eq(t, "value in task.json", Get("task.key01"))
+
+	ClearAll()
+}
+
 func TestReloadFiles(t *testing.T) {
 	ClearAll()
 	c := Default()

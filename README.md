@@ -425,6 +425,7 @@ dump.Println(user)
 - `LoadFlags(keys []string) (err error)` Load from CLI flags
 - `LoadExists(sourceFiles ...string) (err error)` 
 - `LoadFiles(sourceFiles ...string) (err error)`
+- `LoadFromDir(dirPath, format string) (err error)` Load custom format files from the given directory, the file name will be used as the key
 - `LoadRemote(format, url string) (err error)`
 - `LoadSources(format string, src []byte, more ...[]byte) (err error)`
 - `LoadStrings(format string, str string, more ...string) (err error)`
@@ -442,13 +443,15 @@ dump.Println(user)
 - `Float(key string, defVal ...float64) float64`
 - `String(key string, defVal ...string) string`
 - `Strings(key string) (arr []string)`
+- `SubDataMap(key string) maputi.Data`
 - `StringMap(key string) (mp map[string]string)`
 - `Get(key string, findByPath ...bool) (value interface{})`
 
 **Mapping data to struct:**
 
-- `BindStruct(key string, dst interface{}) error`
-- `MapOnExists(key string, dst interface{}) error`
+- `Decode(dst any) error`
+- `BindStruct(key string, dst any) error`
+- `MapOnExists(key string, dst any) error`
 
 ### Setting Values
 

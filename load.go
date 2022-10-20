@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gookit/goutil/fsutil"
 	"github.com/imdario/mergo"
 )
 
@@ -184,13 +185,13 @@ func (c *Config) LoadFlags(keys []string) (err error) {
 }
 
 // LoadData load one or multi data
-func LoadData(dataSource ...interface{}) error { return dc.LoadData(dataSource...) }
+func LoadData(dataSource ...any) error { return dc.LoadData(dataSource...) }
 
 // LoadData load data from map OR struct
 //
 // The dataSources can be:
-//   - map[string]interface{}
-func (c *Config) LoadData(dataSources ...interface{}) (err error) {
+//   - map[string]any
+func (c *Config) LoadData(dataSources ...any) (err error) {
 	if c.opts.Delimiter == 0 {
 		c.opts.Delimiter = defaultDelimiter
 	}
@@ -287,6 +288,55 @@ func (c *Config) LoadExistsByFormat(format string, configFiles ...string) (err e
 	return
 }
 
+// LoadFromDir Load custom format files from the given directory, the file name will be used as the key.
+//
+// Example:
+//
+//	// file: /somedir/task.json
+//	LoadFromDir("/somedir", "json")
+//
+//	// after load
+//	Config.data = map[string]any{"task": file data}
+func LoadFromDir(dirPath, format string) error {
+	return dc.LoadFromDir(dirPath, format)
+}
+
+// LoadFromDir Load custom format files from the given directory, the file name will be used as the key.
+//
+// Example:
+//
+//	// file: /somedir/task.json
+//	Config.LoadFromDir("/somedir", "json")
+//
+//	// after load
+//	Config.data = map[string]any{"task": file data}
+func (c *Config) LoadFromDir(dirPath, format string) (err error) {
+	extName := "." + format
+	extLen := len(extName)
+
+	return fsutil.FindInDir(dirPath, func(fPath string, fi os.FileInfo) error {
+		baseName := fi.Name()
+
+		if strings.HasSuffix(baseName, extName) {
+			data, err := c.parseSourceToMap(format, fsutil.MustReadFile(fPath))
+			if err != nil {
+				return err
+			}
+
+			onlyName := baseName[:len(baseName)-extLen]
+			err = c.loadDataMap(map[string]any{onlyName: data})
+
+			// use file name as key, it cannot be reloaded. SO, cannot append to loadedFiles
+			// if err == nil {
+			// 	c.loadedFiles = append(c.loadedFiles, fPath)
+			// }
+
+			return err
+		}
+		return nil
+	})
+}
+
 // ReloadFiles reload config data use loaded files
 func ReloadFiles() error { return dc.ReloadFiles() }
 
@@ -357,23 +407,16 @@ func (c *Config) loadFile(file string, loadExist bool, format string) (err error
 
 // parse config source code to Config.
 func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
-	format = fixFormat(format)
-	decode := c.decoders[format]
-	if decode == nil {
-		return errors.New("not register decoder for the format: " + format)
+	data, err := c.parseSourceToMap(format, blob)
+	if err != nil {
+		return err
 	}
 
-	if c.opts.Delimiter == 0 {
-		c.opts.Delimiter = defaultDelimiter
-	}
+	return c.loadDataMap(data)
+}
 
-	// decode content to data
-	data := make(map[string]interface{})
-	if err = decode(blob, &data); err != nil {
-		return
-	}
-
-	// init config data
+func (c *Config) loadDataMap(data map[string]any) (err error) {
+	// first: init config data
 	if len(c.data) == 0 {
 		c.data = data
 	} else {
@@ -384,7 +427,26 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	if !c.reloading && err == nil {
 		c.fireHook(OnLoadData)
 	}
+	return err
+}
 
-	data = nil
-	return
+// parse config source code to Config.
+func (c *Config) parseSourceToMap(format string, blob []byte) (map[string]interface{}, error) {
+	format = fixFormat(format)
+	decode := c.decoders[format]
+	if decode == nil {
+		return nil, errors.New("not register decoder for the format: " + format)
+	}
+
+	if c.opts.Delimiter == 0 {
+		c.opts.Delimiter = defaultDelimiter
+	}
+
+	// decode content to data
+	data := make(map[string]any)
+
+	if err := decode(blob, &data); err != nil {
+		return nil, err
+	}
+	return data, nil
 }

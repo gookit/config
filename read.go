@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/gookit/goutil/envutil"
+	"github.com/gookit/goutil/maputil"
 	"github.com/gookit/goutil/mathutil"
 	"github.com/gookit/goutil/strutil"
 )
@@ -561,7 +562,7 @@ func (c *Config) StringMap(key string) (mp map[string]string) {
 			}
 		}
 	default:
-		c.addErrorf("value cannot be convert to map[string]string, key is '%s'", key)
+		c.addErrorf("value cannot be convert to map[string]string, key is %q", key)
 		return
 	}
 
@@ -573,4 +574,21 @@ func (c *Config) StringMap(key string) (mp map[string]string) {
 		c.sMapCache[key] = mp
 	}
 	return
+}
+
+// SubDataMap get sub config data as maputil.Map
+func SubDataMap(key string) maputil.Map { return dc.SubDataMap(key) }
+
+// SubDataMap get sub config data as maputil.Map
+//
+// TIP: will not enable parse Env and more
+func (c *Config) SubDataMap(key string) maputil.Map {
+	if mp, ok := c.GetValue(key); ok {
+		if mmp, ok := mp.(map[string]any); ok {
+			return mmp
+		}
+	}
+
+	// keep is not nil
+	return maputil.Map{}
 }
