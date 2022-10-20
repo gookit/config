@@ -15,12 +15,12 @@ var (
 )
 
 // SetData for override the Config.Data
-func SetData(data map[string]interface{}) {
+func SetData(data map[string]any) {
 	dc.SetData(data)
 }
 
 // SetData for override the Config.Data
-func (c *Config) SetData(data map[string]interface{}) {
+func (c *Config) SetData(data map[string]any) {
 	c.lock.Lock()
 	c.data = data
 	c.lock.Unlock()
@@ -29,12 +29,12 @@ func (c *Config) SetData(data map[string]interface{}) {
 }
 
 // Set val by key
-func Set(key string, val interface{}, setByPath ...bool) error {
+func Set(key string, val any, setByPath ...bool) error {
 	return dc.Set(key, val, setByPath...)
 }
 
 // Set a value by key string.
-func (c *Config) Set(key string, val interface{}, setByPath ...bool) (err error) {
+func (c *Config) Set(key string, val any, setByPath ...bool) (err error) {
 	if c.opts.Readonly {
 		return ErrReadonly
 	}

@@ -84,7 +84,7 @@ type Config struct {
 	// config options
 	opts *Options
 	// all config data
-	data map[string]interface{}
+	data map[string]any
 
 	// loaded config files records
 	loadedUrls  []string
@@ -114,7 +114,7 @@ func New(name string) *Config {
 	return &Config{
 		name: name,
 		opts: newDefaultOption(),
-		data: make(map[string]interface{}),
+		data: make(map[string]any),
 
 		// default add JSON driver
 		encoders: map[string]Encoder{JSON: JSONEncoder},
@@ -127,7 +127,7 @@ func NewEmpty(name string) *Config {
 	return &Config{
 		name: name,
 		opts: newDefaultOption(),
-		data: make(map[string]interface{}),
+		data: make(map[string]any),
 
 		// don't add any drivers
 		encoders: map[string]Encoder{},
@@ -278,6 +278,6 @@ func (c *Config) addError(err error) {
 }
 
 // format and record error
-func (c *Config) addErrorf(format string, a ...interface{}) {
+func (c *Config) addErrorf(format string, a ...any) {
 	c.err = fmt.Errorf(format, a...)
 }

@@ -17,14 +17,14 @@ import (
 //
 //	myConf := &MyConf{}
 //	config.Decode(myConf)
-func Decode(dst interface{}) error { return dc.Decode(dst) }
+func Decode(dst any) error { return dc.Decode(dst) }
 
 // Decode all config data to the dst ptr.
 //
 // It's equals:
 //
 //	c.Structure("", dst)
-func (c *Config) Decode(dst interface{}) error {
+func (c *Config) Decode(dst any) error {
 	return c.Structure("", dst)
 }
 
@@ -34,28 +34,28 @@ func (c *Config) Decode(dst interface{}) error {
 //
 //	dbInfo := &Db{}
 //	config.MapStruct("db", dbInfo)
-func MapStruct(key string, dst interface{}) error { return dc.MapStruct(key, dst) }
+func MapStruct(key string, dst any) error { return dc.MapStruct(key, dst) }
 
 // MapStruct alias method of the 'Structure'
-func (c *Config) MapStruct(key string, dst interface{}) error {
+func (c *Config) MapStruct(key string, dst any) error {
 	return c.Structure(key, dst)
 }
 
 // BindStruct alias method of the 'Structure'
-func BindStruct(key string, dst interface{}) error { return dc.BindStruct(key, dst) }
+func BindStruct(key string, dst any) error { return dc.BindStruct(key, dst) }
 
 // BindStruct alias method of the 'Structure'
-func (c *Config) BindStruct(key string, dst interface{}) error {
+func (c *Config) BindStruct(key string, dst any) error {
 	return c.Structure(key, dst)
 }
 
 // MapOnExists mapping data to the dst structure only on key exists.
-func MapOnExists(key string, dst interface{}) error {
+func MapOnExists(key string, dst any) error {
 	return dc.MapOnExists(key, dst)
 }
 
 // MapOnExists mapping data to the dst structure only on key exists.
-func (c *Config) MapOnExists(key string, dst interface{}) error {
+func (c *Config) MapOnExists(key string, dst any) error {
 	err := c.Structure(key, dst)
 	if err != nil && err == ErrNotFound {
 		return nil
@@ -70,7 +70,7 @@ func (c *Config) MapOnExists(key string, dst interface{}) error {
 //
 //	dbInfo := Db{}
 //	config.Structure("db", &dbInfo)
-func (c *Config) Structure(key string, dst interface{}) error {
+func (c *Config) Structure(key string, dst any) error {
 	var data interface{}
 	// binding all data
 	if key == "" {
