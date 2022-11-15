@@ -3,6 +3,7 @@ package config
 import (
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gookit/goutil/envutil"
 	"github.com/gookit/goutil/maputil"
@@ -325,6 +326,19 @@ func (c *Config) tryInt64(key string) (value int64, ok bool) {
 		c.addError(err)
 	}
 	return
+}
+
+// Duration get a time.Duration type value. if not found return default value
+func Duration(key string, defVal ...time.Duration) time.Duration { return dc.Duration(key, defVal...) }
+
+// Duration get a time.Duration type value. if not found return default value
+func (c *Config) Duration(key string, defVal ...time.Duration) time.Duration {
+	value, exist := c.tryInt64(key)
+
+	if !exist && len(defVal) > 0 {
+		return defVal[0]
+	}
+	return time.Duration(value)
 }
 
 // Float get a float64 value, if not found return default value

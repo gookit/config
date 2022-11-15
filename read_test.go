@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/gookit/goutil/testutil"
 	"github.com/gookit/goutil/testutil/assert"
@@ -275,6 +276,10 @@ func TestInt(t *testing.T) {
 
 	uiv := Uint("age")
 	is.Eq(uint(123), uiv)
+
+	dur := Duration("age")
+	is.Eq(time.Duration(123), dur)
+	is.Eq(time.Duration(340), Duration("not-exist", 340))
 
 	ClearAll()
 }
