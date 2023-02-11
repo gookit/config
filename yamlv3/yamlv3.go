@@ -5,7 +5,6 @@ Usage please see example:
 */
 package yamlv3
 
-// see https://pkg.go.dev/gopkg.in/yaml.v3
 import (
 	"github.com/goccy/go-yaml"
 	"github.com/gookit/config/v2"

@@ -84,7 +84,7 @@ package main
 
 import (
     "github.com/gookit/config/v2"
-    "github.com/gookit/config/v2/yamlv3"
+    "github.com/gookit/config/v2/yaml"
 )
 
 // go run ./examples/yaml.go
@@ -92,7 +92,7 @@ func main() {
 	config.WithOptions(config.ParseEnv)
 
 	// add driver for support yaml content
-	config.AddDriver(yamlv3.Driver)
+	config.AddDriver(yaml.Driver)
 
 	err := config.LoadFiles("testdata/yml_base.yml")
 	if err != nil {
@@ -497,11 +497,16 @@ Check out these projects, which use https://github.com/gookit/config :
 
 ## See also
 
-- Ini parse [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser)
-- Properties parse [gookit/properties](https://github.com/gookit/properties)
-- Json5 parse [json5](https://github.com/yosuke-furukawa/json5)
-- Yaml parse [go-yaml](https://github.com/go-yaml/yaml)
-- Toml parse [go toml](https://github.com/BurntSushi/toml)
+- Ini parser [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser)
+- Properties parser [gookit/properties](https://github.com/gookit/properties)
+- Json5 parser [json5](https://github.com/yosuke-furukawa/json5)
+- Json parser
+  - [goccy/go-json](https://github.com/goccy/go-json)
+  - [json-iterator/go](https://github.com/json-iterator/go)
+- Yaml parser
+  - [goccy/go-yaml](https://github.com/goccy/go-yaml)
+  - [go-yaml/yaml](https://github.com/go-yaml/yaml)
+- Toml parser [go toml](https://github.com/BurntSushi/toml)
 - Data merge [mergo](https://github.com/imdario/mergo)
 - Map structure [mapstructure](https://github.com/mitchellh/mapstructure)
 

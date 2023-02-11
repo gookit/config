@@ -3,13 +3,13 @@ package main
 import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/gookit/config/v2"
-	"github.com/gookit/config/v2/yamlv3"
+	"github.com/gookit/config/v2/yaml"
 	"github.com/gookit/goutil"
 	"github.com/gookit/goutil/cliutil"
 )
 
 func main() {
-	config.AddDriver(yamlv3.Driver)
+	config.AddDriver(yaml.Driver)
 	config.WithOptions(
 		config.ParseEnv,
 		config.WithHookFunc(func(event string, c *config.Config) {

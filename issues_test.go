@@ -21,8 +21,7 @@ func TestIssues_37(t *testing.T) {
 	c := config.New("test")
 	c.AddDriver(yaml.Driver)
 
-	err := c.LoadStrings(config.JSON, `
-{
+	err := c.LoadStrings(config.JSON, `{
     "lang": {
         "allowed": {
             "en": "ddd"
@@ -33,7 +32,8 @@ func TestIssues_37(t *testing.T) {
 	is.NoErr(err)
 	dump.Println(c.Data())
 
-	is.Panics(func() {
+	// update yaml pkg to goccy/go-yaml
+	is.NotPanics(func() {
 		_ = c.LoadStrings(config.Yaml, `
 lang:
   allowed:
