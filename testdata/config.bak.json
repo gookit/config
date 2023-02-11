@@ -14,8 +14,10 @@
     "key": "val",
     "key1": "val1",
     "key2": "val2",
-    "key3": "${SHELL}"
+    "key3": "${SHELL}",
+    "key4": "230"
   },
   "name": "app",
-  "new-key": "new-value"
+  "new-key": "new-value",
+  "tagsStr": "php,go"
 }

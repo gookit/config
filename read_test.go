@@ -105,7 +105,7 @@ func TestGet(t *testing.T) {
 	val = Get("name")
 	is.Eq("app", val)
 
-	is.Eq([]string{"php", "go"}, StringsBySplit("tagStr", ","))
+	is.Eq([]string{"php", "go"}, StringsBySplit("tagsStr", ","))
 
 	// get string array
 	arr := Strings("notExist")
@@ -433,7 +433,7 @@ func TestParseEnv(t *testing.T) {
 
 	tests := []struct{ EKey, EVal, CKey, CVal string }{
 		{"EnvKey", "EnvKey val", "ekey", "EnvKey val"},
-		{"EnvKey", "", "ekey", "${EnvKey}"},
+		{"EnvKey", "", "ekey", ""},
 		{"EnvKey0", "EnvKey0 val", "ekey0", "EnvKey0 val"},
 		{"EnvKey3", "EnvKey3 val", "ekey3", "EnvKey3 val"},
 		{"EnvKey3", "", "ekey3", "app:run"},
@@ -470,6 +470,6 @@ func TestParseEnv(t *testing.T) {
 	}, func() {
 		is.Eq("abc", Getenv("FirstEnv"))
 		is.Eq("", Getenv("SecondEnv"))
-		is.Eq("abc/${ SecondEnv }", cfg.String("ekey4"))
+		is.Eq("abc/", cfg.String("ekey4"))
 	})
 }
