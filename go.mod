@@ -7,7 +7,7 @@ require (
 	github.com/goccy/go-json v0.10.0
 	github.com/goccy/go-yaml v1.9.8
 	github.com/gookit/goutil v0.6.4
-	github.com/gookit/ini/v2 v2.1.3
+	github.com/gookit/ini/v2 v2.2.1
 	github.com/gookit/properties v0.2.1
 	github.com/hashicorp/hcl v1.0.0
 	github.com/hashicorp/hcl/v2 v2.14.1
