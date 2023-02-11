@@ -2,25 +2,23 @@
 package json
 
 import (
+	"github.com/goccy/go-json"
 	"github.com/gookit/config/v2"
 	"github.com/gookit/goutil/jsonutil"
-	"github.com/json-iterator/go"
 )
-
-var parser = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var (
 	// Decoder for json
 	Decoder config.Decoder = func(data []byte, v any) (err error) {
 		if config.JSONAllowComments {
 			str := jsonutil.StripComments(string(data))
-			return parser.Unmarshal([]byte(str), v)
+			return json.Unmarshal([]byte(str), v)
 		}
-		return parser.Unmarshal(data, v)
+		return json.Unmarshal(data, v)
 	}
 
 	// Encoder for json
-	Encoder config.Encoder = parser.Marshal
+	Encoder config.Encoder = json.Marshal
 	// Driver for json
 	Driver = config.NewDriver(config.JSON, Decoder, Encoder)
 )

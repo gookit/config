@@ -34,9 +34,7 @@ func NewDriver(name string, dec Decoder, enc Encoder) *StdDriver {
 }
 
 // Name of driver
-func (d *StdDriver) Name() string {
-	return d.name
-}
+func (d *StdDriver) Name() string { return d.name }
 
 // Decode of driver
 func (d *StdDriver) Decode(blob []byte, v any) (err error) {
@@ -59,13 +57,11 @@ func (d *StdDriver) GetEncoder() Encoder {
 }
 
 /*************************************************************
- * json driver
+ * JSON driver
  *************************************************************/
 
 var (
 	// JSONAllowComments support write comments on json file.
-	//
-	// Deprecated: please use JSONDriver.ClearComments = true
 	JSONAllowComments = true
 
 	// JSONMarshalIndent if not empty, will use json.MarshalIndent for encode data.
