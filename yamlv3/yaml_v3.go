@@ -2,14 +2,13 @@
 Package yamlv3 is a driver use YAML format content as config source
 
 Usage please see example:
-
 */
 package yamlv3
 
 // see https://pkg.go.dev/gopkg.in/yaml.v3
 import (
+	"github.com/goccy/go-yaml"
 	"github.com/gookit/config/v2"
-	"gopkg.in/yaml.v3"
 )
 
 // Decoder the yaml content decoder
