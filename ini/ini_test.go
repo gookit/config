@@ -66,7 +66,7 @@ func TestDriver(t *testing.T) {
 	st.True(c.HasDecoder(config.Ini))
 	st.True(c.HasEncoder(config.Ini))
 
-	_, err := Encoder(map[string]interface{}{"k": "v"})
+	_, err := Encoder(map[string]any{"k": "v"})
 	st.Nil(err)
 
 	_, err = Encoder("invalid")

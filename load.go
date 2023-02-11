@@ -431,7 +431,7 @@ func (c *Config) loadDataMap(data map[string]any) (err error) {
 }
 
 // parse config source code to Config.
-func (c *Config) parseSourceToMap(format string, blob []byte) (map[string]interface{}, error) {
+func (c *Config) parseSourceToMap(format string, blob []byte) (map[string]any, error) {
 	format = fixFormat(format)
 	decode := c.decoders[format]
 	if decode == nil {

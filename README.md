@@ -389,7 +389,7 @@ Support parse default value by struct tag `default`
 c := config.New("test").WithOptions(config.ParseDefault)
 
 // only set name
-c.SetData(map[string]interface{}{
+c.SetData(map[string]any{
     "name": "inhere",
 })
 
@@ -421,7 +421,7 @@ dump.Println(user)
 ### Load Config
 
 - `LoadOSEnvs(nameToKeyMap map[string]string)` Load data from os ENV
-- `LoadData(dataSource ...interface{}) (err error)` Load from struts or maps
+- `LoadData(dataSource ...any) (err error)` Load from struts or maps
 - `LoadFlags(keys []string) (err error)` Load from CLI flags
 - `LoadExists(sourceFiles ...string) (err error)` 
 - `LoadFiles(sourceFiles ...string) (err error)`
@@ -445,7 +445,7 @@ dump.Println(user)
 - `Strings(key string) (arr []string)`
 - `SubDataMap(key string) maputi.Data`
 - `StringMap(key string) (mp map[string]string)`
-- `Get(key string, findByPath ...bool) (value interface{})`
+- `Get(key string, findByPath ...bool) (value any)`
 
 **Mapping data to struct:**
 
@@ -455,14 +455,14 @@ dump.Println(user)
 
 ### Setting Values
 
-- `Set(key string, val interface{}, setByPath ...bool) (err error)`
+- `Set(key string, val any, setByPath ...bool) (err error)`
 
 ### Useful Methods
 
 - `Getenv(name string, defVal ...string) (val string)`
 - `AddDriver(driver Driver)`
-- `Data() map[string]interface{}`
-- `SetData(data map[string]interface{})` set data to override the Config.Data
+- `Data() map[string]any`
+- `SetData(data map[string]any)` set data to override the Config.Data
 - `Exists(key string, findByPath ...bool) bool`
 - `DumpTo(out io.Writer, format string) (n int64, err error)`
 

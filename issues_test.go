@@ -89,7 +89,7 @@ func TestIssues_46(t *testing.T) {
 	dump.Println(c.Data())
 
 	val, _ := c.GetValue("http")
-	mp := val.(map[string]interface{})
+	mp := val.(map[string]any)
 	dump.Println(mp)
 	is.Eq("${HTTP_PORT|8080}", mp["port"])
 
@@ -156,11 +156,11 @@ func TestIssues_70(t *testing.T) {
 	err = c.Set("parent.child.grandChild", "New Val")
 	assert.Err(t, err)
 
-	err = c.Set("parent.child", map[string]interface{}{
+	err = c.Set("parent.child", map[string]any{
 		"grandChild": "New Val",
 	})
 	assert.NoErr(t, err)
-	assert.Eq(t, map[string]interface{}{
+	assert.Eq(t, map[string]any{
 		"grandChild": "New Val",
 	}, c.Get("parent.child"))
 
@@ -237,7 +237,7 @@ func TestIssues_94(t *testing.T) {
 	c := config.New("test").WithOptions(config.ParseDefault)
 
 	// only set name
-	c.SetData(map[string]interface{}{
+	c.SetData(map[string]any{
 		"name": "inhere",
 	})
 

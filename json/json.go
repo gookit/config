@@ -11,7 +11,7 @@ var parser = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var (
 	// Decoder for json
-	Decoder config.Decoder = func(data []byte, v interface{}) (err error) {
+	Decoder config.Decoder = func(data []byte, v any) (err error) {
 		if config.JSONAllowComments {
 			str := jsonutil.StripComments(string(data))
 			return parser.Unmarshal([]byte(str), v)

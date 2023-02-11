@@ -10,35 +10,36 @@ import (
 )
 
 func TestDefaultLoad(t *testing.T) {
-	st := assert.New(t)
+	is := assert.New(t)
 
 	ClearAll()
 	err := LoadFiles("testdata/json_base.json", "testdata/json_other.json")
-	st.Nil(err)
+	is.Nil(err)
 
 	ClearAll()
 	err = LoadFilesByFormat(JSON, "testdata/json_base.json", "testdata/json_other.json")
-	st.Nil(err)
+	is.Nil(err)
 
 	ClearAll()
 	err = LoadExists("testdata/json_base.json", "not-exist.json")
-	st.Nil(err)
+	is.Nil(err)
 
 	ClearAll()
 	err = LoadExistsByFormat(JSON, "testdata/json_base.json", "not-exist.json")
-	st.Nil(err)
+	is.Nil(err)
 
 	ClearAll()
 	// load map
-	err = LoadData(map[string]interface{}{
+	err = LoadData(map[string]any{
 		"name":    "inhere",
 		"age":     28,
 		"working": true,
 		"tags":    []string{"a", "b"},
 		"info":    map[string]string{"k1": "a", "k2": "b"},
 	})
-	st.NotEmpty(Data())
-	st.Nil(err)
+	is.NotEmpty(Data())
+	is.NotEmpty(Keys())
+	is.Nil(err)
 }
 
 func TestLoad(t *testing.T) {
@@ -56,7 +57,7 @@ func TestLoad(t *testing.T) {
 	is.Eq(OnCleanData, name)
 
 	// load map data
-	err = c.LoadData(map[string]interface{}{
+	err = c.LoadData(map[string]any{
 		"name":    "inhere",
 		"age":     float64(28),
 		"working": true,

@@ -14,7 +14,7 @@ import (
 )
 
 // Decoder the hcl content decoder
-var Decoder config.Decoder = func(blob []byte, v interface{}) (err error) {
+var Decoder config.Decoder = func(blob []byte, v any) (err error) {
 	return hclsimple.Decode("hcl2/config.hcl", blob, nil, v)
 	// file, diags := hclsyntax.ParseConfig(
 	// 	blob,
@@ -30,7 +30,7 @@ var Decoder config.Decoder = func(blob []byte, v interface{}) (err error) {
 }
 
 // Encoder the hcl content encoder
-var Encoder config.Encoder = func(ptr interface{}) (out []byte, err error) {
+var Encoder config.Encoder = func(ptr any) (out []byte, err error) {
 	err = errors.New("HCLv2: is not support encode data to HCL")
 	return
 }

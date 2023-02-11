@@ -20,7 +20,7 @@ var (
 	Decoder config.Decoder = json5.Unmarshal
 
 	// Encoder for json5
-	Encoder config.Encoder = func(v interface{}) (out []byte, err error) {
+	Encoder config.Encoder = func(v any) (out []byte, err error) {
 		if len(JSONMarshalIndent) == 0 {
 			return json5.Marshal(v)
 		}

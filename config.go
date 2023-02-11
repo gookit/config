@@ -95,8 +95,8 @@ type Config struct {
 	// TODO Deprecated decoder and encoder, use driver instead
 	// drivers map[string]Driver
 
-	// decoders["toml"] = func(blob []byte, v interface{}) (err error){}
-	// decoders["yaml"] = func(blob []byte, v interface{}) (err error){}
+	// decoders["toml"] = func(blob []byte, v any) (err error){}
+	// decoders["yaml"] = func(blob []byte, v any) (err error){}
 	decoders map[string]Decoder
 	encoders map[string]Encoder
 
@@ -246,7 +246,7 @@ func (c *Config) ClearAll() {
 func (c *Config) ClearData() {
 	c.fireHook(OnCleanData)
 
-	c.data = make(map[string]interface{})
+	c.data = make(map[string]any)
 	c.loadedUrls = []string{}
 	c.loadedFiles = []string{}
 }

@@ -16,7 +16,7 @@ import (
 var Decoder config.Decoder = hcl.Unmarshal
 
 // Encoder the hcl content encoder
-var Encoder config.Encoder = func(ptr interface{}) (out []byte, err error) {
+var Encoder config.Encoder = func(ptr any) (out []byte, err error) {
 	err = errors.New("HCL: is not support encode data to HCL")
 	return
 }

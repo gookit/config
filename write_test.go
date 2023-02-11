@@ -20,13 +20,13 @@ func TestSetData(t *testing.T) {
 	assert.Eq(t, "app", c.String("name"))
 	assert.True(t, c.Exists("age"))
 
-	SetData(map[string]interface{}{
+	SetData(map[string]any{
 		"name": "new app",
 	})
 	assert.Eq(t, "new app", c.String("name"))
 	assert.False(t, c.Exists("age"))
 
-	c.SetData(map[string]interface{}{
+	c.SetData(map[string]any{
 		"age": 222,
 	})
 	assert.Eq(t, "", c.String("name"))
@@ -78,7 +78,7 @@ func TestSet(t *testing.T) {
 	}
 
 	// like yaml.v2 decoded data
-	err = Set("ymlLike", map[interface{}]interface{}{"k": "v"})
+	err = Set("ymlLike", map[any]any{"k": "v"})
 	is.Nil(err)
 	str := c.String("ymlLike.k")
 	is.Eq("v", str)
@@ -189,7 +189,7 @@ func TestSet_fireEvent(t *testing.T) {
 	}
 
 	c := NewWithOptions("test", WithHookFunc(hookFn))
-	err := c.LoadData(map[string]interface{}{
+	err := c.LoadData(map[string]any{
 		"key": "value",
 	})
 	assert.NoErr(t, err)
