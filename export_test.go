@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/gookit/goutil/dump"
+	"github.com/gookit/goutil/jsonutil"
 	"github.com/gookit/goutil/testutil/assert"
 )
 
@@ -115,7 +116,7 @@ func TestConfig_Structure(t *testing.T) {
 
 	// custom data
 	cfg = New("test")
-	err = cfg.LoadData(map[string]interface{}{
+	err = cfg.LoadData(map[string]any{
 		"key":  "val",
 		"age":  120,
 		"tags": []int{12, 34},
@@ -151,14 +152,12 @@ func TestMapStruct_embedded_struct_squash_false(t *testing.T) {
 	})
 	assert.False(t, loader.Options().DecoderConfig.Squash)
 
-	err := loader.LoadStrings(JSON, `
-{
+	err := loader.LoadStrings(JSON, `{
   "c": "12",
   "test1": {
 	"b": "34"
   }
-}
-`)
+}`)
 	assert.NoErr(t, err)
 	dump.Println(loader.Data())
 	assert.Eq(t, 12, loader.Int("c"))
@@ -187,6 +186,20 @@ func TestMapStruct_embedded_struct_squash_false(t *testing.T) {
 	assert.NoErr(t, err)
 	dump.Println(cfg1)
 	assert.Eq(t, 34, cfg1.Test1.B)
+
+	loader.SetData(map[string]any{
+		"c": 120,
+		"b": 340,
+	})
+	dump.Println(loader.Data())
+
+	cfg2 := &Test3{}
+	err = loader.BindStruct("", cfg2)
+
+	cfg3 := &Test3{}
+	_ = jsonutil.DecodeString(`{"c": 12, "b": 34}`, cfg3)
+
+	dump.Println(cfg2, cfg3)
 }
 
 func TestMapStruct_embedded_struct_squash_true(t *testing.T) {
@@ -196,14 +209,12 @@ func TestMapStruct_embedded_struct_squash_true(t *testing.T) {
 	})
 	assert.True(t, loader.Options().DecoderConfig.Squash)
 
-	err := loader.LoadStrings(JSON, `
-{
+	err := loader.LoadStrings(JSON, `{
   "c": "12",
   "test1": {
 	"b": "34"
   }
-}
-`)
+}`)
 	assert.NoErr(t, err)
 	dump.Println(loader.Data())
 	assert.Eq(t, 12, loader.Int("c"))
@@ -212,6 +223,8 @@ func TestMapStruct_embedded_struct_squash_true(t *testing.T) {
 	type Test1 struct {
 		B int `json:"b"`
 	}
+
+	// use value - will not set ok
 	type Test2 struct {
 		Test1
 		// Test1 `json:",squash"`
@@ -224,6 +237,7 @@ func TestMapStruct_embedded_struct_squash_true(t *testing.T) {
 	dump.Println(cfg)
 	assert.Eq(t, 0, cfg.Test1.B)
 
+	// use pointer
 	type Test3 struct {
 		*Test1
 		C int `json:"c"`
@@ -232,7 +246,22 @@ func TestMapStruct_embedded_struct_squash_true(t *testing.T) {
 	err = loader.MapStruct("", cfg1)
 	assert.NoErr(t, err)
 	dump.Println(cfg1)
+	assert.Eq(t, 34, cfg1.B)
 	assert.Eq(t, 34, cfg1.Test1.B)
+
+	loader.SetData(map[string]any{
+		"c": 120,
+		"b": 340,
+	})
+	dump.Println(loader.Data())
+
+	cfg2 := &Test3{}
+	err = loader.BindStruct("", cfg2)
+
+	cfg3 := &Test3{}
+	_ = jsonutil.DecodeString(`{"c": 12, "b": 34}`, cfg3)
+
+	dump.Println(cfg2, cfg3)
 }
 
 func TestMapOnExists(t *testing.T) {
@@ -294,7 +323,7 @@ func TestConfig_BindStruct_default(t *testing.T) {
 	}
 
 	cfg := NewWithOptions("test", ParseEnv, ParseDefault)
-	// cfg.SetData(map[string]interface{}{
+	// cfg.SetData(map[string]any{
 	// 	"env": "prod",
 	// 	"debug": "true",
 	// })

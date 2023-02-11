@@ -14,6 +14,7 @@ var jsonStr = `{
     "name": "app",
     "debug": true,
     "baseKey": "value",
+    "tagsStr": "php,go",
     "age": 123,
     "envKey": "${SHELL}",
     "envKey1": "${NotExist|defValue}",
@@ -245,7 +246,7 @@ func TestJSONDriver(t *testing.T) {
 	is.Eq(1, c.Int("key"))
 
 	c = NewWith("test", func(c *Config) {
-		err = c.LoadData(map[string]interface{}{"key1": 2})
+		err = c.LoadData(map[string]any{"key1": 2})
 		is.NoErr(err)
 	})
 	is.Eq(2, c.Int("key1"))
@@ -342,7 +343,7 @@ func TestDelimiter(t *testing.T) {
 	c.WithOptions(Delimiter(':'))
 	is.Eq(byte(':'), c.Options().Delimiter)
 
-	err := c.LoadData(map[string]interface{}{
+	err := c.LoadData(map[string]any{
 		"top0": 1,
 		"top1": map[string]int{"sub0": 2},
 	})
@@ -354,7 +355,7 @@ func TestDelimiter(t *testing.T) {
 	c = NewWithOptions("test", Delimiter(0))
 	is.Eq(byte(0), c.Options().Delimiter)
 
-	err = c.LoadData(map[string]interface{}{
+	err = c.LoadData(map[string]any{
 		"top0": 1,
 		"top1": map[string]int{"sub0": 2},
 	})
