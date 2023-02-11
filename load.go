@@ -4,7 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -42,6 +42,10 @@ func LoadExists(sourceFiles ...string) error { return dc.LoadExists(sourceFiles.
 // LoadExists load and parse config files, but will ignore not exists file.
 func (c *Config) LoadExists(sourceFiles ...string) (err error) {
 	for _, file := range sourceFiles {
+		if file == "" {
+			continue
+		}
+
 		if err = c.loadFile(file, true, ""); err != nil {
 			return
 		}
@@ -72,7 +76,7 @@ func (c *Config) LoadRemote(format, url string) (err error) {
 	}
 
 	// read response content
-	bts, err := ioutil.ReadAll(resp.Body)
+	bts, err := io.ReadAll(resp.Body)
 	if err == nil {
 		if err = c.parseSourceCode(format, bts); err != nil {
 			return
@@ -386,7 +390,7 @@ func (c *Config) loadFile(file string, loadExist bool, format string) (err error
 	defer fd.Close()
 
 	// read file content
-	bts, err := ioutil.ReadAll(fd)
+	bts, err := io.ReadAll(fd)
 	if err == nil {
 		// get format for file ext
 		if format == "" {

@@ -282,3 +282,28 @@ func TestIssues_96(t *testing.T) {
 	is.NotEmpty(c.Data())
 	is.Eq([]string{"Test1", "Test2"}, c.Get("parent.child"))
 }
+
+// https://github.com/gookit/config/issues/114
+func TestIssues_114(t *testing.T) {
+	c := config.NewWithOptions("test",
+		config.ParseDefault,
+		config.ParseEnv,
+		config.Readonly,
+	)
+
+	type conf struct {
+		Name  string   `mapstructure:"name" default:"${NAME | Bob}"`
+		Value []string `mapstructure:"value" default:"${VAL | val1}"`
+	}
+
+	err := c.LoadExists("")
+	assert.NoErr(t, err)
+
+	var cc conf
+	err = c.Decode(&cc)
+	assert.NoErr(t, err)
+
+	assert.Eq(t, "Bob", cc.Name)
+	assert.Eq(t, []string{"val1"}, cc.Value)
+	// dump.Println(cc)
+}
