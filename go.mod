@@ -10,7 +10,7 @@ require (
 	github.com/gookit/ini/v2 v2.2.1
 	github.com/gookit/properties v0.2.1
 	github.com/hashicorp/hcl v1.0.0
-	github.com/hashicorp/hcl/v2 v2.16.0
+	github.com/hashicorp/hcl/v2 v2.16.1
 	github.com/imdario/mergo v0.3.13
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/yosuke-furukawa/json5 v0.1.1
