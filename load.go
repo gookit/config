@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/fs"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -318,9 +319,8 @@ func (c *Config) LoadFromDir(dirPath, format string) (err error) {
 	extName := "." + format
 	extLen := len(extName)
 
-	return fsutil.FindInDir(dirPath, func(fPath string, fi os.FileInfo) error {
-		baseName := fi.Name()
-
+	return fsutil.FindInDir(dirPath, func(fPath string, ent fs.DirEntry) error {
+		baseName := ent.Name()
 		if strings.HasSuffix(baseName, extName) {
 			data, err := c.parseSourceToMap(format, fsutil.MustReadFile(fPath))
 			if err != nil {
