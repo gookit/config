@@ -6,7 +6,7 @@ require (
 	github.com/BurntSushi/toml v1.2.1
 	github.com/goccy/go-json v0.10.0
 	github.com/goccy/go-yaml v1.10.0
-	github.com/gookit/goutil v0.6.5
+	github.com/gookit/goutil v0.6.6
 	github.com/gookit/ini/v2 v2.2.1
 	github.com/gookit/properties v0.3.0
 	github.com/hashicorp/hcl v1.0.0
