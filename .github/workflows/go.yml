@@ -31,7 +31,7 @@ jobs:
         go-version: ${{ matrix.go_version }}
 
     - name: Revive check
-      uses: morphy2k/revive-action@v2.4.1
+      uses: morphy2k/revive-action@v2.5.0
       with:
         # Exclude patterns, separated by semicolons (optional)
         exclude: "./_examples/..."
