@@ -2,8 +2,10 @@
 package json5
 
 import (
+	"encoding/json"
+
 	"github.com/gookit/config/v2"
-	"github.com/yosuke-furukawa/json5/encoding/json5"
+	"github.com/titanous/json5"
 )
 
 // NAME for driver
@@ -22,10 +24,9 @@ var (
 	// Encoder for json5
 	Encoder config.Encoder = func(v any) (out []byte, err error) {
 		if len(JSONMarshalIndent) == 0 {
-			return json5.Marshal(v)
+			return json.Marshal(v)
 		}
-
-		return json5.MarshalIndent(v, "", JSONMarshalIndent)
+		return json.MarshalIndent(v, "", JSONMarshalIndent)
 	}
 
 	// Driver for json5

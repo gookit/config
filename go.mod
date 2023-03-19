@@ -13,7 +13,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.16.2
 	github.com/imdario/mergo v0.3.14
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/yosuke-furukawa/json5 v0.1.1
+	github.com/titanous/json5 v1.0.0
 )
 
 require (

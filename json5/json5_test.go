@@ -85,4 +85,8 @@ func TestDriver(t *testing.T) {
 `), &m)
 	is.Nil(err)
 	is.Eq("v", m.N)
+
+	// will error on use
+	err = c.LoadFiles("../testdata/json_base.json5")
+	is.NoErr(err)
 }
