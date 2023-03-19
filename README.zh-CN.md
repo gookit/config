@@ -484,6 +484,9 @@ go test -cover ./...
 - Toml 解析 [go toml](https://github.com/BurntSushi/toml)
 - 数据合并 [mergo](https://github.com/imdario/mergo)
 - 映射数据到结构体 [mapstructure](https://github.com/mitchellh/mapstructure)
+- JSON5 解析
+  - [yosuke-furukawa/json5](https://github.com/yosuke-furukawa/json5)
+  - [titanous/json5](https://github.com/titanous/json5)
 
 ## License
 

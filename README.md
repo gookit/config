@@ -499,7 +499,9 @@ Check out these projects, which use https://github.com/gookit/config :
 
 - Ini parser [gookit/ini/parser](https://github.com/gookit/ini/tree/master/parser)
 - Properties parser [gookit/properties](https://github.com/gookit/properties)
-- Json5 parser [json5](https://github.com/yosuke-furukawa/json5)
+- Json5 parser
+  - [yosuke-furukawa/json5](https://github.com/yosuke-furukawa/json5)
+  - [titanous/json5](https://github.com/titanous/json5)
 - Json parser
   - [goccy/go-json](https://github.com/goccy/go-json)
   - [json-iterator/go](https://github.com/json-iterator/go)

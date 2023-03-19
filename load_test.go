@@ -63,11 +63,12 @@ func TestLoad(t *testing.T) {
 		"working": true,
 		"tags":    []string{"a", "b"},
 		"info":    map[string]string{"k1": "a", "k2": "b"},
-	})
+	}, map[string]string{"str-map": "value"})
 
 	is.Eq(OnLoadData, name)
 	is.NotEmpty(c.Data())
 	is.Nil(err)
+	is.Eq("value", c.String("str-map"))
 
 	// LoadData
 	err = c.LoadData("invalid")
