@@ -1,4 +1,4 @@
-// Package json5 use the https://github.com/yosuke-furukawa/json5 for parse json5
+// Package json5 support for parse and load json5
 package json5
 
 import (

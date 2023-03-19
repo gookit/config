@@ -20,7 +20,7 @@
     "defLang": "en",
     "allowed": {
       "en": "val",
-      "zh-CN": "val2"
+      "zh-CN": "val2", // for comment
     }
   }
 }
