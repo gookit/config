@@ -6,7 +6,7 @@ require (
 	github.com/BurntSushi/toml v1.2.1
 	github.com/goccy/go-json v0.10.2
 	github.com/goccy/go-yaml v1.11.0
-	github.com/gookit/goutil v0.6.7
+	github.com/gookit/goutil v0.6.8
 	github.com/gookit/ini/v2 v2.2.2
 	github.com/gookit/properties v0.3.0
 	github.com/hashicorp/hcl v1.0.0
@@ -21,7 +21,7 @@ require (
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/fatih/color v1.14.1 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
-	github.com/gookit/color v1.5.2 // indirect
+	github.com/gookit/color v1.5.3 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
