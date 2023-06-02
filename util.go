@@ -19,6 +19,9 @@ func ValDecodeHookFunc(parseEnv, parseTime bool) mapstructure.DecodeHookFunc {
 		}
 
 		str := data.(string)
+		if parseEnv {
+			str = envutil.ParseEnvValue(str)
+		}
 		if len(str) < 2 {
 			return str, nil
 		}
@@ -32,10 +35,7 @@ func ValDecodeHookFunc(parseEnv, parseTime bool) mapstructure.DecodeHookFunc {
 					return dur, nil
 				}
 			}
-		} else if parseEnv { // parse ENV value
-			str = envutil.ParseEnvValue(str)
 		}
-
 		return str, nil
 	}
 }
