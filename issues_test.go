@@ -1,6 +1,7 @@
 package config_test
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -306,4 +307,37 @@ func TestIssues_114(t *testing.T) {
 	assert.Eq(t, "Bob", cc.Name)
 	assert.Eq(t, []string{"val1"}, cc.Value)
 	// dump.Println(cc)
+}
+
+// https://github.com/gookit/config/issues/146
+func TestIssues_146(t *testing.T) {
+	c := config.NewWithOptions("test",
+		config.ParseDefault,
+		config.ParseEnv,
+		config.ParseTime,
+	)
+
+	type conf struct {
+		Env        time.Duration
+		DefaultEnv time.Duration
+		NoEnv      time.Duration
+	}
+
+	err := os.Setenv("ENV", "5s")
+	assert.NoError(t, err)
+
+	err = c.LoadStrings(config.JSON, `{
+		"env": "${ENV}",
+		"defaultEnv": "${DEFAULT_ENV| 10s}",
+		"noEnv": "15s"
+	}`)
+	assert.NoErr(t, err)
+
+	var cc conf
+	err = c.Decode(&cc)
+	assert.NoErr(t, err)
+
+	assert.Eq(t, 5*time.Second, cc.Env)
+	assert.Eq(t, 10*time.Second, cc.DefaultEnv)
+	assert.Eq(t, 15*time.Second, cc.NoEnv)
 }
