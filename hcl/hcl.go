@@ -22,4 +22,4 @@ var Encoder config.Encoder = func(ptr any) (out []byte, err error) {
 }
 
 // Driver instance for hcl
-var Driver = config.NewDriver(config.Hcl, Decoder, Encoder)
+var Driver = config.NewDriver(config.Hcl, Decoder, Encoder).WithAlias("conf")

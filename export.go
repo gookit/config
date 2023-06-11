@@ -139,7 +139,7 @@ func (c *Config) DumpTo(out io.Writer, format string) (n int64, err error) {
 	var ok bool
 	var encoder Encoder
 
-	format = fixFormat(format)
+	format = c.resolveFormat(format)
 	if encoder, ok = c.encoders[format]; !ok {
 		err = errors.New("not exists/register encoder for the format: " + format)
 		return

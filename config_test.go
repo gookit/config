@@ -179,10 +179,6 @@ func TestGetEnv(t *testing.T) {
 		assert.Eq(t, "true", Getenv("APP_DEBUG"))
 		assert.Eq(t, "defVal", GetEnv("not-exsit", "defVal"))
 	})
-
-	assert.Eq(t, Yaml, fixFormat("yml"))
-	assert.Eq(t, Hcl, fixFormat("conf"))
-	assert.Eq(t, Ini, fixFormat("inc"))
 }
 
 func TestSetDecoderEncoder(t *testing.T) {
@@ -211,7 +207,6 @@ func TestDefault(t *testing.T) {
 
 	ClearAll()
 	WithOptions(ParseEnv)
-
 	is.True(GetOptions().ParseEnv)
 
 	_ = LoadStrings(JSON, `{"name": "inhere"}`)
@@ -219,6 +214,10 @@ func TestDefault(t *testing.T) {
 	buf := &bytes.Buffer{}
 	_, err := WriteTo(buf)
 	is.Nil(err)
+
+	// add alias
+	AddAlias("ini", "conf")
+	is.NotEmpty(Default().AliasMap())
 }
 
 func TestJSONDriver(t *testing.T) {

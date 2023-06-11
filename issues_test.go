@@ -130,7 +130,8 @@ func TestIssues_59(t *testing.T) {
 	dump.Println(c.Data())
 
 	dumpfile := "testdata/issues59.ini"
-	out := fsutil.MustCreateFile(dumpfile, 0666, 0666)
+	out, err := fsutil.OpenTruncFile(dumpfile, 0666)
+	is.NoErr(err)
 	_, err = c.DumpTo(out, config.Ini)
 	is.NoErr(err)
 
@@ -309,6 +310,19 @@ func TestIssues_114(t *testing.T) {
 	// dump.Println(cc)
 }
 
+// https://github.com/gookit/config/issues/139
+func TestIssues_139(t *testing.T) {
+	c := config.New("issues_139", config.ParseEnv)
+	c.AddDriver(ini.Driver)
+	c.AddAlias("ini", "conf")
+
+	err := c.LoadFiles("testdata/issues_139.conf")
+	assert.NoErr(t, err)
+
+	assert.Eq(t, "app", c.String("name"))
+	assert.Eq(t, "defValue", c.String("envKey1"))
+}
+
 // https://github.com/gookit/config/issues/141
 func TestIssues_141(t *testing.T) {
 	type Logger struct {
@@ -323,7 +337,7 @@ func TestIssues_141(t *testing.T) {
 		Loggers []*Logger `default:""` // mark for parse default
 	}
 
-	c := config.New("issues141", config.ParseDefault)
+	c := config.New("issues_141", config.ParseDefault)
 	err := c.LoadStrings(config.JSON, `
 {
 	"loggers": [

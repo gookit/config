@@ -17,4 +17,4 @@ var Decoder config.Decoder = yaml.Unmarshal
 var Encoder config.Encoder = yaml.Marshal
 
 // Driver for yaml
-var Driver = config.NewDriver(config.Yaml, Decoder, Encoder)
+var Driver = config.NewDriver(config.Yaml, Decoder, Encoder).WithAliases(config.Yml)

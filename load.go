@@ -451,7 +451,7 @@ func (c *Config) loadDataMap(data map[string]any) (err error) {
 
 // parse config source code to Config.
 func (c *Config) parseSourceToMap(format string, blob []byte) (map[string]any, error) {
-	format = fixFormat(format)
+	format = c.resolveFormat(format)
 	decode := c.decoders[format]
 	if decode == nil {
 		return nil, errors.New("not register decoder for the format: " + format)

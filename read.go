@@ -92,7 +92,9 @@ func (c *Config) Exists(key string, findByPath ...bool) (ok bool) {
 // Data return all config data
 func Data() map[string]any { return dc.Data() }
 
-// Data get all config data
+// Data get all config data.
+//
+// Note: will don't apply any options, like ParseEnv
 func (c *Config) Data() map[string]any {
 	return c.data
 }
