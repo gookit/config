@@ -103,10 +103,11 @@ func TestDriver(t *testing.T) {
 	err := Decoder([]byte("invalid"), tg)
 	is.Err(err)
 
-	_, err = Encoder("invalid")
-	is.Err(err)
+	out, err := Encoder("invalid")
+	is.Eq(`"invalid"`, string(out))
+	is.Nil(err)
 
-	out, err := Encoder(map[string]any{"k": "v"})
+	out, err = Encoder(map[string]any{"k": "v"})
 	is.Nil(err)
 	is.Contains(string(out), `k = "v"`)
 }
