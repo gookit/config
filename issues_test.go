@@ -309,6 +309,55 @@ func TestIssues_114(t *testing.T) {
 	// dump.Println(cc)
 }
 
+// https://github.com/gookit/config/issues/141
+func TestIssues_141(t *testing.T) {
+	type Logger struct {
+		Name     string `json:"name"`
+		LogFile  string `json:"logFile"`
+		MaxSize  int    `json:"maxSize" default:"1024"` // MB
+		MaxDays  int    `json:"maxDays" default:"7"`
+		Compress bool   `json:"compress" default:"true"`
+	}
+
+	type LogConfig struct {
+		Loggers []*Logger `default:""` // mark for parse default
+	}
+
+	c := config.New("issues141", config.ParseDefault)
+	err := c.LoadStrings(config.JSON, `
+{
+	"loggers": [
+		{
+			"name": "error",
+			"logFile": "logs/error.log"
+		},
+		{	
+			"name": "request",
+			"logFile": "logs/request.log",
+			"maxSize": 2048,
+			"maxDays": 30,
+			"compress": false
+		}
+	]
+}
+`)
+
+	assert.NoErr(t, err)
+
+	opt := &LogConfig{}
+	err = c.Decode(opt)
+	dump.Println(opt)
+	assert.NoErr(t, err)
+	assert.Eq(t, 2, len(opt.Loggers))
+	assert.Eq(t, 1024, opt.Loggers[0].MaxSize)
+	assert.Eq(t, 7, opt.Loggers[0].MaxDays)
+	assert.Eq(t, true, opt.Loggers[0].Compress)
+
+	assert.Eq(t, 2048, opt.Loggers[1].MaxSize)
+	assert.Eq(t, 30, opt.Loggers[1].MaxDays)
+	assert.Eq(t, false, opt.Loggers[1].Compress)
+}
+
 // https://github.com/gookit/config/issues/146
 func TestIssues_146(t *testing.T) {
 	c := config.NewWithOptions("test",
