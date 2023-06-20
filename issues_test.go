@@ -369,7 +369,38 @@ func TestIssues_141(t *testing.T) {
 
 	assert.Eq(t, 2048, opt.Loggers[1].MaxSize)
 	assert.Eq(t, 30, opt.Loggers[1].MaxDays)
-	assert.Eq(t, false, opt.Loggers[1].Compress)
+	assert.Eq(t, true, opt.Loggers[1].Compress)
+
+	t.Run("3 elements", func(t *testing.T) {
+		jsonStr := `
+{
+  "loggers": [
+    {
+      "name": "info",
+      "logFile": "logs/info.log"
+    },
+    {
+      "name": "error",
+      "logFile": "logs/error.log"
+    },
+    {
+      "name": "request",
+      "logFile": "logs/request.log",
+      "maxSize": 2048,
+      "maxDays": 30,
+      "compress": false
+    }
+  ]
+}
+`
+		c := config.New("issues_141", config.ParseDefault)
+		err := c.LoadStrings(config.JSON, jsonStr)
+		assert.NoErr(t, err)
+
+		opt := &LogConfig{}
+		err = c.Decode(opt)
+		dump.Println(opt)
+	})
 }
 
 // https://github.com/gookit/config/issues/146
