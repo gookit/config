@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 	"time"
+        "fmt"
 
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/ini"
@@ -434,4 +435,29 @@ func TestIssues_146(t *testing.T) {
 	assert.Eq(t, 5*time.Second, cc.Env)
 	assert.Eq(t, 10*time.Second, cc.DefaultEnv)
 	assert.Eq(t, 15*time.Second, cc.NoEnv)
+}
+
+type DurationStruct struct {
+	Duration time.Duration
+}
+
+func TestDuration(t *testing.T) {
+	var (
+		err error
+		str string
+	)
+
+	c := config.New("test").WithOptions(config.ParseTime)
+	is := assert.New(t)
+	dur := DurationStruct{}
+
+	for _, seconds := range []int{10, 90} {
+		str = fmt.Sprintf(`{ "Duration": "%ds" }`, seconds)
+
+		err = c.LoadSources(config.JSON, []byte(str))
+		is.Nil(err)
+		err = c.Decode(&dur)
+		is.Nil(err)
+		is.Equal(float64(seconds), dur.Duration.Seconds())
+	}
 }

@@ -447,3 +447,4 @@ func TestMapStringStringParseEnv(t *testing.T) {
 		is.Eq(shellVal, sMap["key3"])
 	})
 }
+
