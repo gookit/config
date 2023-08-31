@@ -10,7 +10,7 @@ require (
 	github.com/gookit/ini/v2 v2.2.2
 	github.com/gookit/properties v0.3.0
 	github.com/hashicorp/hcl v1.0.0
-	github.com/hashicorp/hcl/v2 v2.17.0
+	github.com/hashicorp/hcl/v2 v2.18.0
 	github.com/imdario/mergo v0.3.15
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/titanous/json5 v1.0.0
@@ -19,6 +19,7 @@ require (
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
+	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/fatih/color v1.14.1 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/gookit/color v1.5.4 // indirect
