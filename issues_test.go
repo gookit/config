@@ -1,10 +1,10 @@
 package config_test
 
 import (
+	"fmt"
 	"os"
 	"testing"
 	"time"
-        "fmt"
 
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/ini"
@@ -460,4 +460,28 @@ func TestDuration(t *testing.T) {
 		is.Nil(err)
 		is.Equal(float64(seconds), dur.Duration.Seconds())
 	}
+}
+
+// https://github.com/gookit/config/issues/162
+func TestIssues_162(t *testing.T) {
+	type Logger struct {
+		Name     string `json:"name"`
+		LogFile  string `json:"logFile"`
+		MaxSize  int    `json:"maxSize" default:"1024"` // MB
+		MaxDays  int    `json:"maxDays" default:"7"`
+		Compress bool   `json:"compress" default:"true"`
+	}
+
+	type LogConfig struct {
+		Loggers []*Logger `default:""` // mark for parse default
+	}
+
+	c := config.New("issues_162", config.ParseDefault)
+	err := c.LoadStrings(config.JSON, `{}`)
+	assert.NoErr(t, err)
+
+	opt := &LogConfig{}
+	err = c.Decode(opt)
+	// dump.Println(opt)
+	assert.Empty(t, opt.Loggers)
 }

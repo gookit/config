@@ -78,8 +78,12 @@ func (c *Config) MapOnExists(key string, dst any) error {
 //	config.Structure("db", &dbInfo)
 func (c *Config) Structure(key string, dst any) error {
 	var data any
-	// binding all data
+	// binding all data on key is empty.
 	if key == "" {
+		// fix: if c.data is nil, directly return
+		if len(c.data) == 0 {
+			return nil
+		}
 		data = c.data
 	} else {
 		// binding sub-data of the config
