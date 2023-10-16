@@ -39,6 +39,7 @@ func TestDefaultLoad(t *testing.T) {
 	})
 	is.NotEmpty(Data())
 	is.NotEmpty(Keys())
+	is.Empty(Sub("not-exist"))
 	is.Nil(err)
 }
 

@@ -76,14 +76,21 @@ func (c *Config) MapOnExists(key string, dst any) error {
 //
 //	dbInfo := Db{}
 //	config.Structure("db", &dbInfo)
-func (c *Config) Structure(key string, dst any) error {
+func (c *Config) Structure(key string, dst any) (err error) {
 	var data any
 	// binding all data on key is empty.
 	if key == "" {
-		// fix: if c.data is nil, directly return
+		// fix: if c.data is nil, don't need to apply map structure
 		if len(c.data) == 0 {
-			return nil
+			// init default value by tag: default
+			if c.opts.ParseDefault {
+				err = structs.InitDefaults(dst, func(opt *structs.InitOptions) {
+					opt.ParseEnv = c.opts.ParseEnv
+				})
+			}
+			return
 		}
+
 		data = c.data
 	} else {
 		// binding sub-data of the config
@@ -94,6 +101,7 @@ func (c *Config) Structure(key string, dst any) error {
 		}
 	}
 
+	// map structure from data
 	bindConf := c.opts.makeDecoderConfig()
 	// set result struct ptr
 	bindConf.Result = dst
