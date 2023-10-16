@@ -441,6 +441,7 @@ type DurationStruct struct {
 	Duration time.Duration
 }
 
+// https://github.com/gookit/config/pull/151
 func TestDuration(t *testing.T) {
 	var (
 		err error
@@ -460,6 +461,50 @@ func TestDuration(t *testing.T) {
 		is.Nil(err)
 		is.Equal(float64(seconds), dur.Duration.Seconds())
 	}
+}
+
+// https://github.com/gookit/config/issues/156
+func TestIssues_156(t *testing.T) {
+	c := config.New("test", config.ParseEnv)
+	c.AddDriver(yaml.Driver)
+
+	type DbConfig struct {
+		Url      string
+		Type     string
+		Password string
+		Username string
+	}
+
+	err := c.LoadStrings(config.Yaml, `
+---
+datasource:
+  password: ${DATABASE_PASSWORD|?} # use fixed error message
+  type: postgres
+  username: ${DATABASE_USERNAME|postgres}
+  url: ${DATABASE_URL|?error message2}
+`)
+	assert.NoErr(t, err)
+	// dump.Println(c.Data())
+	assert.NotEmpty(t, c.Sub("datasource"))
+
+	// will error
+	dbConf := &DbConfig{}
+	err = c.BindStruct("datasource", dbConf)
+	assert.Err(t, err)
+	assert.ErrSubMsg(t, err, "decoding 'Password': value is required for var: DATABASE_PASSWORD")
+	assert.ErrSubMsg(t, err, "error decoding 'Url': error message2")
+
+	testutil.MockEnvValues(map[string]string{
+		"DATABASE_PASSWORD": "1234yz56",
+		"DATABASE_URL":      "localhost:5432/postgres?sslmode=disable",
+	}, func() {
+		dbConf := &DbConfig{}
+		err = c.BindStruct("datasource", dbConf)
+		assert.NoErr(t, err)
+		dump.Println(dbConf)
+		assert.Eq(t, "1234yz56", dbConf.Password)
+		assert.Eq(t, "localhost:5432/postgres?sslmode=disable", dbConf.Url)
+	})
 }
 
 // https://github.com/gookit/config/issues/162
