@@ -203,8 +203,10 @@ func (c *Config) LoadData(dataSources ...any) (err error) {
 		c.opts.Delimiter = defaultDelimiter
 	}
 
+	var loaded bool
 	for _, ds := range dataSources {
 		if smp, ok := ds.(map[string]string); ok {
+			loaded = true
 			c.LoadSMap(smp)
 			continue
 		}
@@ -213,9 +215,12 @@ func (c *Config) LoadData(dataSources ...any) (err error) {
 		if err != nil {
 			return errorx.WithStack(err)
 		}
+		loaded = true
 	}
 
-	c.fireHook(OnLoadData)
+	if loaded {
+		c.fireHook(OnLoadData)
+	}
 	return
 }
 
@@ -325,10 +330,10 @@ func LoadFromDir(dirPath, format string) error {
 //
 // Example:
 //
-//	// file: /somedir/task.json
+//	// file: /somedir/task.json , will use filename 'task' as key
 //	Config.LoadFromDir("/somedir", "json")
 //
-//	// after load
+//	// after load, the data will be:
 //	Config.data = map[string]any{"task": file data}
 func (c *Config) LoadFromDir(dirPath, format string) (err error) {
 	extName := "." + format

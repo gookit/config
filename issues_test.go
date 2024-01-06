@@ -530,3 +530,79 @@ func TestIssues_162(t *testing.T) {
 	// dump.Println(opt)
 	assert.Empty(t, opt.Loggers)
 }
+
+// https://github.com/gookit/goutil/issues/135
+func TestGoutil_issues_135(t *testing.T) {
+	// TIP: not support use JSON as default value
+	testYml := `
+test:
+    credentials: >
+        ${CREDENTIALS|{}}
+    apiKey: ${API_KEY|AN_APIKEY}
+    apiUri: ${API_URI|http://localhost:8888/v1/api}
+`
+
+	type Setup struct {
+		Credentials string `mapstructure:"credentials"`
+		ApiKey      string `mapstructure:"apiKey"`
+		ApiUri      string `mapstructure:"apiUri"`
+	}
+
+	type Configuration struct {
+		Details Setup `mapstructure:"test"`
+	}
+
+	c := config.New("config", config.ParseEnv).WithDriver(yamlv3.Driver)
+
+	err := c.LoadStrings(config.Yaml, testYml)
+	assert.NoErr(t, err)
+
+	// no env values
+	t.Run("no env values", func(t *testing.T) {
+		st := Configuration{}
+		err = c.Decode(&st)
+		assert.NoErr(t, err)
+		dump.Println(st)
+	})
+
+	// set value
+	err = c.Set("test.credentials", `${CREDENTIALS}`)
+	assert.NoErr(t, err)
+
+	// set value(use JSON as default value)
+	err = c.Set("test.credentials", `${CREDENTIALS | {}}`)
+	assert.NoErr(t, err)
+
+	// with env values
+	t.Run("with env values", func(t *testing.T) {
+		testutil.MockEnvValues(map[string]string{
+			"CREDENTIALS": `{"username":"admin"}`,
+		}, func() {
+			st := Configuration{}
+			err = c.Decode(&st)
+			assert.NoErr(t, err)
+			dump.Println(st)
+			assert.Eq(t, `{"username":"admin"}`, st.Details.Credentials)
+		})
+	})
+}
+
+// https://github.com/gookit/config/issues/178
+func TestIssues_178(t *testing.T) {
+	type ConferenceConfigure struct {
+		AuthServerEnable bool `mapstructure:"authServerEnable" default:"true"`
+	}
+
+	var ENVS = map[string]string{
+		"CONF_AUTH_SERVER_ENABLE": "authServerEnable",
+	}
+
+	config.WithOptions(config.ParseEnv, config.ParseTime, config.ParseDefault)
+	config.LoadOSEnvs(ENVS)
+
+	cfg := &ConferenceConfigure{}
+	err := config.Decode(cfg)
+	assert.NoErr(t, err)
+	dump.Println(cfg)
+
+}
