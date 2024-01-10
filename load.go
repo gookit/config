@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
+	"dario.cat/mergo"
 	"github.com/gookit/goutil/errorx"
 	"github.com/gookit/goutil/fsutil"
-	"github.com/imdario/mergo"
 )
 
 // LoadFiles load one or multi files, will fire OnLoadData event

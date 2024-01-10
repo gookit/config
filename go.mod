@@ -3,15 +3,15 @@ module github.com/gookit/config/v2
 go 1.19
 
 require (
+	dario.cat/mergo v1.0.0
 	github.com/BurntSushi/toml v1.3.2
 	github.com/goccy/go-json v0.10.2
 	github.com/goccy/go-yaml v1.11.2
 	github.com/gookit/goutil v0.6.15
-	github.com/gookit/ini/v2 v2.2.2
+	github.com/gookit/ini/v2 v2.2.3
 	github.com/gookit/properties v0.3.0
 	github.com/hashicorp/hcl v1.0.0
 	github.com/hashicorp/hcl/v2 v2.19.1
-	github.com/imdario/mergo v0.3.15
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/titanous/json5 v1.0.0
 )

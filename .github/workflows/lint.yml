@@ -1,0 +1,46 @@
+name: CodeCheck
+on:
+  pull_request:
+    paths:
+      - 'go.mod'
+      - '**.go'
+      - '**.yml'
+  push:
+    paths:
+      - '**.go'
+      - 'go.mod'
+      - '**.yml'
+
+jobs:
+
+  test:
+    name: Code linter
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Setup Go Faster
+      uses: WillAbides/setup-go-faster@v1.13.0
+      timeout-minutes: 3
+      with:
+        go-version: *
+
+    - name: Revive lint check
+      uses: docker://morphy/revive-action:v2.5.5
+      with:
+        # Exclude patterns, separated by semicolons (optional)
+        exclude: "./_examples/...;./testdata/..."
+
+    - name: Run static check
+      uses: reviewdog/action-staticcheck@v1
+      if: ${{ github.event_name == 'pull_request'}}
+      with:
+        github_token: ${{ secrets.github_token }}
+        # Change reviewdog reporter if you need [github-pr-check,github-check,github-pr-review].
+        reporter: github-pr-check
+        # Report all results. [added,diff_context,file,nofilter].
+        filter_mode: added
+        # Exit with 1 when it find at least one finding.
+        fail_on_error: true
