@@ -3,6 +3,7 @@ package config
 import (
 	"strings"
 
+	"dario.cat/mergo"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -47,6 +48,8 @@ type Options struct {
 	DecoderConfig *mapstructure.DecoderConfig
 	// HookFunc on data changed. you can do something...
 	HookFunc HookFunc
+	// MergeOptions settings for merge two data
+	MergeOptions []func(*mergo.Config)
 	// WatchChange bool
 }
 
@@ -63,6 +66,10 @@ func newDefaultOption() *Options {
 		ReadFormat: JSON,
 		// struct decoder config
 		DecoderConfig: newDefaultDecoderConfig(""),
+		MergeOptions: []func(*mergo.Config){
+			mergo.WithOverride,
+			mergo.WithTypeCheck,
+		},
 	}
 }
 

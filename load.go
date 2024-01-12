@@ -193,7 +193,7 @@ func LoadData(dataSource ...any) error { return dc.LoadData(dataSource...) }
 
 // LoadData load data from map OR struct
 //
-// The dataSources can be:
+// The dataSources type allow:
 //   - map[string]any
 //   - map[string]string
 func (c *Config) LoadData(dataSources ...any) (err error) {
@@ -209,7 +209,7 @@ func (c *Config) LoadData(dataSources ...any) (err error) {
 			continue
 		}
 
-		err = mergo.Merge(&c.data, ds, mergo.WithOverride)
+		err = mergo.Merge(&c.data, ds, c.opts.MergeOptions...)
 		if err != nil {
 			return errorx.WithStack(err)
 		}
@@ -480,7 +480,7 @@ func (c *Config) loadDataMap(data map[string]any) (err error) {
 		c.data = data
 	} else {
 		// again ... will merge data
-		err = mergo.Merge(&c.data, data, mergo.WithOverride, mergo.WithTypeCheck)
+		err = mergo.Merge(&c.data, data, c.opts.MergeOptions...)
 	}
 
 	if !c.reloading && err == nil {
