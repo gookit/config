@@ -24,6 +24,29 @@ func TestDriver(t *testing.T) {
 	is.Err(err)
 }
 
+func TestHcl2Package(t *testing.T) {
+	hclStr := `io_mode = "async"
+
+service "http" "web_proxy" {
+  listen_addr = "127.0.0.1:8080"
+  
+  process "main" {
+    command = ["/usr/local/bin/awesome-app", "server"]
+  }
+
+  process "mgmt" {
+    command = ["/usr/local/bin/awesome-app", "mgmt"]
+  }
+}`
+
+	mp := make(map[string]any)
+	// mp := make(map[string]cty.Type)
+	// err := hclsimple.Decode("test.hcl", []byte(hclStr), nil, &mp)
+	// assert.NoErr(t, err)
+	dump.P(hclStr, mp)
+	t.Skip("Not completed")
+}
+
 func TestLoadFile(t *testing.T) {
 	is := assert.New(t)
 	c := config.NewEmpty("test")

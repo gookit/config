@@ -15,18 +15,8 @@ import (
 
 // Decoder the hcl content decoder
 var Decoder config.Decoder = func(blob []byte, v any) (err error) {
+	// TODO hcl2 decode data to map ptr will report error
 	return hclsimple.Decode("hcl2/config.hcl", blob, nil, v)
-	// file, diags := hclsyntax.ParseConfig(
-	// 	blob,
-	// 	"hcl2/config.hcl",
-	// 	hcl.Pos{Line: 0, Column: 0},
-	// )
-	// // if diags.HasErrors() {
-	// if len(diags) != 0 {
-	// 	return diags
-	// }
-	//
-	// return gohcl.DecodeBody(file.Body, nil, v)
 }
 
 // Encoder the hcl content encoder
