@@ -1,4 +1,4 @@
-name: CodeCheck
+name: CodeLinter
 on:
   pull_request:
     paths:
