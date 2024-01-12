@@ -604,5 +604,4 @@ func TestIssues_178(t *testing.T) {
 	err := config.Decode(cfg)
 	assert.NoErr(t, err)
 	dump.Println(cfg)
-
 }

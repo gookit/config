@@ -2,9 +2,11 @@ package config
 
 import (
 	"os"
+	"reflect"
 	"runtime"
 	"testing"
 
+	"github.com/gookit/goutil/dump"
 	"github.com/gookit/goutil/testutil"
 	"github.com/gookit/goutil/testutil/assert"
 )
@@ -246,15 +248,26 @@ func TestLoadOSEnvs(t *testing.T) {
 
 func TestLoadFromDir(t *testing.T) {
 	ClearAll()
-	assert.NoErr(t, LoadFiles("testdata/json_base.json"))
+	assert.NoErr(t, LoadStrings(JSON, `{
+"topKey": "a value"
+}`))
 
-	err := LoadFromDir("testdata/subdir", JSON)
-	assert.NoErr(t, err)
-	// dump.P(Data())
-
+	assert.NoErr(t, LoadFromDir("testdata/subdir", JSON))
+	dump.P(Data())
 	assert.Eq(t, "value in sub data", Get("subdata.key01"))
 	assert.Eq(t, "value in task.json", Get("task.key01"))
 
+	ClearAll()
+	assert.NoErr(t, LoadFromDir("testdata/emptydir", JSON))
+
+	// with DataKey option. see https://github.com/gookit/config/issues/173
+	assert.NoErr(t, LoadFromDir("testdata/subdir", JSON, func(lo *LoadOptions) {
+		lo.DataKey = "dataList"
+	}))
+	dump.P(Data())
+	dl := Get("dataList")
+	assert.NotNil(t, dl)
+	assert.IsKind(t, reflect.Slice, dl)
 	ClearAll()
 }
 

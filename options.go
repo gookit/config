@@ -20,20 +20,22 @@ type HookFunc func(event string, c *Config)
 
 // Options config options
 type Options struct {
-	// ParseEnv parse env value. like: "${EnvName}" "${EnvName|default}"
+	// ParseEnv parse env in string value and default value. like: "${EnvName}" "${EnvName|default}"
 	ParseEnv bool
 	// ParseTime parses a duration string to time.Duration
 	// eg: 10s, 2m
 	ParseTime bool
 	// Readonly config is readonly
 	Readonly bool
+	// ParseDefault tag on binding data to struct. tag: default
+	ParseDefault bool
 	// EnableCache enable config data cache
 	EnableCache bool
 	// ParseKey parse key path, allow find value by key path. eg: 'key.sub' will find `map[key]sub`
 	ParseKey bool
 	// TagName tag name for binding data to struct
 	//
-	// Tips: please set tag name by DecoderConfig
+	// Deprecated: please set tag name by DecoderConfig, or use SetTagName()
 	TagName string
 	// Delimiter the delimiter char for split key path, if `FindByPath=true`. default is '.'
 	Delimiter byte
@@ -45,8 +47,6 @@ type Options struct {
 	DecoderConfig *mapstructure.DecoderConfig
 	// HookFunc on data changed. you can do something...
 	HookFunc HookFunc
-	// ParseDefault tag on binding data to struct. tag: default
-	ParseDefault bool
 	// WatchChange bool
 }
 
@@ -77,6 +77,12 @@ func newDefaultDecoderConfig(tagName string) *mapstructure.DecoderConfig {
 		// will auto convert string to int/uint
 		WeaklyTypedInput: true,
 	}
+}
+
+// SetTagName for mapping data to struct
+func (o *Options) SetTagName(tagName string) {
+	o.TagName = tagName
+	o.DecoderConfig.TagName = tagName
 }
 
 func (o *Options) shouldAddHookFunc() bool {
@@ -113,8 +119,7 @@ func (o *Options) makeDecoderConfig() *mapstructure.DecoderConfig {
 // WithTagName set tag name for export to struct
 func WithTagName(tagName string) func(*Options) {
 	return func(opts *Options) {
-		opts.TagName = tagName
-		opts.DecoderConfig.TagName = tagName
+		opts.SetTagName(tagName)
 	}
 }
 

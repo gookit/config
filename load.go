@@ -103,10 +103,8 @@ func (c *Config) LoadOSEnv(keys []string, keyToLower bool) {
 		if keyToLower {
 			key = strings.ToLower(key)
 		}
-
 		_ = c.Set(key, val)
 	}
-
 	c.fireHook(OnLoadData)
 }
 
@@ -242,8 +240,8 @@ func LoadSources(format string, src []byte, more ...[]byte) error {
 // Usage:
 //
 //	config.LoadSources(config.Yaml, []byte(`
-//	name: blog
-//	arr:
+//	  name: blog
+//	  arr:
 //		key: val
 //
 // `))
@@ -313,6 +311,24 @@ func (c *Config) LoadExistsByFormat(format string, configFiles ...string) (err e
 	return
 }
 
+// LoadOptions for load config from dir.
+type LoadOptions struct {
+	// DataKey use for load config from dir.
+	// see https://github.com/gookit/config/issues/173
+	DataKey string
+}
+
+// LoadOptFn type func
+type LoadOptFn func(lo *LoadOptions)
+
+func newLoadOptions(loFns []LoadOptFn) *LoadOptions {
+	lo := &LoadOptions{}
+	for _, fn := range loFns {
+		fn(lo)
+	}
+	return lo
+}
+
 // LoadFromDir Load custom format files from the given directory, the file name will be used as the key.
 //
 // Example:
@@ -322,11 +338,13 @@ func (c *Config) LoadExistsByFormat(format string, configFiles ...string) (err e
 //
 //	// after load
 //	Config.data = map[string]any{"task": file data}
-func LoadFromDir(dirPath, format string) error {
-	return dc.LoadFromDir(dirPath, format)
+func LoadFromDir(dirPath, format string, loFns ...LoadOptFn) error {
+	return dc.LoadFromDir(dirPath, format, loFns...)
 }
 
 // LoadFromDir Load custom format files from the given directory, the file name will be used as the key.
+//
+// NOTE: will not be reloaded on call ReloadFiles(), if data loaded by the method.
 //
 // Example:
 //
@@ -334,12 +352,16 @@ func LoadFromDir(dirPath, format string) error {
 //	Config.LoadFromDir("/somedir", "json")
 //
 //	// after load, the data will be:
-//	Config.data = map[string]any{"task": file data}
-func (c *Config) LoadFromDir(dirPath, format string) (err error) {
+//	Config.data = map[string]any{"task": {file data}}
+func (c *Config) LoadFromDir(dirPath, format string, loFns ...LoadOptFn) (err error) {
 	extName := "." + format
 	extLen := len(extName)
 
-	return fsutil.FindInDir(dirPath, func(fPath string, ent fs.DirEntry) error {
+	lo := newLoadOptions(loFns)
+	dirData := make(map[string]any)
+	dataList := make([]map[string]any, 0, 8)
+
+	err = fsutil.FindInDir(dirPath, func(fPath string, ent fs.DirEntry) error {
 		baseName := ent.Name()
 		if strings.HasSuffix(baseName, extName) {
 			data, err := c.parseSourceToMap(format, fsutil.MustReadFile(fPath))
@@ -347,18 +369,31 @@ func (c *Config) LoadFromDir(dirPath, format string) (err error) {
 				return err
 			}
 
+			// filename without ext.
 			onlyName := baseName[:len(baseName)-extLen]
-			err = c.loadDataMap(map[string]any{onlyName: data})
+			if lo.DataKey != "" {
+				dataList = append(dataList, data)
+			} else {
+				dirData[onlyName] = data
+			}
 
-			// use file name as key, it cannot be reloaded. SO, cannot append to loadedFiles
-			// if err == nil {
-			// 	c.loadedFiles = append(c.loadedFiles, fPath)
-			// }
-
-			return err
+			// TODO use file name as key, it cannot be reloaded. So, cannot append to loadedFiles
+			// c.loadedFiles = append(c.loadedFiles, fPath)
 		}
 		return nil
 	})
+
+	if err != nil {
+		return err
+	}
+	if lo.DataKey != "" {
+		dirData[lo.DataKey] = dataList
+	}
+
+	if len(dirData) == 0 {
+		return nil
+	}
+	return c.loadDataMap(dirData)
 }
 
 // ReloadFiles reload config data use loaded files
