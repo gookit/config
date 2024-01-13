@@ -24,6 +24,8 @@ jobs:
     - name: Setup Go Faster
       uses: WillAbides/setup-go-faster@v1.13.0
       timeout-minutes: 3
+      with:
+        go-version: "*"
 
     - name: Revive lint check
       uses: docker://morphy/revive-action:v2
