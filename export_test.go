@@ -2,6 +2,7 @@ package config
 
 import (
 	"bytes"
+	"errors"
 	"testing"
 
 	"github.com/gookit/goutil/dump"
@@ -11,7 +12,6 @@ import (
 
 func TestExport(t *testing.T) {
 	is := assert.New(t)
-
 	c := New("test")
 
 	str := c.ToJSON()
@@ -27,16 +27,33 @@ func TestExport(t *testing.T) {
 	_, err = c.WriteTo(buf)
 	is.Nil(err)
 
+	// test dump
 	buf = &bytes.Buffer{}
-
 	_, err = c.DumpTo(buf, "invalid")
 	is.Err(err)
-
 	_, err = c.DumpTo(buf, Yml)
 	is.Err(err)
 
 	_, err = c.DumpTo(buf, JSON)
 	is.Nil(err)
+}
+
+func TestDumpTo_encode_error(t *testing.T) {
+	is := assert.New(t)
+	c := NewEmpty("test")
+	is.NoErr(c.Set("age", 34))
+
+	drv := NewDriver(JSON, JSONDecoder, func(v any) (out []byte, err error) {
+		return nil, errors.New("encode data error")
+	})
+	c.WithDriver(drv)
+
+	// encode error
+	buf := &bytes.Buffer{}
+	_, err := c.DumpTo(buf, JSON)
+	is.ErrMsg(err, "encode data error")
+
+	is.Empty(c.ToJSON())
 }
 
 func TestConfig_Structure(t *testing.T) {

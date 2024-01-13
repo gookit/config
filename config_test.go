@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/gookit/goutil/maputil"
 	"github.com/gookit/goutil/testutil"
 	"github.com/gookit/goutil/testutil/assert"
 )
@@ -163,11 +164,12 @@ func TestBasic(t *testing.T) {
 	is.Eq("default", c.Name())
 	is.NoErr(c.Error())
 
-	c = NewWithOptions("test", Readonly)
+	c = NewWithOptions("test", Readonly, WithTagName("mytag"))
 	opts := c.Options()
 	is.True(opts.Readonly)
 	is.Eq(JSON, opts.DumpFormat)
 	is.Eq(JSON, opts.ReadFormat)
+	is.Eq("mytag", opts.TagName)
 }
 
 func TestGetEnv(t *testing.T) {
@@ -249,6 +251,16 @@ func TestJSONDriver(t *testing.T) {
 		is.NoErr(err)
 	})
 	is.Eq(2, c.Int("key1"))
+
+	// test call JSONDriver.Encode
+	s := c.ToJSON()
+	is.StrContains(s, `{"key1":2}`)
+
+	// set MarshalIndent
+	JSONDriver.MarshalIndent = "  "
+	s = c.ToJSON()
+	is.StrContains(s, `  "key1": 2`)
+	JSONDriver.MarshalIndent = "" // reset
 }
 
 func TestDriver(t *testing.T) {
@@ -280,6 +292,22 @@ func TestDriver(t *testing.T) {
 	c.SetEncoders(map[string]Encoder{JSON: JSONEncoder})
 	is.True(c.HasDecoder(JSON))
 	is.True(c.HasEncoder(JSON))
+}
+
+func TestStdDriver_methods(t *testing.T) {
+	d1 := NewDriver("my001", JSONDecoder, JSONEncoder)
+	d1.WithAlias("json")
+	assert.Eq(t, "my001", d1.Name())
+	assert.Contains(t, d1.Aliases(), "json")
+
+	s := `{"age": 245}`
+	m := make(maputil.Map)
+	err := d1.Decode([]byte(s), &m)
+	assert.NoErr(t, err)
+
+	bs, err := d1.Encode(m)
+	assert.NoErr(t, err)
+	assert.StrContains(t, string(bs), `{"age":245}`)
 }
 
 func TestOptions(t *testing.T) {
@@ -447,4 +475,3 @@ func TestMapStringStringParseEnv(t *testing.T) {
 		is.Eq(shellVal, sMap["key3"])
 	})
 }
-

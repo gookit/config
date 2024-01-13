@@ -1,7 +1,6 @@
 /*
-Package toml is driver use TOML format content as config source
-
-Usage please see example:
+Package toml is driver use TOML format content as config source.
+How to usage please see README and unit tests.
 */
 package toml
 
@@ -22,13 +21,8 @@ var Decoder config.Decoder = func(blob []byte, ptr any) (err error) {
 // Encoder the toml content encoder
 var Encoder config.Encoder = func(ptr any) (out []byte, err error) {
 	buf := new(bytes.Buffer)
-
 	err = toml.NewEncoder(buf).Encode(ptr)
-	if err != nil {
-		return
-	}
-
-	return buf.Bytes(), nil
+	return buf.Bytes(), err
 }
 
 // Driver for toml format

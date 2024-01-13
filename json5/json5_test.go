@@ -76,6 +76,7 @@ func TestDriver(t *testing.T) {
 	is.True(c.HasDecoder(json5.Name))
 	is.True(c.HasEncoder(json5.Name))
 
+	// test use
 	m := struct {
 		N string
 	}{}
@@ -86,7 +87,26 @@ func TestDriver(t *testing.T) {
 	is.Nil(err)
 	is.Eq("v", m.N)
 
-	// will error on use
+	// load file
 	err = c.LoadFiles("../testdata/json_base.json5")
 	is.NoErr(err)
+	is.Eq("app", c.Get("name"))
+}
+
+func TestEncode2JSON5(t *testing.T) {
+	is := assert.New(t)
+
+	mp := map[string]any{
+		"name": "app",
+		"age":  45,
+	}
+	bs, err := json5.Encoder(mp)
+	is.NoErr(err)
+	is.StrContains(string(bs), `"name":"app"`)
+
+	json5.JSONMarshalIndent = "  "
+	bs, err = json5.Encoder(mp)
+	is.NoErr(err)
+	s := string(bs)
+	is.StrContains(s, `  "name": "app"`)
 }

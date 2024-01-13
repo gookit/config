@@ -8,11 +8,11 @@ import (
 	"github.com/titanous/json5"
 )
 
-// NAME for driver
-const NAME = "json5"
-
 // Name for driver
 const Name = "json5"
+
+// NAME for driver
+const NAME = Name
 
 // JSONMarshalIndent if not empty, will use json.MarshalIndent for encode data.
 var JSONMarshalIndent string

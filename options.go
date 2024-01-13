@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"dario.cat/mergo"
+	"github.com/gookit/goutil"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -149,15 +150,12 @@ func Delimiter(sep byte) func(*Options) {
 	}
 }
 
-// SaveFileOnSet set hook func
+// SaveFileOnSet set hook func, will panic on save error
 func SaveFileOnSet(fileName string, format string) func(options *Options) {
 	return func(opts *Options) {
 		opts.HookFunc = func(event string, c *Config) {
 			if strings.HasPrefix(event, "set.") {
-				err := c.DumpToFile(fileName, format)
-				if err != nil {
-					panic(err)
-				}
+				goutil.PanicErr(c.DumpToFile(fileName, format))
 			}
 		}
 	}
