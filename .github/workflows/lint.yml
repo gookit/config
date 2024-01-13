@@ -26,7 +26,7 @@ jobs:
       timeout-minutes: 3
 
     - name: Revive lint check
-      uses: docker://morphy/revive-action:v2.5.5
+      uses: docker://morphy/revive-action:v2
       with:
         # Exclude patterns, separated by semicolons (optional)
         exclude: "./_examples/...;./testdata/..."
