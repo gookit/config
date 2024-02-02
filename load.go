@@ -149,8 +149,10 @@ func (c *Config) LoadFlags(keys []string) (err error) {
 
 	// bind vars
 	for _, key := range keys {
-		key, typ := parseVarNameAndType(key)
-		desc := "config flag " + key
+		key, typ, desc := parseVarNameAndType(key)
+		if desc == "" {
+			desc = "config flag " + key
+		}
 
 		switch typ {
 		case "int":
