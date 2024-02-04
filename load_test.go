@@ -1,6 +1,7 @@
 package config
 
 import (
+	"flag"
 	"os"
 	"reflect"
 	"runtime"
@@ -166,10 +167,11 @@ func TestLoadFlags(t *testing.T) {
 		"--name", "inhere",
 		"--unknownTyp", "val",
 		"--debug",
+		"--desc=abc",
 	}
 
 	// load flag info
-	keys := []string{"name", "env", "debug:bool", "age:int", "var0:uint", "unknownTyp:notExist"}
+	keys := []string{"name", "env", "debug:bool", "age:int", "var0:uint", "unknownTyp:notExist", "desc:string:This is a custom description: abc"}
 	err := LoadFlags(keys)
 	is.Nil(err)
 	is.Eq("inhere", c.String("name", ""))
@@ -179,6 +181,10 @@ func TestLoadFlags(t *testing.T) {
 	is.Eq(uint(20), c.Uint("not-exist", uint(20)))
 	is.Eq("val", c.Get("unknownTyp"))
 	is.True(c.Bool("debug", false))
+	is.Eq("abc", c.String("desc"))
+	descFlag := flag.Lookup("desc")
+	is.NotNil(descFlag)
+	is.Eq("This is a custom description: abc", descFlag.Usage)
 
 	// set sub key
 	c = New("flag")
