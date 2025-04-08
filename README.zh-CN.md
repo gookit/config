@@ -222,6 +222,10 @@ fmt.Print(name) // new name
 
 ## 从ENV载入数据
 
+`LoadOSEnvs` 支持从环境变量中读取数据，并解析为配置数据。格式为 `ENV_NAME: config_key`
+
+- `config_key` 可以是 key path 格式。 eg: `{"DB_USERNAME": "db.username"}`
+
 ```go
 // os env: APP_NAME=config APP_DEBUG=true
 // load ENV info
@@ -365,6 +369,8 @@ type Options struct {
 	ParseDefault bool
 }
 ```
+
+> **提示**: 访问 https://pkg.go.dev/github.com/gookit/config/v2#Options 查看最新的选项信息
 
 Examples for set options:
 

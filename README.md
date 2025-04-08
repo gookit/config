@@ -377,6 +377,8 @@ type Options struct {
 }
 ```
 
+> **TIP**: please visit https://pkg.go.dev/github.com/gookit/config/v2#Options to see the latest options information
+
 Examples for set options:
 
 ```go
