@@ -1,7 +1,10 @@
 package config_test
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"math/big"
 	"os"
 	"testing"
 	"time"
@@ -604,6 +607,29 @@ func TestIssues_178(t *testing.T) {
 	err := config.Decode(cfg)
 	assert.NoErr(t, err)
 	dump.Println(cfg)
+}
+
+// https://github.com/gookit/config/issues/192
+func TestIssues_192(t *testing.T) {
+	s := `{
+	"key": 23707729876828933003792990320594511132013137629744363463325945636682800546201191581706241551352734654762086038344743940857801503840360878427584255703013924373301145683882034301334533678253123777083489887967659929148298684008991665609773532863485728577470710590688325197694460521376123072613857785739366064688074459399408762960887169067851291291611970194076234580897060365318108861340336375060983779163595033605894055218557648363640361256922411962394084268360413547861005069585285713253756167043430574673046032573767256949834558011358364591391964981157578571244295339467926678988648036459748021538498339258036608168313
+}`
+
+	jsd := config.NewDriver("json", func(blob []byte, v any) (err error) {
+		jnd := json.NewDecoder(bytes.NewReader(blob))
+		jnd.UseNumber()
+		return jnd.Decode(v)
+	}, config.JSONEncoder)
+
+	cfg := config.NewEmpty("test1").WithDriver(jsd)
+	err := cfg.LoadStrings(config.JSON, s)
+	assert.NoErr(t, err)
+	dump.P(cfg.Data())
+
+	// to big.Int
+	bi := new(big.Int)
+	_, ok := bi.SetString(cfg.String("key"), 10)
+	assert.True(t, ok)
 }
 
 // https://github.com/gookit/config/issues/193 Support Environment Variable Overrides
