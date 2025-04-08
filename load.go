@@ -108,18 +108,19 @@ func (c *Config) LoadOSEnv(keys []string, keyToLower bool) {
 	c.fireHook(OnLoadData)
 }
 
-// LoadOSEnvs load data from OS ENVs. format: {ENV_NAME: config_key}
+// LoadOSEnvs load data from OS ENVs. format: `{ENV_NAME: config_key}`
 func LoadOSEnvs(nameToKeyMap map[string]string) { dc.LoadOSEnvs(nameToKeyMap) }
 
-// LoadOSEnvs load data from os ENVs. format: {ENV_NAME: config_key}
+// LoadOSEnvs load data from os ENVs. format: `{ENV_NAME: config_key}`
+//
+//   - `config_key` allow use key path. eg: `{"DB_USERNAME": "db.username"}`
 func (c *Config) LoadOSEnvs(nameToKeyMap map[string]string) {
-	for name, key := range nameToKeyMap {
+	for name, cfgKey := range nameToKeyMap {
 		if val := os.Getenv(name); val != "" {
-			if key == "" {
-				key = strings.ToLower(name)
+			if cfgKey == "" {
+				cfgKey = strings.ToLower(name)
 			}
-
-			_ = c.Set(key, val)
+			_ = c.Set(cfgKey, val)
 		}
 	}
 

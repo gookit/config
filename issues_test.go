@@ -605,3 +605,24 @@ func TestIssues_178(t *testing.T) {
 	assert.NoErr(t, err)
 	dump.Println(cfg)
 }
+
+// https://github.com/gookit/config/issues/193 Support Environment Variable Overrides
+func TestIssues_193(t *testing.T) {
+	c := config.NewGeneric("test", config.WithTagName("config"))
+
+	err := c.LoadStrings(config.JSON, `{"name": "default"}`)
+	assert.NoErr(t, err)
+	assert.Eq(t, "default", c.String("name"))
+
+	err = c.LoadStrings(config.JSON, `{"datasource": {"username": "name in dev"}}`)
+	assert.NoErr(t, err)
+	assert.Eq(t, "name in dev", c.String("datasource.username"))
+
+	testutil.MockEnvValue("DATASOURCE_USERNAME", "name in prod", func(val string) {
+		c.LoadOSEnvs(map[string]string{
+			"DATASOURCE_USERNAME": "datasource.username",
+		})
+	})
+
+	assert.Eq(t, "name in prod", c.String("datasource.username"))
+}
