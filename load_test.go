@@ -158,49 +158,72 @@ func TestLoadFlags(t *testing.T) {
 	ClearAll()
 	c := Default()
 	bakArgs := os.Args
-	// --name inhere --env dev --age 99 --debug
-	os.Args = []string{
-		"./binFile",
-		"--env", "dev",
-		"--age", "99",
-		"--var0", "12",
-		"--name", "inhere",
-		"--unknownTyp", "val",
-		"--debug",
-		"--desc=abc",
+	defer func() {
+		os.Args = bakArgs
+	}()
+
+	defines := []string{"name",
+		"env:Set the run `env`",
+		"debug:bool", "age:int", "var0:uint",
+		"unknownTyp:notExist",
+		"desc:string:This is a custom description: abc",
 	}
 
-	// load flag info
-	keys := []string{"name", "env", "debug:bool", "age:int", "var0:uint", "unknownTyp:notExist", "desc:string:This is a custom description: abc"}
-	err := LoadFlags(keys)
-	is.Nil(err)
-	is.Eq("inhere", c.String("name", ""))
-	is.Eq("dev", c.String("env", ""))
-	is.Eq(99, c.Int("age"))
-	is.Eq(uint(12), c.Uint("var0"))
-	is.Eq(uint(20), c.Uint("not-exist", uint(20)))
-	is.Eq("val", c.Get("unknownTyp"))
-	is.True(c.Bool("debug", false))
-	is.Eq("abc", c.String("desc"))
-	descFlag := flag.Lookup("desc")
-	is.NotNil(descFlag)
-	is.Eq("This is a custom description: abc", descFlag.Usage)
+	// custom global flag instance
+	flag.CommandLine = flag.NewFlagSet("binFile", flag.ContinueOnError)
 
-	// set sub key
-	c = New("flag")
-	_ = c.LoadStrings(JSON, jsonStr)
-	os.Args = []string{
-		"./binFile",
-		"--map1.key", "new val",
-	}
-	is.Eq("val", c.String("map1.key"))
-	err = c.LoadFlags([]string{"--map1.key"})
-	is.NoErr(err)
-	is.Eq("new val", c.String("map1.key"))
+	t.Run("show help", func(t *testing.T) {
+		// show help
+		os.Args = []string{"./binFile", "--help"}
+		is.Nil(LoadFlags(defines))
+		// reset flag instance
+		flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+	})
+
+	t.Run("load flags", func(t *testing.T) {
+		// --name inhere --env dev --age 99 --debug
+		os.Args = []string{
+			"./binFile",
+			"--env", "dev",
+			"--age", "99",
+			"--var0", "12",
+			"--name", "inhere",
+			"--unknownTyp", "val",
+			"--debug",
+			"--desc=abc",
+		}
+
+		// load flag info
+		err := LoadFlags(defines)
+		is.Nil(err)
+		is.Eq("inhere", c.String("name", ""))
+		is.Eq("dev", c.String("env", ""))
+		is.Eq(99, c.Int("age"))
+		is.Eq(uint(12), c.Uint("var0"))
+		is.Eq(uint(20), c.Uint("not-exist", uint(20)))
+		is.Eq("val", c.Get("unknownTyp"))
+		is.True(c.Bool("debug", false))
+		is.Eq("abc", c.String("desc"))
+		descFlag := flag.Lookup("desc")
+		is.NotNil(descFlag)
+		is.Eq("This is a custom description: abc", descFlag.Usage)
+	})
+
+	t.Run("set sub key", func(t *testing.T) {
+		// set sub key
+		c = New("flag")
+		_ = c.LoadStrings(JSON, jsonStr)
+		os.Args = []string{
+			"./binFile",
+			"--map1.key", "new val",
+		}
+		is.Eq("val", c.String("map1.key"))
+		err := c.LoadFlags([]string{"--map1.key"})
+		is.NoErr(err)
+		is.Eq("new val", c.String("map1.key"))
+	})
 	// fmt.Println(err)
 	// fmt.Printf("%#v\n", c.Data())
-
-	os.Args = bakArgs
 }
 
 func TestLoadOSEnv(t *testing.T) {
