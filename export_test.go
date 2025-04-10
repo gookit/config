@@ -366,7 +366,7 @@ func TestConfig_DumpToFile(t *testing.T) {
 	// open file error
 	err = cfg.DumpToFile("not-exists/some.json", JSON)
 	assert.Err(t, err)
-	assert.ErrSubMsg(t, err, "The system cannot find the path specified")
+	assert.ErrSubMsg(t, err, "open not-exists/some.json") // TIP: 不同go版本错误不一样
 
 	// encoder error
 	err = cfg.DumpToFile("./testdata/test_dump_file.yaml", Yaml)
