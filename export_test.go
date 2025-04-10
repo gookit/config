@@ -352,3 +352,24 @@ func TestConfig_BindStruct_default(t *testing.T) {
 	assert.Eq(t, "dev", mc.Env)
 	assert.False(t, mc.Debug)
 }
+
+// test DumpToFile
+func TestConfig_DumpToFile(t *testing.T) {
+	cfg := New("test")
+	err := cfg.LoadStrings(JSON, `{
+"age": 28,
+"name": "inhere",
+"sports": ["pingPong", "跑步"]
+}`)
+	assert.NoErr(t, err)
+
+	// open file error
+	err = cfg.DumpToFile("not-exists/some.json", JSON)
+	assert.Err(t, err)
+	assert.ErrSubMsg(t, err, "The system cannot find the path specified")
+
+	// encoder error
+	err = cfg.DumpToFile("./testdata/test_dump_file.yaml", Yaml)
+	assert.Err(t, err)
+	assert.ErrMsg(t, err, "not exists/register encoder for the format: yaml")
+}

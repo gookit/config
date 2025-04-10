@@ -118,6 +118,16 @@ func TestLoad(t *testing.T) {
 	is.Err(err)
 }
 
+func TestLoad_error(t *testing.T) {
+	is := assert.New(t)
+
+	err := LoadFilesByFormat(Yaml, "testdata/json_base.json")
+	is.Err(err)
+
+	err = LoadExistsByFormat(Yaml, "testdata/json_base.json")
+	is.Err(err)
+}
+
 func TestLoadRemote(t *testing.T) {
 	is := assert.New(t)
 

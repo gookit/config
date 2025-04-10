@@ -192,8 +192,8 @@ func (c *Config) LoadFlags(defines []string) (err error) {
 		// if f.Value implement the flag.Getter, read typed value
 		if gtr, ok := f.Value.(flag.Getter); ok {
 			_ = c.Set(name, gtr.Get())
-		} else {
-			_ = c.Set(name, f.Value.String()) // ignore error
+			// } else { // TIP: basic type flag always implements Getter interface
+			// 	_ = c.Set(name, f.Value.String()) // ignore error
 		}
 	})
 
