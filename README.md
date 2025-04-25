@@ -421,7 +421,10 @@ config.WithOptions(func(opt *Options) {
 
 ### Options: Parse default
 
-Support parse default value by struct tag `default`
+Support parse default value by struct tag `default`, and support parse sub struct.
+
+> **NOTE**⚠️ If you want to parse a substruct, you need to set the `default:""` flag on the struct, 
+> otherwise the fields that will not resolve to it will not be resolved.
 
 ```go
 // add option: config.ParseDefault

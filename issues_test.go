@@ -652,3 +652,21 @@ func TestIssues_193(t *testing.T) {
 
 	assert.Eq(t, "name in prod", c.String("datasource.username"))
 }
+
+// https://github.com/gookit/config/issues/194
+func TestIssues_194(t *testing.T) {
+	cl := config.New("test", config.ParseDefault)
+
+	type TestConfig struct {
+		Nested struct {
+			SimpleValue string
+			WithDefault string `default:"default-value"`
+		} `default:""` // <-- add this line
+	}
+
+	cfg := TestConfig{}
+	err := cl.BindStruct("", &cfg)
+	assert.NoErr(t, err)
+	dump.P(cfg)
+	assert.Eq(t, "default-value", cfg.Nested.WithDefault)
+}
