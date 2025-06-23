@@ -670,3 +670,25 @@ func TestIssues_194(t *testing.T) {
 	dump.P(cfg)
 	assert.Eq(t, "default-value", cfg.Nested.WithDefault)
 }
+
+// https://github.com/gookit/config/issues/195
+func TestIssues_195(t *testing.T) {
+	type TestConfig struct {
+		WithDefault time.Duration `default:"10s"`
+	}
+
+	defer config.Reset()
+	config.WithOptions(
+		config.ParseTime,
+		config.ParseDefault,
+	)
+	config.AddDriver(yaml.Driver)
+	err := config.LoadStrings(config.Yaml, `
+name: inhere
+`)
+	assert.NoErr(t, err)
+
+	cfg := TestConfig{}
+	assert.NoErr(t, config.Decode(&cfg))
+	dump.P(cfg)
+}

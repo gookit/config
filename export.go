@@ -86,7 +86,7 @@ func (c *Config) Structure(key string, dst any) (err error) {
 			if c.opts.ParseDefault {
 				err = structs.InitDefaults(dst, func(opt *structs.InitOptions) {
 					opt.ParseEnv = c.opts.ParseEnv
-					opt.ParseTime = c.opts.ParseTime
+					opt.ParseTime = c.opts.ParseTime // add ParseTime support on parse default value
 				})
 			}
 			return
