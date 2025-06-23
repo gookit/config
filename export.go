@@ -7,8 +7,8 @@ import (
 	"io"
 	"os"
 
+	"github.com/go-viper/mapstructure/v2"
 	"github.com/gookit/goutil/structs"
-	"github.com/mitchellh/mapstructure"
 )
 
 // Decode all config data to the dst ptr
@@ -86,6 +86,7 @@ func (c *Config) Structure(key string, dst any) (err error) {
 			if c.opts.ParseDefault {
 				err = structs.InitDefaults(dst, func(opt *structs.InitOptions) {
 					opt.ParseEnv = c.opts.ParseEnv
+					opt.ParseTime = c.opts.ParseTime
 				})
 			}
 			return
@@ -116,6 +117,7 @@ func (c *Config) Structure(key string, dst any) (err error) {
 	if c.opts.ParseDefault {
 		err = structs.InitDefaults(dst, func(opt *structs.InitOptions) {
 			opt.ParseEnv = c.opts.ParseEnv
+			opt.ParseTime = c.opts.ParseTime
 		})
 	}
 	return err

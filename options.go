@@ -4,8 +4,8 @@ import (
 	"strings"
 
 	"dario.cat/mergo"
+	"github.com/go-viper/mapstructure/v2"
 	"github.com/gookit/goutil"
-	"github.com/mitchellh/mapstructure"
 )
 
 // there are some event names for config data changed.

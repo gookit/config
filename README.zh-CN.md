@@ -416,7 +416,7 @@ config.WithOptions(func(opt *Options) {
 
 NEW: 支持通过结构标签 `default` 解析并设置默认值，支持嵌套解析处理。
 
-> 注意 ⚠️ 如果想要解析子结构体，需要对结构体设置 `default:""` 标记，否则不会解析到它的字段。
+> 注意 ⚠️ 如果想要解析子结构体字段，需要对父结构体设置 `default:""` 标记，否则不会解析子结构体的字段。
 
 ```go
 	// add option: config.ParseDefault

@@ -3,7 +3,7 @@ module github.com/gookit/config/v2
 go 1.19
 
 require (
-	dario.cat/mergo v1.0.1
+	dario.cat/mergo v1.0.2
 	github.com/BurntSushi/toml v1.5.0
 	github.com/goccy/go-json v0.10.5
 	github.com/goccy/go-yaml v1.12.0
@@ -12,7 +12,7 @@ require (
 	github.com/gookit/properties v0.4.0
 	github.com/hashicorp/hcl v1.0.0
 	github.com/hashicorp/hcl/v2 v2.22.0
-	github.com/mitchellh/mapstructure v1.5.0
+	github.com/go-viper/mapstructure/v2 v2.3.0
 	github.com/titanous/json5 v1.0.0
 )
 
