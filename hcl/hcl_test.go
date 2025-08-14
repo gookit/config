@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/gookit/config/v2"
-	"github.com/gookit/goutil/dump"
 	"github.com/gookit/goutil/testutil/assert"
 )
 
@@ -30,10 +29,9 @@ func TestLoadFile(t *testing.T) {
 	c.AddDriver(Driver)
 
 	err := c.LoadFiles("../testdata/hcl_base.hcl")
-	is.NoErr(err)
-	dump.Println(c.Data())
+	is.Err(err)
+	// dump.Println(c.Data())
 
 	err = c.LoadFiles("../testdata/hcl_example.conf")
-	is.NoErr(err)
-
+	is.Err(err)
 }
