@@ -494,8 +494,8 @@ datasource:
 	dbConf := &DbConfig{}
 	err = c.BindStruct("datasource", dbConf)
 	assert.Err(t, err)
-	assert.ErrSubMsg(t, err, "decoding 'Password': value is required for var: DATABASE_PASSWORD")
-	assert.ErrSubMsg(t, err, "error decoding 'Url': error message2")
+	assert.ErrSubMsg(t, err, "'Password' value is required for var: DATABASE_PASSWORD")
+	assert.ErrSubMsg(t, err, "'Url' error message2")
 
 	testutil.MockEnvValues(map[string]string{
 		"DATABASE_PASSWORD": "1234yz56",

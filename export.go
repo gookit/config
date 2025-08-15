@@ -37,17 +37,13 @@ func (c *Config) Decode(dst any) error {
 func MapStruct(key string, dst any) error { return dc.MapStruct(key, dst) }
 
 // MapStruct alias method of the 'Structure'
-func (c *Config) MapStruct(key string, dst any) error {
-	return c.Structure(key, dst)
-}
+func (c *Config) MapStruct(key string, dst any) error { return c.Structure(key, dst) }
 
 // BindStruct alias method of the 'Structure'
 func BindStruct(key string, dst any) error { return dc.BindStruct(key, dst) }
 
 // BindStruct alias method of the 'Structure'
-func (c *Config) BindStruct(key string, dst any) error {
-	return c.Structure(key, dst)
-}
+func (c *Config) BindStruct(key string, dst any) error { return c.Structure(key, dst) }
 
 // MapOnExists mapping data to the dst structure only on key exists.
 func MapOnExists(key string, dst any) error {
@@ -63,7 +59,6 @@ func (c *Config) MapOnExists(key string, dst any) error {
 	if err != nil && err == ErrNotFound {
 		return nil
 	}
-
 	return err
 }
 
