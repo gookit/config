@@ -106,10 +106,10 @@ Each format has its own package with minimal code (usually just driver registrat
 ### Configuration Files
 - `go.mod`/`go.sum` - Go module dependencies
 - `.github/workflows/` - CI/CD workflows
-  - `go.yml` - Unit tests on multiple Go versions
-  - `lint.yml` - Code linting with revive and staticcheck  
-  - `codeql.yml` - Security code scanning
-  - `release.yml` - Automated releases
+    - `go.yml` - Unit tests on multiple Go versions
+    - `lint.yml` - Code linting with revive and staticcheck  
+    - `codeql.yml` - Security code scanning
+    - `release.yml` - Automated releases
 
 ## CI/CD and Validation
 
