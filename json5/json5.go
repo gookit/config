@@ -4,7 +4,7 @@ package json5
 import (
 	"encoding/json"
 
-	"github.com/gookit/config/v2"
+	"github.com/nstrlabs/config"
 	"github.com/titanous/json5"
 )
 

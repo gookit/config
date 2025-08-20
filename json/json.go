@@ -3,8 +3,8 @@ package json
 
 import (
 	"github.com/goccy/go-json"
-	"github.com/gookit/config/v2"
 	"github.com/gookit/goutil/jsonutil"
+	"github.com/nstrlabs/config"
 )
 
 var (

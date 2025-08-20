@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/gookit/config/v2"
-	"github.com/gookit/config/v2/json5"
 	"github.com/gookit/goutil/testutil/assert"
+	"github.com/nstrlabs/config"
+	"github.com/nstrlabs/config/json5"
 )
 
 func Example() {

@@ -1,4 +1,4 @@
-module github.com/gookit/config/v2
+module github.com/nstrlabs/config
 
 go 1.21.0
 

@@ -5,14 +5,13 @@ about HCL, please see https://github.com/hashicorp/hcl
 docs for HCL v2 https://pkg.go.dev/github.com/hashicorp/hcl/v2
 
 NOTE: Deprecated, The HCLv2 driver will no longer be built-in, please add the HCLv2 driver yourself
-
 */
 package hclv2
 
 import (
 	"errors"
 
-	"github.com/gookit/config/v2"
+	"github.com/nstrlabs/config"
 	// "github.com/hashicorp/hcl/v2/hclsimple"
 	// "github.com/hashicorp/hcl/v2/hclparse"
 )

@@ -6,8 +6,8 @@ about ini parse, please see https://github.com/gookit/ini/parser
 package ini
 
 import (
-	"github.com/gookit/config/v2"
 	"github.com/gookit/ini/v2/parser"
+	"github.com/nstrlabs/config"
 )
 
 // Decoder the ini content decoder

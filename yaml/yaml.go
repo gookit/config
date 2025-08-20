@@ -7,7 +7,7 @@ package yaml
 
 import (
 	"github.com/goccy/go-yaml"
-	"github.com/gookit/config/v2"
+	"github.com/nstrlabs/config"
 )
 
 // Decoder the yaml content decoder

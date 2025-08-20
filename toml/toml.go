@@ -9,7 +9,7 @@ import (
 	"bytes"
 
 	"github.com/BurntSushi/toml"
-	"github.com/gookit/config/v2"
+	"github.com/nstrlabs/config"
 )
 
 // Decoder the toml content decoder

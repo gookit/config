@@ -3,9 +3,9 @@ package properties_test
 import (
 	"testing"
 
-	"github.com/gookit/config/v2"
-	"github.com/gookit/config/v2/properties"
 	"github.com/gookit/goutil/testutil/assert"
+	"github.com/nstrlabs/config"
+	"github.com/nstrlabs/config/properties"
 )
 
 func TestDriver(t *testing.T) {

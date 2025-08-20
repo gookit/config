@@ -4,14 +4,13 @@ Package hcl is driver use HCL format content as config source
 about HCL, please see https://github.com/hashicorp/hcl
 
 NOTE: Deprecated, The HCL driver will no longer be built-in, please add the HCL driver yourself
-
 */
 package hcl
 
 import (
 	"errors"
 
-	"github.com/gookit/config/v2"
+	"github.com/nstrlabs/config"
 	// "github.com/hashicorp/hcl"
 )
 
