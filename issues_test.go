@@ -692,3 +692,44 @@ name: inhere
 	assert.NoErr(t, config.Decode(&cfg))
 	dump.P(cfg)
 }
+
+// https://github.com/gookit/config/issues/201
+func TestIssues_201(t *testing.T) {
+	c := config.NewWithOptions("test",
+		config.ParseTime,
+	)
+
+	type conf struct {
+		Zero             time.Duration
+		ZeroNanos        time.Duration
+		ZeroMicros       time.Duration
+		ZeroMicrosSymbol time.Duration // U+00B5 = micro symbol
+		ZeroMillis       time.Duration
+		ZeroSeconds      time.Duration
+		ZeroMinutes      time.Duration
+		ZeroHours        time.Duration
+	}
+
+	err := c.LoadStrings(config.JSON, `{
+		"zero": "0",
+		"zeroNanos": "0ns",
+		"zeroMicros": "0us",
+		"zeroMicrosSymbol": "0µs",
+		"zeroSeconds": "0s",
+		"zeroMinutes": "0m",
+		"zeroHours": "0h"
+	}`)
+	assert.NoErr(t, err)
+
+	var cc conf
+	err = c.Decode(&cc)
+	assert.NoErr(t, err)
+
+	assert.Eq(t, time.Duration(0), cc.Zero)
+	assert.Eq(t, time.Duration(0), cc.ZeroNanos)
+	assert.Eq(t, time.Duration(0), cc.ZeroMicros)
+	assert.Eq(t, time.Duration(0), cc.ZeroMicrosSymbol)
+	assert.Eq(t, time.Duration(0), cc.ZeroSeconds)
+	assert.Eq(t, time.Duration(0), cc.ZeroMinutes)
+	assert.Eq(t, time.Duration(0), cc.ZeroHours)
+}
