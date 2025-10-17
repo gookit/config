@@ -14,8 +14,9 @@
 
 ## Features
 
-- Support multi format: `JSON`(default), `JSON5`, `INI`, `Properties`, `YAML`, `TOML`, `HCL`, `ENV`, `Flags`
+- Support multi format: `JSON`(default), `JSON5`, `INI`, `Properties`, `YAML`, `TOML`, `ENV`, `Flags`
   - `JSON` content support comments. will auto clear comments
+  - `HCL` need to import `github.com/hashicorp/hcl` for custom driver
   - Other drivers are used on demand, not used will not be loaded into the application.
     - Possibility to add custom driver for your specific format
 - Support multi-file and multi-data loading

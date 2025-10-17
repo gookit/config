@@ -1,7 +1,9 @@
 /*
 Package yamlv3 is a driver use YAML format content as config source
 
-Usage please see example:
+Usage please see example.
+
+Deprecated: use ../yaml instead, yamlv3 package is deprecated
 */
 package yamlv3
 

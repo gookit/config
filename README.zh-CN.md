@@ -16,6 +16,7 @@
 
 - 支持多种格式: `JSON`(默认), `JSON5`, `INI`, `Properties`, `YAML`, `TOML`, `HCL`, `ENV`, `Flags`
   - `JSON` 内容支持注释，可以设置解析时清除注释
+  - `HCL` 需要手动引入 `github.com/hashicorp/hcl` 添加自定义驱动
   - 其他驱动都是按需使用，不使用的不会加载编译到应用中
 - 支持多个文件、多数据加载
 - 支持从 OS ENV 变量数据加载配置
