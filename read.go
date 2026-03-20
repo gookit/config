@@ -63,19 +63,19 @@ func (c *Config) Exists(key string, findByPath ...bool) (ok bool) {
 			}
 		case []int: // is array(is from Set)
 			i, err := strconv.Atoi(k)
-			if err != nil || len(typeData) < i {
+			if err != nil || i >= len(typeData) {
 				return false
 			}
 			item = typeData[i]
 		case []string: // is array(is from Set)
 			i, err := strconv.Atoi(k)
-			if err != nil || len(typeData) < i {
+			if err != nil || i >= len(typeData) {
 				return false
 			}
 			item = typeData[i]
 		case []any: // is array(load from file)
 			i, err := strconv.Atoi(k)
-			if err != nil || len(typeData) < i {
+			if err != nil || i >= len(typeData) {
 				return false
 			}
 			item = typeData[i]
@@ -214,7 +214,7 @@ func (c *Config) GetValue(key string, findByPath ...bool) (value any, ok bool) {
 			i, err := strconv.Atoi(k)
 
 			// check slice index
-			if err != nil || len(typeData) < i {
+			if err != nil || len(typeData) <= i {
 				ok = false
 				c.addError(err)
 				return
@@ -223,7 +223,7 @@ func (c *Config) GetValue(key string, findByPath ...bool) (value any, ok bool) {
 			item = typeData[i]
 		case []string: // is array(is from Set)
 			i, err := strconv.Atoi(k)
-			if err != nil || len(typeData) < i {
+			if err != nil || len(typeData) <= i {
 				ok = false
 				c.addError(err)
 				return
@@ -232,7 +232,7 @@ func (c *Config) GetValue(key string, findByPath ...bool) (value any, ok bool) {
 			item = typeData[i]
 		case []any: // is array(load from file)
 			i, err := strconv.Atoi(k)
-			if err != nil || len(typeData) < i {
+			if err != nil || len(typeData) <= i {
 				ok = false
 				c.addError(err)
 				return
