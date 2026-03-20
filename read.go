@@ -63,21 +63,22 @@ func (c *Config) Exists(key string, findByPath ...bool) (ok bool) {
 			}
 		case []int: // is array(is from Set)
 			i, err := strconv.Atoi(k)
-
-			// check slice index
 			if err != nil || len(typeData) < i {
 				return false
 			}
+			item = typeData[i]
 		case []string: // is array(is from Set)
 			i, err := strconv.Atoi(k)
 			if err != nil || len(typeData) < i {
 				return false
 			}
+			item = typeData[i]
 		case []any: // is array(load from file)
 			i, err := strconv.Atoi(k)
 			if err != nil || len(typeData) < i {
 				return false
 			}
+			item = typeData[i]
 		default: // error
 			return false
 		}
