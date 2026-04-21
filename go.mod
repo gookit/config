@@ -8,7 +8,7 @@ require (
 	dario.cat/mergo v1.0.2
 	github.com/BurntSushi/toml v1.5.0
 	github.com/go-viper/mapstructure/v2 v2.5.0
-	github.com/goccy/go-json v0.10.5
+	github.com/goccy/go-json v0.10.6
 	github.com/goccy/go-yaml v1.18.0
 	github.com/gookit/goutil v0.7.4
 	github.com/gookit/ini/v2 v2.3.2
