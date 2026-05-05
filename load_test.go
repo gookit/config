@@ -5,9 +5,11 @@ import (
 	"os"
 	"reflect"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/gookit/goutil/dump"
+	"github.com/gookit/goutil/fsutil"
 	"github.com/gookit/goutil/testutil"
 	"github.com/gookit/goutil/testutil/assert"
 )
@@ -44,6 +46,17 @@ func TestDefaultLoad(t *testing.T) {
 	is.NotEmpty(Keys())
 	is.Empty(Sub("not-exist"))
 	is.Nil(err)
+}
+
+func TestLoadFilesByFilter(t *testing.T) {
+	is := assert.New(t)
+
+	ClearAll()
+	err := LoadFilesByFilter([]string{"testdata/json_base.json", "testdata/json_other.json"}, func(file string, c *Config) (bool, string) {
+		return fsutil.IsFile(file), ""
+	})
+	is.Nil(err)
+	is.NotEmpty(Data())
 }
 
 func TestLoad(t *testing.T) {
@@ -239,12 +252,13 @@ func TestLoadFlags(t *testing.T) {
 func TestLoadOSEnv(t *testing.T) {
 	ClearAll()
 
-	testutil.MockEnvValues(map[string]string{
+	envMap := map[string]string{
 		"APP_NAME":  "config",
 		"app_debug": "true",
 		"test_env0": "val0",
 		"TEST_ENV1": "val1",
-	}, func() {
+	}
+	testutil.MockEnvValues(envMap, func() {
 		assert.Eq(t, "", String("test_env0"))
 
 		LoadOSEnv([]string{"APP_NAME", "app_debug", "test_env0"}, true)
@@ -261,12 +275,13 @@ func TestLoadOSEnv(t *testing.T) {
 func TestLoadOSEnvs(t *testing.T) {
 	ClearAll()
 
-	testutil.MockEnvValues(map[string]string{
+	envMap := map[string]string{
 		"APP_NAME":  "config",
 		"APP_DEBUG": "true",
 		"TEST_ENV0": "val0",
 		"TEST_ENV1": "val1",
-	}, func() {
+	}
+	testutil.MockEnvValues(envMap, func() {
 		assert.Eq(t, "", String("test_env0"))
 		assert.Eq(t, "val0", Getenv("TEST_ENV0"))
 
@@ -280,6 +295,25 @@ func TestLoadOSEnvs(t *testing.T) {
 		assert.Eq(t, "config", String("app_name"))
 		assert.Eq(t, "val0", String("test0"))
 		assert.Eq(t, "", String("test_env1"))
+	})
+	ClearAll()
+
+	// LoadOSEnvByFilter
+	testutil.MockEnvValues(envMap, func() {
+		assert.Eq(t, "", String("test_env0"))
+		assert.Eq(t, "val0", Getenv("TEST_ENV0"))
+		assert.Eq(t, "config", Getenv("APP_NAME"))
+
+		// will only load TEST_*
+		LoadOSEnvByFilter(func(key string) (loadIt bool, cfgKey string) {
+			if key == "TEST_ENV1" {
+				return true, "test-env1"
+			}
+			return strings.HasPrefix(key, "TEST_"), ""
+		})
+		assert.Eq(t, "val0", String("test_env0"))
+		assert.Eq(t, "val1", String("test-env1"))
+		assert.Eq(t, "", String("app_name"))
 	})
 
 	ClearAll()
