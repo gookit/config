@@ -303,6 +303,9 @@ myConf := config.New("my-conf")
 // create empty instance
 myConf := config.NewEmpty("my-conf")
 
+// default add options: ParseEnv, ParseDefault, ParseTime
+myConf := config.NewGeneric("my-conf")
+
 // create and with some options
 myConf := config.NewWithOptions("my-conf", config.ParseEnv, config.ReadOnly)
 ```
@@ -515,13 +518,6 @@ go test -cover
 // contains all sub-folder
 go test -cover ./...
 ```
-
-## Projects using config
-
-Check out these projects, which use https://github.com/gookit/config :
-
-- https://github.com/JanDeDobbeleer/oh-my-posh A prompt theme engine for any shell.
-- [+ See More](https://pkg.go.dev/github.com/gookit/config?tab=importedby)
 
 ## Gookit packages
 
