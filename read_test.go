@@ -473,3 +473,29 @@ func TestParseEnv(t *testing.T) {
 		is.Eq("abc/", cfg.String("ekey4"))
 	})
 }
+
+func TestConfig_Duration_getter(t *testing.T) {
+	is := assert.New(t)
+	c := New("test")
+	err := c.LoadStrings(JSON, `{
+		"ttl": "300s",
+		"idle": "1h30m",
+		"short": "20m",
+		"nanos": 500,
+		"bad": "not-a-duration"
+	}`)
+	is.Nil(err)
+
+	// Go duration strings are parsed.
+	is.Eq(300*time.Second, c.Duration("ttl"))
+	is.Eq(90*time.Minute, c.Duration("idle"))
+	is.Eq(20*time.Minute, c.Duration("short"))
+
+	// A bare integer stays nanoseconds (backwards compatible).
+	is.Eq(time.Duration(500), c.Duration("nanos"))
+
+	// Unparseable and missing fall back to the default.
+	is.Eq(5*time.Minute, c.Duration("bad", 5*time.Minute))
+	is.Eq(7*time.Second, c.Duration("missing", 7*time.Second))
+	is.Eq(time.Duration(0), c.Duration("missing"))
+}
