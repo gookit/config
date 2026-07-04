@@ -2,45 +2,44 @@ name: Unit-Tests
 on:
   pull_request:
     paths:
-      - 'go.mod'
-      - '**.go'
-      - '**.yml'
+      - "go.mod"
+      - "**.go"
+      - "**.yml"
   push:
     paths:
-      - '**.go'
-      - 'go.mod'
-      - '**.yml'
+      - "**.go"
+      - "go.mod"
+      - "**.yml"
 
 jobs:
-
   test:
     name: Test on go ${{ matrix.go_version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-         go_version: [1.21, 1.22, 1.23, 1.24, stable]
+        go_version: [1.21, 1.22, 1.23, 1.24, 1.25, stable]
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v7
+      - name: Check out code
+        uses: actions/checkout@v7
 
-    - name: Setup Go Faster
-      uses: WillAbides/setup-go-faster@v1.19.0
-      timeout-minutes: 3
-      with:
-        go-version: ${{ matrix.go_version }}
+      - name: Setup Go Faster
+        uses: WillAbides/setup-go-faster@v1.19.0
+        timeout-minutes: 3
+        with:
+          go-version: ${{ matrix.go_version }}
 
-    - name: Run unit tests
-      #      run: go test -v -cover ./...
-      #      must add " for profile.cov on windows OS
-      run: go test -coverprofile="profile.cov" ./...
+      - name: Run unit tests
+        #      run: go test -v -cover ./...
+        #      must add " for profile.cov on windows OS
+        run: go test -coverprofile="profile.cov" ./...
 
-    - name: Send coverage
-      uses: shogo82148/actions-goveralls@v1
-      with:
-        path-to-profile: profile.cov
-        flag-name: Go-${{ matrix.go_version }}
-        parallel: true
+      - name: Send coverage
+        uses: shogo82148/actions-goveralls@v1
+        with:
+          path-to-profile: profile.cov
+          flag-name: Go-${{ matrix.go_version }}
+          parallel: true
 
   # notifies that all test jobs are finished.
   # https://github.com/shogo82148/actions-goveralls

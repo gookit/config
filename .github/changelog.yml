@@ -1,10 +1,10 @@
-title: '## Change Log'
+title: "## Change Log"
 # style allow: simple, markdown(mkdown), ghr(gh-release)
 style: gh-release
 # group names
-names: [Refactor, Fixed, Feature, Update, Other]
+names: [Refactor, Feature, Update, Fixed, Other]
 # if empty will auto fetch by git remote
-#repo_url: https://github.com/gookit/goutil
+#repo_url: https://github.com/gookit/xyz
 
 filters:
   # message length should >= 12
@@ -25,13 +25,13 @@ filters:
 rules:
   - name: Refactor
     start_withs: [refactor, break]
-    contains: ['refactor:']
+    contains: ["refactor:"]
   - name: Fixed
     start_withs: [fix]
-    contains: ['fix:']
+    contains: ["fix:"]
   - name: Feature
     start_withs: [feat, new]
-    contains: [feature, 'feat:']
+    contains: [feature, "feat:"]
   - name: Update
     start_withs: [up]
-    contains: ['update:', 'up:']
+    contains: ["update:", "up:"]
