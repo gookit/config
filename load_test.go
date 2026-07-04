@@ -375,3 +375,18 @@ func TestReloadFiles(t *testing.T) {
 	assert.Eq(t, "app2", c.String("name"))
 	ClearAll()
 }
+
+func TestReloadFilesResetRemovedKeys(t *testing.T) {
+	file := t.TempDir() + "/config.json"
+	assert.NoErr(t, os.WriteFile(file, []byte(`{"name":"app","debug":true}`), 0644))
+
+	c := New("reload-reset")
+	assert.NoErr(t, c.LoadFiles(file))
+	assert.True(t, c.Exists("debug"))
+
+	assert.NoErr(t, os.WriteFile(file, []byte(`{"name":"app2"}`), 0644))
+	assert.NoErr(t, c.ReloadFiles())
+
+	assert.Eq(t, "app2", c.String("name"))
+	assert.False(t, c.Exists("debug"))
+}
