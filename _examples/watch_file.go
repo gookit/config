@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/fsnotify/fsnotify"
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/yaml"
@@ -45,16 +47,33 @@ func watchConfigFiles(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
-	//noinspection GoUnhandledErrorResult
-	defer watcher.Close()
 
 	// get loaded files
 	files := cfg.LoadedFiles()
 	if len(files) == 0 {
+		_ = watcher.Close()
 		return nil
 	}
 
+	for _, path := range files {
+		cliutil.Infof("add watch file: %s\n", path)
+		if err := watcher.Add(path); err != nil {
+			_ = watcher.Close()
+			return err
+		}
+	}
+
 	go func() {
+		var reloadTimer *time.Timer
+		reloadDelay := 100 * time.Millisecond
+
+		defer func() {
+			if reloadTimer != nil {
+				reloadTimer.Stop()
+			}
+			_ = watcher.Close()
+		}()
+
 		for {
 			select {
 			case event, ok := <-watcher.Events:
@@ -69,10 +88,15 @@ func watchConfigFiles(cfg *config.Config) error {
 				if event.Op&fsnotify.Write == fsnotify.Write {
 					cliutil.Infof("modified file: %s\n", event.Name)
 
-					err := cfg.ReloadFiles()
-					if err != nil {
-						cliutil.Errorf("reload config error: %s\n", err.Error())
+					if reloadTimer != nil {
+						reloadTimer.Stop()
 					}
+					reloadTimer = time.AfterFunc(reloadDelay, func() {
+						err := cfg.ReloadFiles()
+						if err != nil {
+							cliutil.Errorf("reload config error: %s\n", err.Error())
+						}
+					})
 				}
 				// }
 
@@ -87,12 +111,5 @@ func watchConfigFiles(cfg *config.Config) error {
 			}
 		}
 	}()
-
-	for _, path := range files {
-		cliutil.Infof("add watch file: %s\n", path)
-		if err := watcher.Add(path); err != nil {
-			return err
-		}
-	}
 	return nil
 }
