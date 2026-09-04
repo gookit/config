@@ -499,3 +499,24 @@ func TestConfig_Duration_getter(t *testing.T) {
 	is.Eq(7*time.Second, c.Duration("missing", 7*time.Second))
 	is.Eq(time.Duration(0), c.Duration("missing"))
 }
+
+func TestConfig_GetValue_negativeIndex(t *testing.T) {
+	is := assert.New(t)
+
+	c := New("test-neg")
+	err := c.LoadData(map[string]any{
+		"arr": []any{"a", "b", "c"},
+	})
+	is.NoErr(err)
+
+	// A negative slice index must not panic; it is simply not found.
+	is.NotPanics(func() {
+		v, ok := c.GetValue("arr.-1")
+		is.False(ok)
+		is.Nil(v)
+	})
+
+	is.NotPanics(func() {
+		is.False(c.Exists("arr.-1"))
+	})
+}
