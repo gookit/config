@@ -3,6 +3,7 @@ package config
 import (
 	"bytes"
 	"errors"
+	"io"
 	"testing"
 
 	"github.com/gookit/goutil/dump"
@@ -54,6 +55,66 @@ func TestDumpTo_encode_error(t *testing.T) {
 	is.ErrMsg(err, "encode data error")
 
 	is.Empty(c.ToJSON())
+}
+
+type exportTestWriter struct {
+	bytes.Buffer
+	limit int
+	err   error
+}
+
+func (w *exportTestWriter) Write(p []byte) (int, error) {
+	n := len(p)
+	if n > w.limit {
+		n = w.limit
+	}
+	_, _ = w.Buffer.Write(p[:n])
+	return n, w.err
+}
+
+func TestDumpTo_write_error(t *testing.T) {
+	c := New("test")
+	if err := c.Set("name", "app"); err != nil {
+		t.Fatal(err)
+	}
+	wantOutput := "{\"name\":\"app\"}\n"
+	writeErr := errors.New("write failed")
+
+	methods := []struct {
+		name string
+		call func(io.Writer) (int64, error)
+	}{
+		{"DumpTo", func(out io.Writer) (int64, error) { return c.DumpTo(out, JSON) }},
+		{"WriteTo", c.WriteTo},
+	}
+	cases := []struct {
+		name  string
+		limit int
+		err   error
+	}{
+		{"failed", 0, writeErr},
+		{"partial", 3, writeErr},
+		{"full_with_error", len(wantOutput), writeErr},
+		{"success", len(wantOutput), nil},
+	}
+
+	for _, method := range methods {
+		for _, tt := range cases {
+			t.Run(method.name+"/"+tt.name, func(t *testing.T) {
+				out := &exportTestWriter{limit: tt.limit, err: tt.err}
+				n, err := method.call(out)
+				if n != int64(tt.limit) {
+					t.Fatalf("count = %d, want %d", n, tt.limit)
+				}
+				if err != tt.err {
+					t.Fatalf("error = %v, want %v", err, tt.err)
+				}
+				if got := out.String(); got != wantOutput[:tt.limit] {
+					t.Fatalf("output = %q, want %q", got, wantOutput[:tt.limit])
+				}
+			})
+		}
+	}
 }
 
 func TestConfig_Structure(t *testing.T) {
