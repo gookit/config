@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/gookit/goutil/testutil/assert"
 )
@@ -200,4 +201,39 @@ func TestSet_fireEvent(t *testing.T) {
 	assert.NoErr(t, err)
 	assert.Eq(t, "fire the: set.value", buf.String())
 	buf.Reset()
+}
+
+func TestSetHookCanReadUpdatedValue(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		key    string
+		byPath bool
+	}{
+		{"top level", "name", true},
+		{"nested path", "app.name", true},
+		{"literal key", "app.name", false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			values := make(chan string, 1)
+			c := New("hook-read", WithHookFunc(func(event string, cfg *Config) {
+				if event == OnSetValue {
+					values <- cfg.String(tc.key)
+				}
+			}))
+			done := make(chan error, 1)
+			go func() { done <- c.Set(tc.key, "updated", tc.byPath) }()
+			select {
+			case err := <-done:
+				assert.NoErr(t, err)
+			case <-time.After(time.Second):
+				t.Fatal("Set did not complete when its hook read the updated value")
+			}
+			select {
+			case value := <-values:
+				assert.Eq(t, "updated", value)
+			default:
+				t.Fatal("Set did not invoke its hook")
+			}
+		})
+	}
 }
