@@ -1,14 +1,12 @@
 module github.com/gookit/config/v2
 
-go 1.21.0
-
-toolchain go1.21.1
+go 1.23
 
 require (
 	dario.cat/mergo v1.0.2
 	github.com/BurntSushi/toml v1.6.0
 	github.com/go-viper/mapstructure/v2 v2.5.0
-	github.com/goccy/go-json v0.10.6
+	github.com/goccy/go-json v0.11.2
 	github.com/goccy/go-yaml v1.19.2
 	github.com/gookit/goutil v0.8.0
 	github.com/gookit/ini/v2 v2.3.2
