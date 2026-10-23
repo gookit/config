@@ -367,7 +367,7 @@ func (c *Config) tryInt64(key string) (value int64, ok bool) {
 		return
 	}
 
-	value, err := strconv.ParseInt(strVal, 10, 0)
+	value, err := strconv.ParseInt(strVal, 10, 64)
 	if err != nil {
 		c.addError(err)
 	}

@@ -312,6 +312,23 @@ func TestInt64(t *testing.T) {
 	ClearAll()
 }
 
+func TestInt64FullRange(t *testing.T) {
+	for _, value := range []int64{1 << 31, -1<<31 - 1, 1<<63 - 1, -1 << 63} {
+		t.Run(fmt.Sprint(value), func(t *testing.T) {
+			c := New("int64-range")
+			if err := c.Set("value", value); err != nil {
+				t.Fatal(err)
+			}
+			if got := c.Int64("value"); got != value {
+				t.Fatalf("Int64(value) = %d, want %d", got, value)
+			}
+			if err := c.Error(); err != nil {
+				t.Fatal(err)
+			}
+		})
+	}
+}
+
 func TestFloat(t *testing.T) {
 	is := assert.New(t)
 	ClearAll()
