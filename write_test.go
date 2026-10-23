@@ -3,6 +3,8 @@ package config
 import (
 	"bytes"
 	"fmt"
+	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -236,4 +238,74 @@ func TestSetHookCanReadUpdatedValue(t *testing.T) {
 			}
 		})
 	}
+}
+
+// the hook is fired without the data lock, so another writer must not change the
+// data while the hook is running.
+func TestSetHookKeepsDataStable(t *testing.T) {
+	is := assert.New(t)
+
+	hookEnter := make(chan struct{})
+	hookRelease := make(chan struct{})
+	var firstHook atomic.Bool
+
+	c := New("hook-stable", WithHookFunc(func(event string, cfg *Config) {
+		// hold only the first hook until the test allows it to return
+		if event == OnSetValue && firstHook.CompareAndSwap(false, true) {
+			close(hookEnter)
+			<-hookRelease
+		}
+	}))
+
+	go func() { _ = c.Set("first", 1) }()
+	<-hookEnter
+
+	// another writer must wait for the running hook
+	done := make(chan struct{})
+	go func() {
+		_ = c.Set("second", 2)
+		close(done)
+	}()
+
+	select {
+	case <-done:
+		close(hookRelease)
+		t.Fatal("another Set completed while a set.value hook was still running")
+	case <-time.After(100 * time.Millisecond):
+	}
+
+	close(hookRelease)
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		t.Fatal("Set did not complete after the hook was released")
+	}
+
+	is.Eq(1, c.Int("first"))
+	is.Eq(2, c.Int("second"))
+}
+
+// a hook can read the whole data set, eg: SaveFileOnSet() will dump the config data.
+func TestSetHookCanDumpAllData(t *testing.T) {
+	is := assert.New(t)
+
+	c := New("hook-dump", WithHookFunc(func(event string, cfg *Config) {
+		if event == OnSetValue {
+			_ = cfg.ToJSON()
+		}
+	}))
+
+	var wg sync.WaitGroup
+	for i := 0; i < 2; i++ {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			for j := 0; j < 20; j++ {
+				_ = c.Set(fmt.Sprintf("k%d_%d", i, j), j)
+			}
+		}(i)
+	}
+	wg.Wait()
+
+	is.Eq(40, len(c.Data()))
 }

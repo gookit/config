@@ -18,6 +18,11 @@ const (
 )
 
 // HookFunc on config data changed.
+//
+// Note: the hook is called after the data lock is released, so it can use the getter
+// methods(String, Int, GetValue...). But do not call Set/SetData/ClearData in a hook,
+// it will deadlock. And the data is stable while the hook is running, so the hook can
+// read the whole data set, eg: DumpToFile.
 type HookFunc func(event string, c *Config)
 
 // Options config options

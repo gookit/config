@@ -80,6 +80,10 @@ type Config struct {
 	// config instance name
 	name string
 	lock sync.RWMutex
+	// hookMu serialize the data change with its hook. the hook is fired after the data
+	// lock is released, so a hook can use the getter methods(they take the read lock),
+	// and no other Set/SetData/ClearData can change the data while the hook is running.
+	hookMu sync.Mutex
 
 	// config options
 	opts *Options
@@ -265,9 +269,15 @@ func (c *Config) ClearAll() {
 
 // ClearData clear data
 func (c *Config) ClearData() {
+	c.hookMu.Lock()
+	defer c.hookMu.Unlock()
+
 	c.fireHook(OnCleanData)
 
+	c.lock.Lock()
 	c.data = make(map[string]any)
+	c.lock.Unlock()
+
 	c.loadedUrls = []string{}
 	c.loadedFiles = []string{}
 }
