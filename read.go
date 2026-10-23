@@ -1,6 +1,7 @@
 package config
 
 import (
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -325,7 +326,12 @@ func (c *Config) Int(key string, defVal ...int) (value int) {
 	i64, exist := c.tryInt64(key)
 
 	if exist {
-		value = int(i64)
+		// the int64 value may be out of the int range on 32-bit platforms
+		if i64 > math.MaxInt || i64 < math.MinInt {
+			c.addErrorf("the int value '%d' of key '%s' is out of range", i64, key)
+		} else {
+			value = int(i64)
+		}
 	} else if len(defVal) > 0 {
 		value = defVal[0]
 	}
@@ -340,7 +346,12 @@ func (c *Config) Uint(key string, defVal ...uint) (value uint) {
 	i64, exist := c.tryInt64(key)
 
 	if exist {
-		value = uint(i64)
+		// the int64 value may be out of the uint range on 32-bit platforms
+		if i64 < 0 || uint64(i64) > math.MaxUint {
+			c.addErrorf("the uint value '%d' of key '%s' is out of range", i64, key)
+		} else {
+			value = uint(i64)
+		}
 	} else if len(defVal) > 0 {
 		value = defVal[0]
 	}
