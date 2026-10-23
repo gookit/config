@@ -39,15 +39,15 @@ func (c *Config) Set(key string, val any, setByPath ...bool) (err error) {
 		return ErrReadonly
 	}
 
-	c.lock.Lock()
-	defer c.lock.Unlock()
-
 	sep := c.opts.Delimiter
 	if key = formatKey(key, string(sep)); key == "" {
 		return ErrKeyIsEmpty
 	}
 
 	defer c.fireHook(OnSetValue)
+	c.lock.Lock()
+	defer c.lock.Unlock()
+
 	if strings.IndexByte(key, sep) == -1 {
 		c.data[key] = val
 		return
