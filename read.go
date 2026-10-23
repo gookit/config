@@ -343,15 +343,10 @@ func Uint(key string, defVal ...uint) uint { return dc.Uint(key, defVal...) }
 
 // Uint get a int value, if not found return default value
 func (c *Config) Uint(key string, defVal ...uint) (value uint) {
-	i64, exist := c.tryInt64(key)
+	u64, exist := c.tryUint(key)
 
 	if exist {
-		// the int64 value may be out of the uint range on 32-bit platforms
-		if i64 < 0 || uint64(i64) > math.MaxUint {
-			c.addErrorf("the uint value '%d' of key '%s' is out of range", i64, key)
-		} else {
-			value = uint(i64)
-		}
+		value = uint(u64)
 	} else if len(defVal) > 0 {
 		value = defVal[0]
 	}
@@ -377,10 +372,25 @@ func (c *Config) tryInt64(key string) (value int64, ok bool) {
 	if !ok {
 		return
 	}
-
 	value, err := strconv.ParseInt(strVal, 10, 64)
 	if err != nil {
 		c.addError(err)
+	}
+	return
+}
+
+// try to get an uint value by given key
+func (c *Config) tryUint(key string) (value uint64, ok bool) {
+	strVal, ok := c.getString(key)
+	if !ok {
+		return
+	}
+
+	// the bitSize is the platform uint width, so a value out of range records an error
+	value, err := strconv.ParseUint(strVal, 10, strconv.IntSize)
+	if err != nil {
+		c.addError(err)
+		value = 0 // reset the value on error, don't return the clamped max value
 	}
 	return
 }
