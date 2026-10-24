@@ -26,6 +26,7 @@ func (c *Config) SetData(data map[string]any) {
 
 	c.lock.Lock()
 	c.data = data
+	c.ClearCaches()
 	c.lock.Unlock()
 
 	c.fireHook(OnSetData)
@@ -55,6 +56,7 @@ func (c *Config) Set(key string, val any, setByPath ...bool) (err error) {
 
 	c.lock.Lock()
 	err = c.setValue(key, val, sep, setByPath)
+	c.ClearCaches()
 	c.lock.Unlock()
 
 	c.fireHook(OnSetValue)
