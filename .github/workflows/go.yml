@@ -41,6 +41,26 @@ jobs:
           flag-name: Go-${{ matrix.go_version }}
           parallel: true
 
+  # run the unit tests with the race detector. the data lock, the hook lock and the read
+  # caches are shared by the getter/setter/load paths, a plain `go test` can not catch a
+  # race between them.
+  race:
+    name: Race detector
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Setup Go Faster
+        uses: WillAbides/setup-go-faster@v1.19.0
+        timeout-minutes: 3
+        with:
+          go-version: stable
+
+      - name: Run unit tests with race detector
+        run: go test -race -count=1 ./...
+
   # notifies that all test jobs are finished.
   # https://github.com/shogo82148/actions-goveralls
   finish:
