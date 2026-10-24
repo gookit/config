@@ -280,12 +280,15 @@ func (c *Config) MustString(key string) string {
 }
 
 func (c *Config) getString(key string) (value string, ok bool) {
+	enableCache := c.opts.EnableCache
+	var gen uint64
+
 	// find from cache
-	if c.opts.EnableCache && len(c.strCache) > 0 {
-		value, ok = c.strCache[key]
-		if ok {
+	if enableCache {
+		if value, ok = c.cachedString(key); ok {
 			return
 		}
+		gen = c.cacheGeneration()
 	}
 
 	val, ok := c.GetValue(key)
@@ -309,11 +312,8 @@ func (c *Config) getString(key string) (value string, ok bool) {
 	}
 
 	// add cache
-	if ok && c.opts.EnableCache {
-		if c.strCache == nil {
-			c.strCache = make(map[string]string)
-		}
-		c.strCache[key] = value
+	if enableCache {
+		c.cacheString(gen, key, value)
 	}
 	return
 }
@@ -569,13 +569,15 @@ func Strings(key string) []string { return dc.Strings(key) }
 
 // Strings get config data as a string slice/array
 func (c *Config) Strings(key string) (arr []string) {
-	var ok bool
+	enableCache := c.opts.EnableCache
+	var gen uint64
+
 	// find from cache
-	if c.opts.EnableCache && len(c.sArrCache) > 0 {
-		arr, ok = c.sArrCache[key]
-		if ok {
-			return
+	if enableCache {
+		if cached, ok := c.cachedStringArr(key); ok {
+			return cached
 		}
+		gen = c.cacheGeneration()
 	}
 
 	rawVal, ok := c.GetValue(key)
@@ -597,11 +599,8 @@ func (c *Config) Strings(key string) (arr []string) {
 	}
 
 	// add cache
-	if c.opts.EnableCache {
-		if c.sArrCache == nil {
-			c.sArrCache = make(map[string]strArr)
-		}
-		c.sArrCache[key] = arr
+	if enableCache {
+		c.cacheStringArr(gen, key, arr)
 	}
 	return
 }
@@ -622,14 +621,15 @@ func StringMap(key string) map[string]string { return dc.StringMap(key) }
 
 // StringMap get config data as a map[string]string
 func (c *Config) StringMap(key string) (mp map[string]string) {
-	var ok bool
+	enableCache := c.opts.EnableCache
+	var gen uint64
 
 	// find from cache
-	if c.opts.EnableCache && len(c.sMapCache) > 0 {
-		mp, ok = c.sMapCache[key]
-		if ok {
-			return
+	if enableCache {
+		if cached, ok := c.cachedStringMap(key); ok {
+			return cached
 		}
+		gen = c.cacheGeneration()
 	}
 
 	rawVal, ok := c.GetValue(key)
@@ -678,11 +678,8 @@ func (c *Config) StringMap(key string) (mp map[string]string) {
 	}
 
 	// add cache
-	if c.opts.EnableCache {
-		if c.sMapCache == nil {
-			c.sMapCache = make(map[string]strMap)
-		}
-		c.sMapCache[key] = mp
+	if enableCache {
+		c.cacheStringMap(gen, key, mp)
 	}
 	return
 }

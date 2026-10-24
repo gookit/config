@@ -21,15 +21,10 @@ func SetData(data map[string]any) {
 
 // SetData for override the Config.Data
 func (c *Config) SetData(data map[string]any) {
-	c.hookMu.Lock()
-	defer c.hookMu.Unlock()
-
-	c.lock.Lock()
-	c.data = data
-	c.ClearCaches()
-	c.lock.Unlock()
-
-	c.fireHook(OnSetData)
+	_ = c.writeAndHook(OnSetData, func() error {
+		c.data = data
+		return nil
+	})
 }
 
 // Set value by key. setByPath default is true
@@ -48,19 +43,10 @@ func (c *Config) Set(key string, val any, setByPath ...bool) (err error) {
 		return ErrKeyIsEmpty
 	}
 
-	// tip: the lock order is hookMu -> lock. the hook is fired after the data lock is
-	// released, so a hook can use the getter methods(they take the read lock) without a
-	// deadlock, and hookMu keeps the data stable while the hook is running.
-	c.hookMu.Lock()
-	defer c.hookMu.Unlock()
-
-	c.lock.Lock()
-	err = c.setValue(key, val, sep, setByPath)
-	c.ClearCaches()
-	c.lock.Unlock()
-
-	c.fireHook(OnSetValue)
-	return
+	// tip: the lock order is hookMu -> lock, see Config.writeAndHook().
+	return c.writeAndHook(OnSetValue, func() error {
+		return c.setValue(key, val, sep, setByPath)
+	})
 }
 
 // setValue set the value to data by key. the c.lock must be locked by the caller.
