@@ -59,8 +59,6 @@ const (
 	defaultDelimiter byte = '.'
 	// default struct tag name for binding data to struct
 	defaultStructTag = "mapstructure"
-	// struct tag name for set default-value on binding data
-	defaultValueTag = "default"
 )
 
 // internal vars
