@@ -2,6 +2,7 @@ package config
 
 import (
 	"math"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -588,10 +589,16 @@ func (c *Config) Strings(key string) (arr []string) {
 	switch typeData := rawVal.(type) {
 	case []string:
 		arr = typeData
+		if c.opts.ParseEnv {
+			arr = slices.Clone(typeData)
+			for i, value := range arr {
+				arr[i] = envutil.ParseEnvValue(value)
+			}
+		}
 	case []any:
 		for _, v := range typeData {
 			// arr = append(arr, fmt.Sprintf("%v", v))
-			arr = append(arr, strutil.MustString(v))
+			arr = append(arr, c.stringValue(v))
 		}
 	default:
 		c.addErrorf("value cannot be convert to []string, key is '%s'", key)
@@ -603,6 +610,13 @@ func (c *Config) Strings(key string) (arr []string) {
 		c.cacheStringArr(gen, key, arr)
 	}
 	return
+}
+
+func (c *Config) stringValue(value any) string {
+	if str, ok := value.(string); ok && c.opts.ParseEnv {
+		return envutil.ParseEnvValue(str)
+	}
+	return strutil.MustString(value)
 }
 
 // StringsBySplit get []string by split a string value.
