@@ -8,7 +8,7 @@ import (
 
 	"github.com/gookit/goutil/dump"
 	"github.com/gookit/goutil/jsonutil"
-	"github.com/gookit/goutil/testutil/assert"
+	"github.com/gookit/goutil/x/assert"
 )
 
 func TestExport(t *testing.T) {
@@ -273,6 +273,7 @@ func TestMapStruct_embedded_struct_squash_false(t *testing.T) {
 
 	cfg2 := &Test3{}
 	err = loader.BindStruct("", cfg2)
+	assert.NoErr(t, err)
 
 	cfg3 := &Test3{}
 	_ = jsonutil.DecodeString(`{"c": 12, "b": 34}`, cfg3)
@@ -335,6 +336,7 @@ func TestMapStruct_embedded_struct_squash_true(t *testing.T) {
 
 	cfg2 := &Test3{}
 	err = loader.BindStruct("", cfg2)
+	assert.NoErr(t, err)
 
 	cfg3 := &Test3{}
 	_ = jsonutil.DecodeString(`{"c": 12, "b": 34}`, cfg3)

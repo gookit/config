@@ -16,7 +16,7 @@ import (
 	"github.com/gookit/goutil/dump"
 	"github.com/gookit/goutil/fsutil"
 	"github.com/gookit/goutil/testutil"
-	"github.com/gookit/goutil/testutil/assert"
+	"github.com/gookit/goutil/x/assert"
 )
 
 // https://github.com/gookit/config/issues/37
@@ -403,6 +403,7 @@ func TestIssues_141(t *testing.T) {
 
 		opt := &LogConfig{}
 		err = c.Decode(opt)
+		assert.NoErr(t, err)
 		dump.Println(opt)
 	})
 }
@@ -530,6 +531,7 @@ func TestIssues_162(t *testing.T) {
 
 	opt := &LogConfig{}
 	err = c.Decode(opt)
+	assert.NoErr(t, err)
 	// dump.Println(opt)
 	assert.Empty(t, opt.Loggers)
 }

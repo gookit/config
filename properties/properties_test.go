@@ -5,7 +5,7 @@ import (
 
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/properties"
-	"github.com/gookit/goutil/testutil/assert"
+	"github.com/gookit/goutil/x/assert"
 )
 
 func TestDriver(t *testing.T) {

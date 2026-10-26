@@ -6,7 +6,7 @@ import (
 
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/json5"
-	"github.com/gookit/goutil/testutil/assert"
+	"github.com/gookit/goutil/x/assert"
 )
 
 func Example() {
