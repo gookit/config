@@ -275,6 +275,9 @@ func stringsEnvCachedRead(t *testing.T, c *Config, want string) {
 	stringsEnvEqual(t, "list cache", []string{want}, c.Strings("list"))
 }
 
+// TestStringsParseEnvCache pins the cache semantics: a cache hit returns the value that
+// was expanded on the first read, so an environment change is only picked up after
+// ClearCaches() or a new Set() - the same as the String() cache.
 func TestStringsParseEnvCache(t *testing.T) {
 	stringsEnvSetup(t)
 	for _, kind := range []string{"strings", "any"} {

@@ -569,6 +569,10 @@ func (c *Config) IntMap(key string) (mp map[string]int) {
 func Strings(key string) []string { return dc.Strings(key) }
 
 // Strings get config data as a string slice/array
+//
+// Note: when ParseEnv is enabled, a string elem is parsed by ParseEnvValue and a copy
+// of the []string value is returned. Otherwise the []string value of the config data
+// may be returned directly, do not change the returned slice in that case.
 func (c *Config) Strings(key string) (arr []string) {
 	enableCache := c.opts.EnableCache
 	var gen uint64
@@ -597,8 +601,7 @@ func (c *Config) Strings(key string) (arr []string) {
 		}
 	case []any:
 		for _, v := range typeData {
-			// arr = append(arr, fmt.Sprintf("%v", v))
-			arr = append(arr, c.stringValue(v))
+			arr = append(arr, c.parseEnvString(v))
 		}
 	default:
 		c.addErrorf("value cannot be convert to []string, key is '%s'", key)
@@ -612,7 +615,9 @@ func (c *Config) Strings(key string) (arr []string) {
 	return
 }
 
-func (c *Config) stringValue(value any) string {
+// parseEnvString convert a slice elem value to a string. a string elem is parsed by
+// ParseEnv when it is enabled, the other types use strutil.MustString as before.
+func (c *Config) parseEnvString(value any) string {
 	if str, ok := value.(string); ok && c.opts.ParseEnv {
 		return envutil.ParseEnvValue(str)
 	}
