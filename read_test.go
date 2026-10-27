@@ -520,3 +520,60 @@ func TestConfig_GetValue_negativeIndex(t *testing.T) {
 		is.False(c.Exists("arr.-1"))
 	})
 }
+
+func TestConfig_GetValue_arrayIndexPath(t *testing.T) {
+	is := assert.New(t)
+
+	c := NewEmpty("test-arr-idx")
+	err := c.LoadData(map[string]any{
+		"parent": map[string]any{
+			"child": []any{"a", "b", "c"},
+		},
+		"db": map[string]any{
+			"replicas": []any{
+				map[string]any{"host": "db-1", "port": 3306},
+				map[string]any{"host": "db-2", "port": 3306},
+			},
+		},
+	})
+	is.NoErr(err)
+
+	// simple array element
+	is.Eq("a", c.Get("parent.child[0]"))
+	is.Eq("c", c.Get("parent.child[2]"))
+
+	// nested: array element then map key
+	is.Eq("db-2", c.Get("db.replicas[1].host"))
+
+	// dot-index style still works
+	is.Eq("b", c.Get("parent.child.1"))
+
+	// set by index path, get by index path
+	err = c.Set("parent.child[1]", "Test2")
+	is.NoErr(err)
+	is.Eq("Test2", c.Get("parent.child[1]"))
+
+	// out of range
+	v, ok := c.GetValue("parent.child[3]")
+	is.False(ok)
+	is.Nil(v)
+
+	// negative index
+	v, ok = c.GetValue("parent.child[-1]")
+	is.False(ok)
+	is.Nil(v)
+
+	// non-numeric index is treated as a literal key
+	_, ok = c.GetValue("parent.child[x]")
+	is.False(ok)
+
+	// exists check with index path
+	is.True(c.Exists("parent.child[0]"))
+	is.False(c.Exists("parent.child[9]"))
+	is.True(c.Exists("db.replicas[1].host"))
+
+	// top-level keys with brackets are matched as-is
+	err = c.Set("literal[0]", "v")
+	is.NoErr(err)
+	is.Eq("v", c.Get("literal[0]"))
+}
