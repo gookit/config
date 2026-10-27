@@ -40,6 +40,10 @@ func (c *Config) Exists(key string, findByPath ...bool) (ok bool) {
 	keys := strings.Split(key, string(sep))
 	topK := keys[0]
 
+	// expand "key[0]" style index segments to support get array elements
+	// by path, eg. "top.arr[2]" -> [top, arr, 2]. the top key is kept as-is.
+	keys = expandKeyIndexes(keys)
+
 	// find top item data based on top key
 	var item any
 	if item, ok = c.data[topK]; !ok {
@@ -181,6 +185,10 @@ func (c *Config) GetValue(key string, findByPath ...bool) (value any, ok bool) {
 	keys := strings.Split(key, string(sep))
 	topK := keys[0]
 
+	// expand "key[0]" style index segments to support get array elements
+	// by path, eg. "top.arr[2]" -> [top, arr, 2]. the top key is kept as-is.
+	keys = expandKeyIndexes(keys)
+
 	// find top item data based on top key
 	var item any
 	if item, ok = c.data[topK]; !ok {
@@ -249,6 +257,49 @@ func (c *Config) GetValue(key string, findByPath ...bool) (value any, ok bool) {
 	}
 
 	return item, true
+}
+
+// expandKeyIndexes expands trailing array-index markers in every path segment,
+// eg. "top.arr[2]" -> [top, arr, 2] and "matrix[0][1]" -> [matrix, 0, 1].
+// Segments without a valid trailing numeric index are kept unchanged, so
+// keys containing literal brackets (eg. "child[a]") still work as before.
+// The first segment (the top-level key) is always kept as-is.
+func expandKeyIndexes(keys []string) []string {
+	if len(keys) <= 1 {
+		return keys
+	}
+
+	expanded := make([]string, 0, len(keys)+2)
+	expanded = append(expanded, keys[0])
+	for _, seg := range keys[1:] {
+		expanded = append(expanded, expandSegIndex(seg)...)
+	}
+	return expanded
+}
+
+// expandSegIndex splits trailing "[N]" markers of a path segment into
+// separate numeric elements, eg. "arr[2]" -> ["arr", "2"].
+func expandSegIndex(seg string) []string {
+	var idxs []string
+	for len(seg) > 2 && seg[len(seg)-1] == ']' {
+		pos := strings.LastIndexByte(seg, '[')
+		if pos <= 0 {
+			break
+		}
+
+		idx := seg[pos+1 : len(seg)-1]
+		if _, err := strconv.Atoi(idx); err != nil {
+			break
+		}
+
+		idxs = append([]string{idx}, idxs...)
+		seg = seg[:pos]
+	}
+
+	if len(idxs) == 0 {
+		return []string{seg}
+	}
+	return append([]string{seg}, idxs...)
 }
 
 /*************************************************************
