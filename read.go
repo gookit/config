@@ -1,6 +1,7 @@
 package config
 
 import (
+	"maps"
 	"math"
 	"slices"
 	"strconv"
@@ -710,6 +711,12 @@ func (c *Config) StringMap(key string) (mp map[string]string) {
 	switch typeData := rawVal.(type) {
 	case map[string]string: // from Set
 		mp = typeData
+		if c.opts.ParseEnv {
+			mp = maps.Clone(typeData)
+			for k, v := range mp {
+				mp[k] = envutil.ParseEnvValue(v)
+			}
+		}
 	case map[string]any: // decode from json,toml,yaml.v3
 		mp = make(map[string]string, len(typeData))
 

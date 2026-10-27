@@ -475,3 +475,20 @@ func TestMapStringStringParseEnv(t *testing.T) {
 		is.Eq(shellVal, sMap["key3"])
 	})
 }
+
+func TestMapStringStringParseEnv_setValue(t *testing.T) {
+	is := assert.New(t)
+	raw := map[string]string{"shell": "${SHELL}", "name": "app"}
+
+	testutil.MockEnvValue("SHELL", "/usr/bin/bash", func(_ string) {
+		c := New("test", ParseEnv)
+		is.NoErr(c.Set("map1", raw))
+		is.Eq(map[string]string{"shell": "/usr/bin/bash", "name": "app"}, c.StringMap("map1"))
+		// the stored value is not changed
+		is.Eq("${SHELL}", raw["shell"])
+
+		c = New("test")
+		is.NoErr(c.Set("map1", raw))
+		is.Eq(raw, c.StringMap("map1"))
+	})
+}
