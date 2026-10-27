@@ -26,6 +26,21 @@ func TestInt64FullRange(t *testing.T) {
 	}
 }
 
+func TestInt64OutOfRange(t *testing.T) {
+	// like Uint, an out of range value records an error and the clamped value is not returned
+	for _, value := range []string{"9223372036854775808", "-9223372036854775809"} {
+		t.Run(value, func(t *testing.T) {
+			is := assert.New(t)
+			c := New("int64-out-of-range")
+
+			is.NoErr(c.Set("value", value))
+			is.Eq(int64(0), c.Int64("value"))
+			is.Err(c.Error())
+			is.Eq(0, c.Int("value"))
+		})
+	}
+}
+
 func TestInt64ByDuration(t *testing.T) {
 	is := assert.New(t)
 	c := New("duration-range")
