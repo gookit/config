@@ -691,6 +691,10 @@ func (c *Config) StringsBySplit(key, sep string) (ss []string) {
 func StringMap(key string) map[string]string { return dc.StringMap(key) }
 
 // StringMap get config data as a map[string]string
+//
+// Note: when ParseEnv is enabled, a map[string]string value from Set or LoadData is
+// parsed by ParseEnvValue and a copy of it is returned. Otherwise the map[string]string
+// value of the config data is returned directly, do not change the returned map in that case.
 func (c *Config) StringMap(key string) (mp map[string]string) {
 	enableCache := c.opts.EnableCache
 	var gen uint64

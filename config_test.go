@@ -481,14 +481,28 @@ func TestMapStringStringParseEnv_setValue(t *testing.T) {
 	raw := map[string]string{"shell": "${SHELL}", "name": "app"}
 
 	testutil.MockEnvValue("SHELL", "/usr/bin/bash", func(_ string) {
+		want := map[string]string{"shell": "/usr/bin/bash", "name": "app"}
+
 		c := New("test", ParseEnv)
 		is.NoErr(c.Set("map1", raw))
-		is.Eq(map[string]string{"shell": "/usr/bin/bash", "name": "app"}, c.StringMap("map1"))
+		is.Eq(want, c.StringMap("map1"))
 		// the stored value is not changed
 		is.Eq("${SHELL}", raw["shell"])
+		is.Eq("${SHELL}", c.Data()["map1"].(map[string]string)["shell"])
 
 		c = New("test")
 		is.NoErr(c.Set("map1", raw))
 		is.Eq(raw, c.StringMap("map1"))
+
+		// the read cache holds the parsed map, so the next call returns it too
+		c = New("test", ParseEnv, EnableCache)
+		is.NoErr(c.Set("map1", raw))
+		is.Eq(want, c.StringMap("map1"))
+		is.Eq(want, c.StringMap("map1"))
+
+		// a map[string]string value from LoadData is parsed the same way
+		c = New("test", ParseEnv)
+		is.NoErr(c.LoadData(map[string]any{"map1": raw}))
+		is.Eq(want, c.StringMap("map1"))
 	})
 }
