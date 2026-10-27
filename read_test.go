@@ -527,7 +527,8 @@ func TestConfig_GetValue_arrayIndexPath(t *testing.T) {
 	c := NewEmpty("test-arr-idx")
 	err := c.LoadData(map[string]any{
 		"parent": map[string]any{
-			"child": []any{"a", "b", "c"},
+			"child":  []any{"a", "b", "c"},
+			"matrix": []any{[]any{"m00", "m01"}, []any{"m10", "m11"}},
 		},
 		"db": map[string]any{
 			"replicas": []any{
@@ -544,6 +545,13 @@ func TestConfig_GetValue_arrayIndexPath(t *testing.T) {
 
 	// nested: array element then map key
 	is.Eq("db-2", c.Get("db.replicas[1].host"))
+
+	// more than one index in the same segment. NOTICE: the top key is matched as-is,
+	// so a single segment path (eg. "matrix[0][1]") is not expanded.
+	is.Eq("m01", c.Get("parent.matrix[0][1]"))
+	is.Eq("m10", c.Get("parent.matrix[1][0]"))
+	is.True(c.Exists("parent.matrix[0][1]"))
+	is.False(c.Exists("parent.matrix[0][2]"))
 
 	// dot-index style still works
 	is.Eq("b", c.Get("parent.child.1"))
