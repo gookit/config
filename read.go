@@ -544,6 +544,9 @@ func (c *Config) Bool(key string, defVal ...bool) (value bool) {
 func Ints(key string) []int { return dc.Ints(key) }
 
 // Ints get config data as an int slice/array
+//
+// Note: when ParseEnv is enabled, a string elem is parsed by ParseEnvValue before
+// the conversion, so a "${PORT}" elem reads the env value.
 func (c *Config) Ints(key string) (arr []int) {
 	rawVal, ok := c.GetValue(key)
 	if !ok {
@@ -553,10 +556,21 @@ func (c *Config) Ints(key string) (arr []int) {
 	switch typeData := rawVal.(type) {
 	case []int:
 		arr = typeData
+	case []string: // from Set
+		for _, v := range typeData {
+			iv, err := mathutil.ToInt(c.parseEnvValue(v))
+			if err != nil {
+				c.addError(err)
+				arr = arr[0:0] // reset
+				return
+			}
+
+			arr = append(arr, iv)
+		}
 	case []any:
 		for _, v := range typeData {
-			iv, err := mathutil.ToInt(v)
 			// iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
+			iv, err := mathutil.ToInt(c.parseEnvValue(v))
 			if err != nil {
 				c.addError(err)
 				arr = arr[0:0] // reset
@@ -575,6 +589,9 @@ func (c *Config) Ints(key string) (arr []int) {
 func IntMap(key string) map[string]int { return dc.IntMap(key) }
 
 // IntMap get config data as a map[string]int
+//
+// Note: when ParseEnv is enabled, a string value is parsed by ParseEnvValue before
+// the conversion, so a "${PORT}" value reads the env value.
 func (c *Config) IntMap(key string) (mp map[string]int) {
 	rawVal, ok := c.GetValue(key)
 	if !ok {
@@ -584,11 +601,22 @@ func (c *Config) IntMap(key string) (mp map[string]int) {
 	switch typeData := rawVal.(type) {
 	case map[string]int: // from Set
 		mp = typeData
+	case map[string]string: // from Set
+		mp = make(map[string]int, len(typeData))
+		for k, v := range typeData {
+			iv, err := mathutil.ToInt(c.parseEnvValue(v))
+			if err != nil {
+				c.addError(err)
+				mp = map[string]int{} // reset
+				return
+			}
+			mp[k] = iv
+		}
 	case map[string]any: // decode from json,toml
 		mp = make(map[string]int)
 		for k, v := range typeData {
 			// iv, err := strconv.Atoi(fmt.Sprintf("%v", v))
-			iv, err := mathutil.ToInt(v)
+			iv, err := mathutil.ToInt(c.parseEnvValue(v))
 			if err != nil {
 				c.addError(err)
 				mp = map[string]int{} // reset
@@ -600,7 +628,7 @@ func (c *Config) IntMap(key string) (mp map[string]int) {
 		mp = make(map[string]int)
 		for k, v := range typeData {
 			// iv, err := strconv.Atoi(fmt.Sprintf( "%v", v))
-			iv, err := mathutil.ToInt(v)
+			iv, err := mathutil.ToInt(c.parseEnvValue(v))
 			if err != nil {
 				c.addError(err)
 				mp = map[string]int{} // reset
@@ -669,11 +697,17 @@ func (c *Config) Strings(key string) (arr []string) {
 
 // parseEnvString convert a slice elem value to a string. a string elem is parsed by
 // ParseEnv when it is enabled, the other types use strutil.MustString as before.
-func (c *Config) parseEnvString(value any) string {
+// parseEnvValue parses the ${VAR} references of a string value when ParseEnv is
+// enabled. Any other value, and any value with ParseEnv off, is returned as-is.
+func (c *Config) parseEnvValue(value any) any {
 	if str, ok := value.(string); ok && c.opts.ParseEnv {
 		return envutil.ParseEnvValue(str)
 	}
-	return strutil.MustString(value)
+	return value
+}
+
+func (c *Config) parseEnvString(value any) string {
+	return strutil.MustString(c.parseEnvValue(value))
 }
 
 // StringsBySplit get []string by split a string value.

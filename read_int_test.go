@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gookit/goutil/testutil"
 	"github.com/gookit/goutil/x/assert"
 )
 
@@ -24,6 +25,34 @@ func TestInt64FullRange(t *testing.T) {
 			is.NoErr(c.Error())
 		})
 	}
+}
+
+// TestIntsIntMapParseEnv: Ints and IntMap convert a "${VAR}" elem/value after
+// ParseEnvValue when ParseEnv is enabled, like Strings and StringMap do.
+func TestIntsIntMapParseEnv(t *testing.T) {
+	testutil.MockEnvValue("CONFIG_READ_INT_PORT", "8080", func(_ string) {
+		is := assert.New(t)
+
+		c := New("ints-env", ParseEnv)
+		is.NoErr(c.Set("list", []any{"${CONFIG_READ_INT_PORT}", 1, "2"}))
+		is.NoErr(c.Set("strs", []string{"${CONFIG_READ_INT_PORT}", "9"}))
+		is.NoErr(c.Set("smap", map[string]string{"http": "${CONFIG_READ_INT_PORT}"}))
+		is.NoErr(c.Set("amap", map[string]any{"http": "${CONFIG_READ_INT_PORT}"}))
+
+		is.Eq([]int{8080, 1, 2}, c.Ints("list"))
+		is.Eq([]int{8080, 9}, c.Ints("strs"))
+		is.Eq(map[string]int{"http": 8080}, c.IntMap("smap"))
+		is.Eq(map[string]int{"http": 8080}, c.IntMap("amap"))
+		is.NoErr(c.Error())
+
+		// ParseEnv off: no env parsing, the numbers are converted as before
+		c = New("ints-no-env")
+		is.NoErr(c.Set("list", []any{1, "2"}))
+		is.NoErr(c.Set("strs", []string{"3"}))
+		is.Eq([]int{1, 2}, c.Ints("list"))
+		is.Eq([]int{3}, c.Ints("strs"))
+		is.NoErr(c.Error())
+	})
 }
 
 func TestInt64ByDuration(t *testing.T) {
