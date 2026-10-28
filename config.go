@@ -244,6 +244,9 @@ func (c *Config) Error() error {
 
 // IsEmpty of the config
 func (c *Config) IsEmpty() bool {
+	c.lock.RLock()
+	defer c.lock.RUnlock()
+
 	return len(c.data) == 0
 }
 

@@ -19,6 +19,9 @@ func Exists(key string, findByPath ...bool) bool { return dc.Exists(key, findByP
 
 // Exists key exists check
 func (c *Config) Exists(key string, findByPath ...bool) (ok bool) {
+	c.lock.RLock()
+	defer c.lock.RUnlock()
+
 	sep := c.opts.Delimiter
 	if key = formatKey(key, string(sep)); key == "" {
 		return
@@ -127,6 +130,9 @@ func Keys() []string { return dc.Keys() }
 
 // Keys get all config data
 func (c *Config) Keys() []string {
+	c.lock.RLock()
+	defer c.lock.RUnlock()
+
 	keys := make([]string, 0, len(c.data))
 	for key := range c.data {
 		keys = append(keys, key)
