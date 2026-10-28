@@ -428,6 +428,7 @@ func (c *Config) tryInt64(key string) (value int64, ok bool) {
 	value, err := strconv.ParseInt(strVal, 10, 64)
 	if err != nil {
 		c.addError(err)
+		value = 0 // reset the value on error, don't return the clamped max/min value
 	}
 	return
 }
