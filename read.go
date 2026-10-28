@@ -497,6 +497,7 @@ func (c *Config) Float(key string, defVal ...float64) (value float64) {
 	value, err := strconv.ParseFloat(str, 64)
 	if err != nil {
 		c.addError(err)
+		value = 0 // reset the value on error, don't return the clamped +Inf/-Inf
 	}
 	return
 }

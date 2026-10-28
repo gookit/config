@@ -339,6 +339,25 @@ func TestFloat(t *testing.T) {
 	ClearAll()
 }
 
+// TestFloatOutOfRange: like Int64 and Uint, an out of range value records an error
+// and the clamped +Inf/-Inf is not returned.
+func TestFloatOutOfRange(t *testing.T) {
+	for _, value := range []string{"1e400", "-1e400"} {
+		t.Run(value, func(t *testing.T) {
+			is := assert.New(t)
+			c := New("float-out-of-range")
+
+			is.NoErr(c.Set("value", value))
+			is.Eq(float64(0), c.Float("value"))
+			is.Err(c.Error())
+
+			// a non-numeric value is 0 as before
+			is.NoErr(c.Set("text", "abc"))
+			is.Eq(float64(0), c.Float("text"))
+		})
+	}
+}
+
 func TestString(t *testing.T) {
 	is := assert.New(t)
 	ClearAll()
