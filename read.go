@@ -3,6 +3,7 @@ package config
 import (
 	"maps"
 	"math"
+	"reflect"
 	"slices"
 	"strconv"
 	"strings"
@@ -41,59 +42,8 @@ func (c *Config) Exists(key string, findByPath ...bool) (ok bool) {
 		return
 	}
 
-	keys := strings.Split(key, string(sep))
-	topK := keys[0]
-
-	// expand "key[0]" style index segments to support get array elements
-	// by path, eg. "top.arr[2]" -> [top, arr, 2]. the top key is kept as-is.
-	keys = expandKeyIndexes(keys)
-
-	// find top item data based on top key
-	var item any
-	if item, ok = c.data[topK]; !ok {
-		return
-	}
-	for _, k := range keys[1:] {
-		switch typeData := item.(type) {
-		case map[string]int: // is map(from Set)
-			if item, ok = typeData[k]; !ok {
-				return
-			}
-		case map[string]string: // is map(from Set)
-			if item, ok = typeData[k]; !ok {
-				return
-			}
-		case map[string]any: // is map(decode from toml/json/yaml.v3)
-			if item, ok = typeData[k]; !ok {
-				return
-			}
-		case map[any]any: // is map(decode from yaml.v2)
-			if item, ok = typeData[k]; !ok {
-				return
-			}
-		case []int: // is array(is from Set)
-			i, err := strconv.Atoi(k)
-			if err != nil || i < 0 || i >= len(typeData) {
-				return false
-			}
-			item = typeData[i]
-		case []string: // is array(is from Set)
-			i, err := strconv.Atoi(k)
-			if err != nil || i < 0 || i >= len(typeData) {
-				return false
-			}
-			item = typeData[i]
-		case []any: // is array(load from file)
-			i, err := strconv.Atoi(k)
-			if err != nil || i < 0 || i >= len(typeData) {
-				return false
-			}
-			item = typeData[i]
-		default: // error
-			return false
-		}
-	}
-	return true
+	_, ok = maputil.GetByPathKeys(c.data, strings.Split(key, string(sep)))
+	return
 }
 
 /*************************************************************
@@ -189,124 +139,40 @@ func (c *Config) GetValue(key string, findByPath ...bool) (value any, ok bool) {
 		return
 	}
 
+	// find by path, the bracket index syntax (eg. "top.arr[1]") is handled there
 	keys := strings.Split(key, string(sep))
-	topK := keys[0]
-
-	// expand "key[0]" style index segments to support get array elements
-	// by path, eg. "top.arr[2]" -> [top, arr, 2]. the top key is kept as-is.
-	keys = expandKeyIndexes(keys)
-
-	// find top item data based on top key
-	var item any
-	if item, ok = c.data[topK]; !ok {
-		// c.addError(ErrNotFound)
-		return
+	if val, found := maputil.GetByPathKeys(c.data, keys); found {
+		return val, true
 	}
 
-	// find child
-	// NOTICE: don't merge case, will result in an error.
-	// e.g. case []int, []string
-	// OR
-	// case []int:
-	// case []string:
-	for _, k := range keys[1:] {
-		switch typeData := item.(type) {
-		case map[string]int: // is map(from Set)
-			if item, ok = typeData[k]; !ok {
-				return
-			}
-		case map[string]string: // is map(from Set)
-			if item, ok = typeData[k]; !ok {
-				return
-			}
-		case map[string]any: // is map(decode from toml/json)
-			if item, ok = typeData[k]; !ok {
-				return
-			}
-		case map[any]any: // is map(decode from yaml)
-			if item, ok = typeData[k]; !ok {
-				return
-			}
-		case []int: // is array(is from Set)
-			i, err := strconv.Atoi(k)
+	c.recordGetPathError(key, keys)
+	return nil, false
+}
 
-			// check slice index
-			if err != nil || i < 0 || len(typeData) <= i {
-				ok = false
-				c.addError(err)
-				return
+// recordGetPathError reports a path that runs into a value which cannot have sub-keys,
+// eg. "name.sub" when "name" is a string. A missing key stays silent, as before.
+func (c *Config) recordGetPathError(key string, keys []string) {
+	for i := len(keys) - 1; i >= 1; i-- {
+		if val, ok := maputil.GetByPathKeys(c.data, keys[:i]); ok {
+			if !canHaveSubValue(val) {
+				c.addErrorf("cannot get value of the key '%s'", key)
 			}
-
-			item = typeData[i]
-		case []string: // is array(is from Set)
-			i, err := strconv.Atoi(k)
-			if err != nil || i < 0 || len(typeData) <= i {
-				ok = false
-				c.addError(err)
-				return
-			}
-
-			item = typeData[i]
-		case []any: // is array(load from file)
-			i, err := strconv.Atoi(k)
-			if err != nil || i < 0 || len(typeData) <= i {
-				ok = false
-				c.addError(err)
-				return
-			}
-
-			item = typeData[i]
-		default: // error
-			ok = false
-			c.addErrorf("cannot get value of the key '%s'", key)
 			return
 		}
 	}
-
-	return item, true
 }
 
-// expandKeyIndexes expands trailing array-index markers in every path segment,
-// eg. "top.arr[2]" -> [top, arr, 2] and "matrix[0][1]" -> [matrix, 0, 1].
-// Segments without a valid trailing numeric index are kept unchanged, so
-// keys containing literal brackets (eg. "child[a]") still work as before.
-// The first segment (the top-level key) is always kept as-is.
-func expandKeyIndexes(keys []string) []string {
-	if len(keys) <= 1 {
-		return keys
+// canHaveSubValue reports whether the value can be walked into by a sub key.
+func canHaveSubValue(val any) bool {
+	if val == nil {
+		return false
 	}
 
-	expanded := make([]string, 0, len(keys)+2)
-	expanded = append(expanded, keys[0])
-	for _, seg := range keys[1:] {
-		expanded = append(expanded, expandSegIndex(seg)...)
+	switch reflect.ValueOf(val).Kind() {
+	case reflect.Map, reflect.Slice, reflect.Array:
+		return true
 	}
-	return expanded
-}
-
-// expandSegIndex splits trailing "[N]" markers of a path segment into
-// separate numeric elements, eg. "arr[2]" -> ["arr", "2"].
-func expandSegIndex(seg string) []string {
-	var idxs []string
-	for len(seg) > 2 && seg[len(seg)-1] == ']' {
-		pos := strings.LastIndexByte(seg, '[')
-		if pos <= 0 {
-			break
-		}
-
-		idx := seg[pos+1 : len(seg)-1]
-		if _, err := strconv.Atoi(idx); err != nil {
-			break
-		}
-
-		idxs = append([]string{idx}, idxs...)
-		seg = seg[:pos]
-	}
-
-	if len(idxs) == 0 {
-		return []string{seg}
-	}
-	return append([]string{seg}, idxs...)
+	return false
 }
 
 /*************************************************************
