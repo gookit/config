@@ -51,6 +51,10 @@ func (c *Config) Set(key string, val any, setByPath ...bool) (err error) {
 
 // setValue set the value to data by key. the c.lock must be locked by the caller.
 func (c *Config) setValue(key string, val any, sep byte, setByPath []bool) error {
+	if c.data == nil {
+		c.data = make(map[string]any)
+	}
+
 	if strings.IndexByte(key, sep) == -1 {
 		c.data[key] = val
 		return nil
