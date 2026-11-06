@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/big"
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -133,11 +134,15 @@ func TestIssues_59(t *testing.T) {
 	is.NoErr(err)
 	dump.Println(c.Data())
 
-	dumpfile := "testdata/issues59.ini"
+	// write to a temp dir: the dump carries an export timestamp, so writing it into
+	// testdata would leave the working tree dirty after every test run
+	dumpfile := filepath.Join(t.TempDir(), "issues59.ini")
 	out, err := fsutil.OpenTruncFile(dumpfile, 0666)
 	is.NoErr(err)
+
 	_, err = c.DumpTo(out, config.Ini)
 	is.NoErr(err)
+	is.NoErr(out.Close())
 
 	str := string(fsutil.MustReadFile(dumpfile))
 	is.Contains(str, "name = app")
